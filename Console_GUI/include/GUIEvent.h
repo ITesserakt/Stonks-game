@@ -3,10 +3,10 @@
 #include "Widget.h"
 
 class GUIEvent {
-  // TODO: this abstract class contains all data to process event
+    // TODO: this abstract class contains all data to process event
 
-  Widget &sender;
+    Widget &sender;
 
 public:
-  virtual void action() = 0;
+    virtual void action() = 0;
 };

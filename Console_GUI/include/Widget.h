@@ -9,6 +9,8 @@ class Widget {
 
 protected:
   std::string name;
+  std::weak_ptr<Widget> parent;
+  std::shared_ptr<Widget> canvas;
   std::vector<std::shared_ptr<Widget>> children;
 
 private:

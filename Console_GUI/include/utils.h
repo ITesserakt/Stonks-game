@@ -9,85 +9,92 @@
 
 template<typename N>
 concept Number = requires(N l, N r) {
-  { l } -> std::convertible_to<double>;
-  { l + r } -> std::same_as<N>;
-  { l * r } -> std::same_as<N>;
-  { l - r } -> std::same_as<N>;
-  { l / r } -> std::same_as<N>;
+    { l } -> std::convertible_to<double>;
+    { l + r } -> std::same_as<N>;
+    { l * r } -> std::same_as<N>;
+    { l - r } -> std::same_as<N>;
+    { l / r } -> std::same_as<N>;
 };
 
-template <Number T>
+template<Number T>
 struct Point {
-  const T x, y;
+    const T x, y;
 
-  Point() : x(), y() {}
-  Point(T x, T y) : x(x), y(y) {}
+    Point() : x(), y() {}
 
-  [[nodiscard]] double magnitude() const {
-	return x * x + y * y;
-  }
+    Point(T x, T y) : x(x), y(y) {}
 
-  [[nodiscard]] double sqrMagnitude() const {
-	return sqrt(magnitude());
-  }
+    [[nodiscard]] double magnitude() const {
+        return x * x + y * y;
+    }
 
-  Point<T> operator+(Point<T> rhs) const {
-	return Point(x + rhs.x, y + rhs.y);
-  }
+    [[nodiscard]] double sqrMagnitude() const {
+        return sqrt(magnitude());
+    }
 
-  Point<T> operator-(Point<T> rhs) const {
-	return Point(x - rhs.x, y - rhs.y);
-  }
+    Point<T> operator+(Point<T> rhs) const {
+        return Point(x + rhs.x, y + rhs.y);
+    }
+
+    Point<T> operator-(Point<T> rhs) const {
+        return Point(x - rhs.x, y - rhs.y);
+    }
 };
 
 using IPoint = Point<int>;
 using FPoint = Point<float>;
 using UIPoint = Point<unsigned int>;
 
-template <Number T>
+template<Number T>
 struct Vector {
-  const Point<T> x, y;
+    const Point<T> x, y;
 
-  Vector() : x(), y() {}
-  Vector(Point<T> x, Point<T> y) : x(x), y(y) {}
-  Vector(T x1, T x2, T y1, T y2) : x(x1, y1), y(x2, y2) {}
+    Vector() : x(), y() {}
 
-  [[nodiscard]] double magnitude() const {
-	return (x - y).magnitude();
-  }
+    Vector(Point<T> x, Point<T> y) : x(x), y(y) {}
 
-  [[nodiscard]] double sqrMagnitude() const {
-	return (x - y).sqrMagnitude();
-  }
+    Vector(T x1, T x2, T y1, T y2) : x(x1, y1), y(x2, y2) {}
 
-  Vector<T> operator+(Vector<T> rhs) const {
-	return Vector(x + rhs.x, y + rhs.y);
-  }
+    [[nodiscard]] double magnitude() const {
+        return (x - y).magnitude();
+    }
 
-  Vector<T> operator-(Vector<T> rhs) const {
-	return Vector(x - rhs.x, y - rhs.y);
-  }
+    [[nodiscard]] double sqrMagnitude() const {
+        return (x - y).sqrMagnitude();
+    }
+
+    Vector<T> operator+(Vector<T> rhs) const {
+        return Vector(x + rhs.x, y + rhs.y);
+    }
+
+    Vector<T> operator-(Vector<T> rhs) const {
+        return Vector(x - rhs.x, y - rhs.y);
+    }
 };
 
 using IVector = Vector<int>;
 using FVector = Vector<float>;
 using UIVector = Vector<unsigned int>;
 
-template <Number T>
+template<Number T>
 struct Rect {
-  const Point<T> a, b;
+    const Point<T> a, b;
 
-  Rect() : a(), b() {}
-  Rect(Point<T> a, Point<T> b) : a(a), b(b) {}
-  Rect(T x1, T x2, T y1, T y2) : a(x1, y1), b(x2, y2) {}
+    Rect() : a(), b() {}
 
-  double area() {
-	return abs((a.x - b.x) * (a.y - b.y));
-  }
+    Rect(Point<T> a, Point<T> b) : a(a), b(b) {}
+
+    Rect(T x1, T x2, T y1, T y2) : a(x1, y1), b(x2, y2) {}
+
+    double area() {
+        return abs((a.x - b.x) * (a.y - b.y));
+    }
 };
 
 using IRect = Rect<int>;
 using FRect = Rect<float>;
 using UIRect = Rect<unsigned int>;
 
-enum Align { Left, Right, Centered };
+enum Align {
+    Left, Right, Centered
+};
