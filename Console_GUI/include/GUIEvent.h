@@ -7,5 +7,6 @@ class GUIEvent {
 
   Widget &sender;
 
+public:
   virtual void action() = 0;
 };

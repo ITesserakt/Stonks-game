@@ -2,6 +2,6 @@
 
 #include "Widget.h"
 
-class Canvas : public Widget {
+class Canvas : public virtual Widget {
   // TODO: main widget that takes all console window
 };

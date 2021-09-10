@@ -1,12 +1,22 @@
 #pragma once
 
 #include <cmath>
+#include <concepts>
 
 /*
  * This file contains necessary utilities, such as geometric abstractions
  */
 
-template <typename T>
+template<typename N>
+concept Number = requires(N l, N r) {
+  { l } -> std::convertible_to<double>;
+  { l + r } -> std::same_as<N>;
+  { l * r } -> std::same_as<N>;
+  { l - r } -> std::same_as<N>;
+  { l / r } -> std::same_as<N>;
+};
+
+template <Number T>
 struct Point {
   const T x, y;
 
@@ -22,11 +32,11 @@ struct Point {
   }
 
   Point<T> operator+(Point<T> rhs) const {
-	return Point::Point(x + rhs.x, y + rhs.y);
+	return Point(x + rhs.x, y + rhs.y);
   }
 
   Point<T> operator-(Point<T> rhs) const {
-	return Point::Point(x - rhs.x, y - rhs.y);
+	return Point(x - rhs.x, y - rhs.y);
   }
 };
 
@@ -34,7 +44,7 @@ using IPoint = Point<int>;
 using FPoint = Point<float>;
 using UIPoint = Point<unsigned int>;
 
-template <typename T>
+template <Number T>
 struct Vector {
   const Point<T> x, y;
 
@@ -63,7 +73,7 @@ using IVector = Vector<int>;
 using FVector = Vector<float>;
 using UIVector = Vector<unsigned int>;
 
-template <typename T>
+template <Number T>
 struct Rect {
   const Point<T> a, b;
 
