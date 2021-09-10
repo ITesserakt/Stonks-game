@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.19)
 project(Stonks-Game CXX)
 set(CXX_STANDARD 17)
 
-file(GLOB_RECURSE SOURCE_FILES Game/project/src/*.cpp)
-file(GLOB_RECURSE HEADER_FILES Game/project/include/*.h)
+file(GLOB_RECURSE SOURCE_FILES Game/src/*.cpp)
+file(GLOB_RECURSE HEADER_FILES Game/include/*.h)
 
 add_subdirectory(Console_GUI)
 

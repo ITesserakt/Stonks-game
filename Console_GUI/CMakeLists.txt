@@ -1,5 +1,5 @@
-file(GLOB_RECURSE HEADER_FILES project/include/*.h)
-file(GLOB_RECURSE SOURCE_FILES project/src/*.cpp)
+file(GLOB_RECURSE HEADER_FILES include/*.h)
+file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
 add_library(Console_GUI ${SOURCE_FILES} ${HEADER_FILES})
 
