@@ -1,13 +1,13 @@
 #pragma once
 
-#include <tbb/concurrent_queue.h>
+#include <queue>
 #include "GUIEvent.h"
 
 class Frontend {
     //TODO: here we need to specialize a facade to contact with gui
 
 protected:
-    tbb::concurrent_queue<std::unique_ptr<GUIEvent>> todo;
+    std::queue<std::unique_ptr<GUIEvent>> todo;
 
 public:
     Frontend() = default;
@@ -16,8 +16,9 @@ public:
 
     void flush() {
         std::unique_ptr<GUIEvent> item;
-        while (todo.try_pop(item)) {
-            item->action();
+        while (!todo.empty()) {
+            todo.back()->action();
+            todo.pop();
         }
     }
 

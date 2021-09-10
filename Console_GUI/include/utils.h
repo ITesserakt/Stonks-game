@@ -7,16 +7,7 @@
  * This file contains necessary utilities, such as geometric abstractions
  */
 
-template<typename N>
-concept Number = requires(N l, N r) {
-    { l } -> std::convertible_to<double>;
-    { l + r } -> std::same_as<N>;
-    { l * r } -> std::same_as<N>;
-    { l - r } -> std::same_as<N>;
-    { l / r } -> std::same_as<N>;
-};
-
-template<Number T>
+template<typename T>
 struct Point {
     const T x, y;
 
@@ -45,7 +36,7 @@ using IPoint = Point<int>;
 using FPoint = Point<float>;
 using UIPoint = Point<unsigned int>;
 
-template<Number T>
+template<typename T>
 struct Vector {
     const Point<T> x, y;
 
@@ -76,7 +67,7 @@ using IVector = Vector<int>;
 using FVector = Vector<float>;
 using UIVector = Vector<unsigned int>;
 
-template<Number T>
+template<typename T>
 struct Rect {
     const Point<T> a, b;
 
