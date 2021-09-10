@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "EventSequence.h"
+#include <memory>
 
 class Widget {
     // TODO: Base class to represent widget, i.e. text label, button, etc
