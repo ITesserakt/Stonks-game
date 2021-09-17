@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+# Scrub in testGUI folder
+Console_GUI/test/*.out
+
 # Compiled Object files
 *.slo
 *.lo

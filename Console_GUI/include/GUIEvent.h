@@ -4,8 +4,7 @@
 
 class GUIEvent {
     // TODO: this abstract class contains all data to process event
-
-    Widget &sender;
+    // Widget &sender;  TODO: this string is not working
 
 public:
     virtual void action() = 0;
