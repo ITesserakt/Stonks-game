@@ -1,35 +1,14 @@
-#include "../include/Helper.h"
-#include <iostream>
+#include "Helper.h"
+#include <gtest/gtest.h>
 
-int testAmount = 0;
-int mistakes   = 0;
-
-void test(std::string str1, std::string str2) {
-    testAmount++;
-    if (!str1.compare(str2)) {
-        mistakes++;
-        std::cout << "Test № " << testAmount << " failed\n"
-                  << "We get: " << str1
-                  << "\nBut need:" << str2 << '\n';
-    }
-}
-
-template <typename T>
-void test(T a, T b) {
-    testAmount++;
-    if (a != b) {
-        mistakes++;
-        std::cout << "Test № " << testAmount << " failed\n"
-                  << "We get: " << a
-                  << "\nBut need:" << b << '\n';
-    }
+TEST(basic, get_height_of_text) {
+    ASSERT_EQ(getHeight("Hello"), 1);
+    ASSERT_EQ(getHeight("Hello\n\n"), 3);
+    ASSERT_EQ(getHeight("\nHel\nlo\n"), 4);
 }
 
 /*This main is for testing GUI module*/
-int main() {
-    test(getHeight("Hello"), 1);
-    test(getHeight("Hello\n\n"),3);
-    test(getHeight("\nHel\nlo\n"), 4);
-
-    printf("Results: %d/%d\n", testAmount - mistakes, testAmount);
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

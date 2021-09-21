@@ -2,7 +2,7 @@
 *.d
 
 # Scrub in testGUI folder
-Console_GUI/test/*.out
+Console_GUI/assertEq/*.out
 
 # Compiled Object files
 *.slo
