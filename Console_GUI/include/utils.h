@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <cmath>
 
 /*
@@ -88,3 +89,5 @@ using UIRect = Rect<unsigned int>;
 enum Align {
     Left, Right, Centered
 };
+
+int getHeight(std::string str);

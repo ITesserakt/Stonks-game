@@ -1,4 +1,4 @@
-#include "Helper.h"
+#include "utils.h"
 #include <gtest/gtest.h>
 
 TEST(basic, get_height_of_text) {
