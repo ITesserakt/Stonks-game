@@ -17,7 +17,6 @@ if (WIN32)
 	target_link_libraries(main PUBLIC ${CMAKE_PREFIX_PATH}/pdcurses.lib)
 elseif (UNIX)
 	set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/Lib/Linux)
-	find_package(ncurses REQUIRED)
 	target_link_libraries(main PUBLIC ncurses)
 endif()
 

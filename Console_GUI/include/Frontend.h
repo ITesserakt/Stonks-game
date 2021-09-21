@@ -2,8 +2,6 @@
 
 #include <queue>
 #include "GUIEvent.h"
-#include <curses.h>
-#include <iostream>
 
 class Frontend {
     //TODO: here we need to specialize a facade to contact with gui
@@ -12,10 +10,7 @@ protected:
     std::queue<std::unique_ptr<GUIEvent>> todo;
 
 public:
-    Frontend() {
-        std::cout << "here" << std::endl;
-        mvprintw(10, 10, "aboba");
-    }
+    Frontend() = default;
 
     Frontend(const Frontend &) = delete;
 

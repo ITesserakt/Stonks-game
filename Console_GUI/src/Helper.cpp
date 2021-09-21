@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "../include/Helper.h"
 
 int getHeight(std::string str) {

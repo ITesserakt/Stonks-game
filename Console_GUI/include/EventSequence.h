@@ -2,7 +2,6 @@
 
 #include <queue>
 #include "GUIEvent.h"
-#include "Widget.h"
 
 class GUIEvent;
 
