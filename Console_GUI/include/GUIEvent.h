@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Widget.h"
+#include "widgets/Widget.h"
 
 class GUIEvent {
     // TODO: this abstract class contains all data to process event

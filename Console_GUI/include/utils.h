@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <concepts>
 
 /*
  * This file contains necessary utilities, such as geometric abstractions
