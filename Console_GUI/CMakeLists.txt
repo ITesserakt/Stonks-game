@@ -2,7 +2,7 @@ file(GLOB_RECURSE HEADER_FILES include/*.h)
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 file(GLOB_RECURSE TEST_FILES test/*.cpp)
 
-add_library(Console_GUI ${SOURCE_FILES} ${HEADER_FILES})
+add_library(Console_GUI ${SOURCE_FILES} ${HEADER_FILES} src/widgets/Widget.cpp)
 
 target_include_directories(Console_GUI
 		PUBLIC    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
