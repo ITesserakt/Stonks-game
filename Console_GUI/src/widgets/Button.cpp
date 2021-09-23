@@ -1,11 +1,10 @@
 #include "widgets/Button.h"
 #include "Utils.h"
 #include <ncurses.h>
-#include <utility>
 
 Button::Button(std::string Name) : Widget(Name) {
     isBlowing = false;
-    height = getHeight(std::move(Name));
+    height = getHeight(Name);
     width = getWidth(Name);
 }
 
