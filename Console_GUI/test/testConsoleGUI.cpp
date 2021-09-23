@@ -1,7 +1,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include "utils.h"
+#include "Utils.h"
 #include <gtest/gtest.h>
 #include "widgets/Group.h"
 

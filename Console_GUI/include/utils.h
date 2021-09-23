@@ -1,12 +1,14 @@
 #pragma once
 
-#include <string>
 #include <cmath>
-#include <ostream>
+#include <concepts>
+#include <string>
 
 /*
  * This file contains necessary utilities, such as geometric abstractions
  */
+
+int getHeight(std::string str);
 
 template<typename T>
 struct Point {
@@ -30,10 +32,6 @@ struct Point {
 
     Point<T> operator-(Point<T> rhs) const {
         return Point(x - rhs.x, y - rhs.y);
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, const Point &point) {
-        return os << "(" << point.x << ", " << point.y << ")";
     }
 };
 
@@ -66,10 +64,6 @@ struct Vector {
     Vector<T> operator-(Vector<T> rhs) const {
         return Vector(x - rhs.x, y - rhs.y);
     }
-
-    friend std::ostream &operator<<(std::ostream &os, const Vector &vector) {
-        return os << "Vector {x: " << vector.x << " y: " << vector.y << "}";
-    }
 };
 
 using IVector = Vector<int>;
@@ -89,10 +83,6 @@ struct Rect {
     double area() {
         return abs((a.x - b.x) * (a.y - b.y));
     }
-
-    friend std::ostream &operator<<(std::ostream &os, const Rect &rect) {
-        return os << "Rect {a: " << rect.a << " b: " << rect.b << "}";
-    }
 };
 
 using IRect = Rect<int>;
@@ -102,5 +92,3 @@ using UIRect = Rect<unsigned int>;
 enum Align {
     Left, Right, Centered
 };
-
-int getHeight(std::string str);
