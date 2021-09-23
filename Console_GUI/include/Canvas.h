@@ -4,6 +4,7 @@
 
 class Canvas : public virtual Widget {
     // TODO: main widget that takes all console window (Menu)
+    // It places all widgets on right places
 
 public:
     void show() override {
