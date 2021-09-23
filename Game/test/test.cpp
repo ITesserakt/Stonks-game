@@ -20,7 +20,7 @@ TEST(game_logic, config_parsing) {
     }]
 })";
     auto f = ObjectFactory::fromText(json);
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000, 0}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000}));
 }
 
 TEST(game_logic, objects_generating) {
@@ -45,9 +45,9 @@ TEST(game_logic, objects_generating) {
     }]
 })"_json;
     auto f = ObjectFactory(json, 0);
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000, 0}));
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty"}, 1, 7500, 0}));
-    ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 2, 1000000, 0}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty"}, 1, 7500}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 2, 1000000}));
 }
 
 TEST(game_logic, objects_cost) {

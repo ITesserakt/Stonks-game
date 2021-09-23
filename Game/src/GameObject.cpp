@@ -3,12 +3,11 @@
 //
 
 #include "GameObject.h"
+#include "Utils.h"
 
 std::ostream &operator<<(std::ostream &os, const GameObject &object) {
     return os << "Object {name: " << object.name << ", desc: ["
-              << (!object.description.empty() ?
-                  std::accumulate(++object.description.begin(), object.description.end(),
-                                  *object.description.begin(), [](auto &a, auto &b) { return a + ", " + b; }) : "")
+              << joinToString(object.description.begin(),  object.description.end(), ", ")
               << "], cost: " << object.cost << ", times sold: " << object.timesSold << "}";
 }
 

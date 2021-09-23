@@ -2,6 +2,9 @@
 
 #include <cmath>
 #include <concepts>
+#include <algorithm>
+#include <numeric>
+#include <sstream>
 
 /*
  * This file contains necessary utilities, such as geometric abstractions
@@ -89,3 +92,17 @@ using UIRect = Rect<unsigned int>;
 enum Align {
     Left, Right, Centered
 };
+
+template<typename InputIterator>
+std::string joinToString(InputIterator begin, InputIterator end, const std::string& separator) {
+    auto size = std::distance(begin, end);
+    if (size == 0)
+        return "";
+    std::stringstream ss;
+    ss << *begin;
+    return std::accumulate(++begin, end, ss.str(), [&separator](const auto& acc, const auto& x) {
+        std::stringstream ss;
+        ss << x;
+        return acc + separator + ss.str();
+    });
+}
