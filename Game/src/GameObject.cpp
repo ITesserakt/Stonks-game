@@ -15,7 +15,7 @@ std::ostream &operator<<(std::ostream &os, const GameObject &object) {
 bool GameObject::operator==(const GameObject &rhs) const {
     return name == rhs.name &&
            description == rhs.description &&
-           std::abs(cost - rhs.cost) < std::numeric_limits<GameObject::Cost>::epsilon() * 10000 &&
+           std::abs(cost - rhs.cost) < std::numeric_limits<GameObject::Cost>::epsilon() &&
            timesSold == rhs.timesSold &&
            id == rhs.id;
 }

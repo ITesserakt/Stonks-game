@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <gtest/gtest.h>
+#include <gmock/gmock-matchers.h>
+#include <exception>
 #include <ObjectFactory.h>
 #include <World.h>
 
@@ -43,9 +45,9 @@ TEST(game_logic, objects_generating) {
     }]
 })"_json;
     auto f = ObjectFactory(json, 0);
-    ASSERT_EQ(f.generateNext(), (GameObject { "car", {}, 0, 10000, 0 }));
-    ASSERT_EQ(f.generateNext(), (GameObject { "car", {"dirty"}, 1, 7500, 0 }));
-    ASSERT_EQ(f.generateNext(), (GameObject { "laba, tipovik", {}, 2, 1000000, 0 }));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000, 0}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty"}, 1, 7500, 0}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 2, 1000000, 0}));
 }
 
 TEST(game_logic, objects_cost) {
@@ -103,9 +105,19 @@ TEST(game_logic, profitness) {
         w.availableSlots--;
         ASSERT_NEAR(w.getProfitness(x), expected[x], 1e-5);
     }
+    EXPECT_THAT(w.getSlots(), (testing::ElementsAreArray({0, 1, 2, 3, 4})));
 }
 
-int main(int argc, char** argv) {
+TEST(game_logic, non_existing_gameobject) {
+    auto json = R"({"Objects":[]})"_json;
+    auto f = ObjectFactory(json);
+    auto w = World(std::move(f));
+    ASSERT_THROW({
+        w.getProfitness(1);
+    }, std::runtime_error);
+}
+
+int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
