@@ -3,35 +3,43 @@
 
 std::random_device ObjectFactory::engine = std::random_device();
 
+/*
+ * Holy, that's so unoptimized!
+ */
 GameObject ObjectFactory::generateNext() {
     auto object = data.begin();
-    std::advance(object, random() % data.size() - 1);
+    std::advance(object, random() % data.size());
     auto name = object->first;
     auto kind = object->second;
+
     auto descriptions = std::vector<GameObject::Description>();
-    for (const auto& [k, _]: kind.descriptions) descriptions.emplace_back(k);
-    auto descCount = random() % kind.descriptions.size();
-
+    for (const auto&[k, _]: kind.descriptions) descriptions.emplace_back(k);
+    auto descCount = random() % (kind.descriptions.empty() ? 1 : kind.descriptions.size());
     std::shuffle(descriptions.begin(), descriptions.end(), random);
-    auto shuffled = std::vector(descriptions.begin(), descriptions.begin() + descCount + 1);
-    auto cost = kind.basicCost *
-                std::accumulate(shuffled.begin(), shuffled.end(), 1.0, [&](auto &a, auto &b) { return a * kind.descriptions[b]; });
+    descriptions = std::vector(descriptions.begin(), descriptions.begin() + descCount);
 
-    return {name, shuffled, cost};
+    auto cost = kind.basicCost * std::accumulate(descriptions.begin(), descriptions.end(), 1.0,
+                                                 [&](auto &a, auto &b) { return a * kind.descriptions[b]; });
+
+    return {name, descriptions, lastId++, cost, 0};
 }
 
-ObjectFactory::ObjectFactory(const nlohmann::json &config, unsigned int randomSeed): random(randomSeed) {
+ObjectFactory::ObjectFactory(const nlohmann::json &config, unsigned int randomSeed) : random(randomSeed) {
     auto objects = config["Objects"];
 
     for (const auto &object: objects) {
         const auto &name = object["name"].get<GameObject::Name>();
         const auto &cost = object["cost"].get<GameObject::Cost>();
         const auto &descs = object["descriptions"];
-        data[name] = ObjectPrototype {{}, cost };
+        data[name] = ObjectPrototype{{}, cost};
         for (const auto &desc: descs) {
-            const auto& d = desc["value"].get<GameObject::Description>();
-            const auto& c = desc["multiplier"].get<GameObject::Cost>();
+            const auto &d = desc["value"].get<GameObject::Description>();
+            const auto &c = desc["multiplier"].get<GameObject::Cost>();
             data[name].descriptions[d] = c;
         }
     }
+}
+
+GameObject::Cost ObjectFactory::getCostForKind(GameObject::Name kind) {
+    return data[kind].basicCost;
 }

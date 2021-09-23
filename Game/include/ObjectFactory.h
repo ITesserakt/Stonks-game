@@ -16,12 +16,14 @@ class ObjectFactory {
 
 private:
     std::map<GameObject::Name, ObjectPrototype> data;
+    unsigned int lastId = 0;
 
     static std::random_device engine;
     std::mt19937 random;
 
 public:
     GameObject generateNext();
+    GameObject::Cost getCostForKind(GameObject::Name kind);
 
     explicit ObjectFactory(const nlohmann::json &config, unsigned int randomSeed = engine());
 
