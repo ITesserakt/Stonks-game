@@ -10,6 +10,8 @@
 
 int getHeight(std::string str);
 
+int getWidth(std::string str);
+
 template<typename T>
 struct Point {
     const T x, y;

@@ -11,6 +11,12 @@ protected:
 
 public:
     Button(std::string name);
+    void show();
+    Rect<unsigned int> getSize();
 
+    // Unimplemented methods TODO
+    EventSequence onHoverEnd();
+    EventSequence onHoverStart();
+    EventSequence click();
 
 };
