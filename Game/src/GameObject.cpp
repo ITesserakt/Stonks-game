@@ -3,7 +3,7 @@
 //
 
 #include "GameObject.h"
-#include "Utils.h"
+#include "utils.h"
 
 std::ostream &operator<<(std::ostream &os, const GameObject &object) {
     return os << "Object {name: " << object.name << ", desc: ["

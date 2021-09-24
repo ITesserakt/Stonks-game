@@ -1,5 +1,5 @@
 #include "widgets/Button.h"
-#include "Utils.h"
+#include "utils.h"
 #include <ncurses.h>
 
 Button::Button(std::string Name) : Widget(Name) {
