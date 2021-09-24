@@ -39,3 +39,5 @@ cmake-*/
 .idea/
 .vscode/
 .vs/
+
+*.DS_Store
