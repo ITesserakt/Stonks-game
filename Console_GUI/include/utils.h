@@ -91,6 +91,5 @@ using IRect = Rect<int>;
 using FRect = Rect<float>;
 using UIRect = Rect<unsigned int>;
 
-enum Align {
-    Left, Right, Centered
-};
+enum Align { Left, Right, Centered };
+enum Color { NoColor = -1, Black, Blue, Green, Cyan, Red, Magenta, Yellow, White};

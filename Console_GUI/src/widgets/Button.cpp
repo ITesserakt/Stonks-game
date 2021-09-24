@@ -10,8 +10,12 @@ Button::Button(std::string Name) : Widget(Name) {
 }
 
 void Button::show() {
-    if (height == 1)
+    if (isBlowing) { init_pair(1, COLOR_BLACK, col); }
+    if (height == 1) {
+        if (isBlowing) { attron(COLOR_PAIR(1)); }
         printw("[ %s ]", name.c_str());
+        if (isBlowing) { attroff(COLOR_PAIR(1)); }
+    }
     // else big button
 }
 
