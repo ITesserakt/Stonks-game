@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "utils.h"
+#include "Utils.h"
 
 int getHeight(std::string str) {
     return std::count(str.begin(), str.end(), '\n') + 1;
