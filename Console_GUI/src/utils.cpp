@@ -6,5 +6,5 @@ int getHeight(std::string str) {
 }
 
 int getWidth(std::string str) {
-
+    return 1;
 }

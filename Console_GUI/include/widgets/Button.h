@@ -1,7 +1,8 @@
 #pragma once
 
 #include "HoverableWidget.h"
-#include "Utils.h"
+#include "utils.h"
+#include <ncurses.h>
 #include <string>
 
 class Button : public HoverableWidget
@@ -16,9 +17,9 @@ public:
     void show();
     Rect<unsigned int> getSize();
     // light a button
-    void turnOn(int color = Green) { col = color; isBlowing = true; };
+    void turnOn(int color = COLOR_GREEN) { col = color; isBlowing = true; };
     // put out the light
-    void turnOff() { col = NoColor; isBlowing = false; };
+    void turnOff() { isBlowing = false; };
 
     // Unimplemented methods TODO
     EventSequence onHoverEnd();
