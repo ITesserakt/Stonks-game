@@ -23,7 +23,7 @@ private:
 
 public:
     GameObject generateNext();
-    GameObject::Cost getCostForKind(GameObject::Name kind);
+    GameObject::Cost getCostForKind(const GameObject::Name& kind) const;
 
     explicit ObjectFactory(const nlohmann::json &config, unsigned int randomSeed = engine());
 
@@ -32,4 +32,6 @@ public:
     }
 
     static ObjectFactory fromText(const std::string &text) { return ObjectFactory(nlohmann::json::parse(text.begin(),  text.end())); }
+
+    static ObjectFactory empty() { return ObjectFactory(R"({"Objects":[]})"); }
 };

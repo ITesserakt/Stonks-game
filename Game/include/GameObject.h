@@ -1,12 +1,16 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <ostream>
 #include <sstream>
 #include <limits>
 #include <algorithm>
 #include <numeric>
+#include <memory>
+
+class Gamer;
 
 struct GameObject {
 public:
@@ -19,7 +23,8 @@ public:
     const std::vector<Description> description;
     const Id id;
     Cost cost;
-    unsigned int timesSold;
+    unsigned int timesSold = 0;
+    std::shared_ptr<Gamer> lastSeller = {};
 
     [[nodiscard]] std::string fullName() const;
 
@@ -28,4 +33,7 @@ public:
     bool operator==(const GameObject &rhs) const;
 
     bool operator!=(const GameObject &rhs) const;
+
+    GameObject(Name name, std::vector<Description> descs, Id id, Cost cost) :
+            name(std::move(name)), description(std::move(descs)), id(id), cost(cost) {}
 };

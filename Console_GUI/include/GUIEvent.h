@@ -9,3 +9,18 @@ class GUIEvent {
 public:
     virtual void action() = 0;
 };
+
+//class ChangeColor : public GUIEvent {
+//    int color;
+//
+//public:
+//    void action() override {
+//        widget.powerOn(color);
+//    }
+//};
+
+// EventSequence onHoverStart() {
+//      return EventSequence.empty().andThen(ChangeColor(aboba));
+// }
+
+// GuiEvent => change color <== widget, color, action == widget.powerOn(Color)

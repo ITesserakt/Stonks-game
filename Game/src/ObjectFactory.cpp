@@ -21,7 +21,7 @@ GameObject ObjectFactory::generateNext() {
     auto cost = kind.basicCost * std::accumulate(descriptions.begin(), descriptions.end(), 1.0,
                                                  [&](auto &a, auto &b) { return a * kind.descriptions[b]; });
 
-    return {name, descriptions, lastId++, cost, 0};
+    return {name, descriptions, lastId++, cost};
 }
 
 ObjectFactory::ObjectFactory(const nlohmann::json &config, unsigned int randomSeed) : random(randomSeed) {
@@ -40,6 +40,6 @@ ObjectFactory::ObjectFactory(const nlohmann::json &config, unsigned int randomSe
     }
 }
 
-GameObject::Cost ObjectFactory::getCostForKind(GameObject::Name kind) {
-    return data[kind].basicCost;
+GameObject::Cost ObjectFactory::getCostForKind(const GameObject::Name& kind) const {
+    return data.at(kind).basicCost;
 }
