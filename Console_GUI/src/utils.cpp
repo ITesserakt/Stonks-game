@@ -7,5 +7,5 @@ int getHeight(std::string str) {
 
 int getWidth(std::string str) {
     // TODO make it more gibkiy
-    return str.length() + 4;
+    return str.length();
 }

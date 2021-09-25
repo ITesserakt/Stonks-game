@@ -6,11 +6,10 @@
 class PositionedWidget : public virtual Widget
 {
 public:
-    virtual Rect<unsigned> getSize() = 0;
+    virtual Size<unsigned> getSize() = 0;
 
 protected:
-    unsigned int height;
-    unsigned int width;
+    Size<unsigned> size;
     UIRect position;
     Align align;
 };

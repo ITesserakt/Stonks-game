@@ -12,5 +12,5 @@ public:
     Canvas(std::string name, Align al) : Widget(name), align(al) {}
     void show() override;
 
-    Rect<unsigned int> getSize() override;
+    Size<unsigned int> getSize() override;
 };

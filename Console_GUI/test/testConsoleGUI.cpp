@@ -1,7 +1,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include "Utils.h"
+#include "utils.h"
 #include <gtest/gtest.h>
 #include "widgets/Group.h"
 
@@ -22,10 +22,10 @@ TEST(api, widget_creation) {
 
 TEST(api, right_child_creation) {
     auto g1 = std::make_shared<Group>("Main");
-    auto g2 = Group("Test");
+    auto g2 = std::make_shared<Group>("Test");
 
     ASSERT_NO_THROW({
-                        g1->bind(std::move(g2));
+                        g1->bind(g2);
                     });
     ASSERT_EQ(g1->getName(), "Main");
 
@@ -36,12 +36,12 @@ TEST(api, right_child_creation) {
 }
 
 TEST(api, wrong_child_creation) {
-    auto g1 = Group("Main");
-    auto g2 = Group("Test");
+    auto g1 = std::make_shared<Group>("Main");
+    auto g2 = std::make_shared<Group>("Test");
 
-    g1.bind(std::move(g2));
+    g1->bind(g2);
     ASSERT_NO_THROW({
-                        ASSERT_EQ(g1.getChildren()[0]->getParent().lock(), nullptr);
+                        ASSERT_EQ(g1->getChildren()[0]->getParent().lock(), nullptr);
                     });
 }
 

@@ -27,6 +27,10 @@ std::string joinToString(InputIterator begin, InputIterator end, const std::stri
     });
 }
 
+template<typename T>
+struct Size {
+    T width, height;
+};
 
 template<typename T>
 struct Point {

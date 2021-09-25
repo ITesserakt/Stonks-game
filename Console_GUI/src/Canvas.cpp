@@ -17,13 +17,16 @@ void Canvas::show() {
     else if (align == Right) {
         x = getmaxx(initscr());
         for (const auto &child: children) {
-            move(y, x - child->getSize().b.x);
+            move(y, x - child->getSize().width);
             child->show();
             y++;
         }
     }
 }
 
-Rect<unsigned int> Canvas::getSize() {
-    return Rect<unsigned int>();
+Size<unsigned int> Canvas::getSize() {
+    Size<unsigned> sizeOfWindow;
+    sizeOfWindow.width  = getmaxx(initscr());
+    sizeOfWindow.height = getmaxy(initscr());
+    return sizeOfWindow;
 }

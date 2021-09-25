@@ -30,11 +30,12 @@ public:
 
     virtual void show() = 0;
     // TODO virtual void hide() = 0;
-    virtual Rect<unsigned> getSize() = 0;
+    virtual Size<unsigned> getSize() = 0;
 
     void bind(std::shared_ptr<Widget> widget) {
-        if (this == widget.get())
+        if (this == widget.get()) {
             throw std::runtime_error("Cannot add itself as a child");
+        }
 
         widget->parent = weak_from_this();
         widget->canvas = canvas;
