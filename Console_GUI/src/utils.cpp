@@ -22,3 +22,8 @@ int getWidth(std::string str) {
     }
     return maxWidth;
 }
+
+int generateId() {
+    static int id = 0;
+    return id++;
+}

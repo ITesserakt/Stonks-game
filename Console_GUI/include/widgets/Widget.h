@@ -10,8 +10,10 @@
 class Canvas;
 
 class Widget : public std::enable_shared_from_this<Widget> {
-    // TODO: Base class to represent widget, i.e. text label, button, etc
 protected:
+    int widgetId;
+    bool isHidden;
+
     std::string name;
     std::weak_ptr<Widget> parent;
     std::shared_ptr<Canvas> canvas;
@@ -19,18 +21,17 @@ protected:
 
 public:
     Widget(const Widget &) = delete;
-
     Widget &operator=(const Widget &) = delete;
-
     Widget(Widget &&) = default;
-
     Widget &operator=(Widget &&) = default;
 
-    explicit Widget(std::string name) : name(std::move(name)) {}
+    explicit Widget(std::string name)
+    : name(std::move(name)), widgetId(generateId()) {}
 
     virtual void show() = 0;
+    virtual void hide(bool isHidden) { this->isHidden = isHidden; }
+
     virtual void changePos(int x, int y) = 0;
-    // TODO virtual void hide() = 0;
     virtual Size<unsigned> getSize() = 0;
 
     void bind(std::shared_ptr<Widget> widget) {

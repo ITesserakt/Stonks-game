@@ -13,6 +13,8 @@
 int getHeight(std::string str);
 int getWidth(std::string str);
 
+int generateId();
+
 template<typename InputIterator>
 std::string joinToString(InputIterator begin, InputIterator end, const std::string& separator) {
     auto size = std::distance(begin, end);

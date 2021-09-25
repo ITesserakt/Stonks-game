@@ -23,8 +23,16 @@ public:
     }
 
     void show() override {
+        if (isHidden) return;
+
         for (const auto& child: children) {
             child->show();
+        }
+    }
+
+    void hide(bool isHidden) override {
+        for (const auto& child: children) {
+            child->hide(isHidden);
         }
     }
 

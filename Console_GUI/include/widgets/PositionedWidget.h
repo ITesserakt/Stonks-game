@@ -14,7 +14,15 @@ public:
         position.y = y;
     }
 
+    // light a button
+    virtual void turnOn(int color) { col = color; isBlowing = true; };
+    // put out the light
+    virtual void turnOff() { isBlowing = false; };
+
 protected:
+    bool isBlowing;
+    int col;        // COLor of Button
+
     Size<unsigned> size;
     UIPoint position;
     Align align;

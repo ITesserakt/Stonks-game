@@ -3,13 +3,16 @@
 #include <ncurses.h>
 
 void Canvas::show() {
-    int y = 0, x = 0;
+    int y = 0;
+    int x = 0;
+
+    if (isHidden) { return; }
 
     if (align == Left) {
         for (const auto &child: children) {
             child->changePos(x, y);             // DON'T USE move() from ncurses
             child->show();
-            y++;
+            y += child->getSize().height;
         }
     }
     else if (align == Centered) {
@@ -27,7 +30,7 @@ void Canvas::show() {
         for (const auto& child: children) {
             child->changePos(xInd, yInd);
             child->show();
-            yInd++;
+            yInd += child->getSize().height;
         }
     }
     else if (align == Right) {
@@ -35,7 +38,7 @@ void Canvas::show() {
         for (const auto &child: children) {
             child->changePos(x - child->getSize().width, y);
             child->show();
-            y++;
+            y += child->getSize().height;
         }
     }
 }
