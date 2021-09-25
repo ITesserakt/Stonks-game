@@ -29,15 +29,16 @@ public:
     explicit Widget(std::string name) : name(std::move(name)) {}
 
     virtual void show() = 0;
+    // TODO virtual void hide() = 0;
+    virtual Rect<unsigned> getSize() = 0;
 
-    template<typename T>
-    void bind(T &&widget) {
-        if (this == &widget)
+    void bind(std::shared_ptr<Widget> widget) {
+        if (this == widget.get())
             throw std::runtime_error("Cannot add itself as a child");
 
-        widget.parent = weak_from_this();
-        widget.canvas = canvas;
-        children.push_back(std::make_shared<T>(std::forward<T>(widget)));
+        widget->parent = weak_from_this();
+        widget->canvas = canvas;
+        children.push_back(widget);
     }
 
     const std::string &getName() const { return name; }

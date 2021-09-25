@@ -4,12 +4,13 @@
 
 class Canvas : public virtual Widget {
     // TODO: main widget that takes all console window (Menu)
-    // It places all widgets on right places
+    // It places all widgets on right place
+private:
+    Align align;
 
 public:
-    void show() override {
-        for (const auto& child: children) {
-            child->show();
-        }
-    }
+    Canvas(std::string name, Align al) : Widget(name), align(al) {}
+    void show() override;
+
+    Rect<unsigned int> getSize() override;
 };
