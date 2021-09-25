@@ -29,6 +29,7 @@ public:
     explicit Widget(std::string name) : name(std::move(name)) {}
 
     virtual void show() = 0;
+    virtual void changePos(int x, int y) = 0;
     // TODO virtual void hide() = 0;
     virtual Size<unsigned> getSize() = 0;
 

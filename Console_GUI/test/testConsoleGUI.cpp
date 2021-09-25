@@ -11,6 +11,16 @@ TEST(logic, get_height_of_text) {
     ASSERT_EQ(getHeight("\nHel\nlo\n"), 4);
 }
 
+TEST(logic, get_max_width_of_text) {
+    ASSERT_EQ(getWidth("4let"), 4);
+    ASSERT_EQ(getWidth("4let\n"
+                            "8letters"), 8);
+    ASSERT_EQ(getWidth("4let\n"
+                            "8letters\n"
+                            "10letters "), 10);
+    ASSERT_EQ(getWidth(""), 0);
+}
+
 TEST(api, widget_creation) {
     auto g = Group("Test");
 

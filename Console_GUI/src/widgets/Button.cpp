@@ -9,6 +9,7 @@ Button::Button(std::string Name) : Widget(Name) {
 }
 
 void Button::show() {
+    move(position.y, position.x);
     if (isBlowing) { init_pair(1, COLOR_BLACK, col); }
     if (size.height == 1) {
         if (isBlowing) { attron(COLOR_PAIR(1)); }

@@ -6,7 +6,7 @@ void Canvas::show() {
 
     if (align == Left) {
         for (const auto &child: children) {
-            move(y, x);
+            child->changePos(x, y);             // DON'T USE move() from ncurses
             child->show();
             y++;
         }
@@ -17,7 +17,7 @@ void Canvas::show() {
     else if (align == Right) {
         x = getmaxx(initscr());
         for (const auto &child: children) {
-            move(y, x - child->getSize().width);
+            child->changePos(x - child->getSize().width, y);
             child->show();
             y++;
         }

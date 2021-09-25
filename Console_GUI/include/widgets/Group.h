@@ -9,30 +9,25 @@ protected:
     std::vector<std::shared_ptr<PositionedWidget>> children;
 
 public:
-    UIRect getSize() override {
+    Size<unsigned> getSize() override {
         unsigned int minx = -1, miny = -1, maxx = 0, maxy = 0;
 
         for (const auto &child: children) {
-            if (child->getSize().a.x < minx) {
-                minx = child->getSize().a.x;
+            if (child->getSize().width < minx) {
+                minx = child->getSize().width;
             }
-            if (child->getSize().b.x > maxx) {
-                maxx = child->getSize().a.x;
+            if (child->getSize().width > maxx) {
+                maxx = child->getSize().width;
             }
-            if (child->getSize().a.y < miny) {
-                miny = child->getSize().a.y;
+            if (child->getSize().height < miny) {
+                miny = child->getSize().height;
             }
-            if (child->getSize().b.x > maxy) {
-                maxy = child->getSize().a.y;
+            if (child->getSize().height > maxy) {
+                maxy = child->getSize().height;
             }
         }
 
-        if (minx == -1 || miny == -1) {
-            minx = 0;
-            miny = 0;
-        }
-
-        return {minx, miny, maxx, maxy};
+        return {maxx, maxy};
     }
 
     void show() override {

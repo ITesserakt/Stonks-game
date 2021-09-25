@@ -27,14 +27,17 @@ std::string joinToString(InputIterator begin, InputIterator end, const std::stri
     });
 }
 
+// Size of widget
+// width == x; height == y
 template<typename T>
 struct Size {
     T width, height;
 };
 
+// Simple point that has x and y
 template<typename T>
 struct Point {
-    const T x, y;
+    T x, y;
 
     Point() : x(), y() {}
 
