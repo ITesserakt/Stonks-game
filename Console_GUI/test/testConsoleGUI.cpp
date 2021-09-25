@@ -51,7 +51,7 @@ TEST(api, wrong_child_creation) {
 
     g1->bind(g2);
     ASSERT_NO_THROW({
-                        ASSERT_EQ(g1->getChildren()[0]->getParent().lock(), nullptr);
+                        ASSERT_EQ(g1->getChildren()[0]->getParent().lock(), g1);
                     });
 }
 

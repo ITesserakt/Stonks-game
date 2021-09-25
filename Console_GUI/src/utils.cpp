@@ -14,7 +14,7 @@ int getWidth(std::string str) {
     int maxWidth = 0;
     while ((width = str.find('\n')) != std::string::npos) {
         maxWidth = fmax(width, maxWidth);
-        str.erase(0, width);
+        str.erase(0, width + 1);
     }
     if (width == std::string::npos) {
         width = str.length();
