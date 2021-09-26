@@ -37,6 +37,10 @@ public:
 
     virtual void changePos(int x, int y) = 0;
 
+    virtual void changeName(const std::string& str) {
+        name = str;
+    }
+
     virtual UISize getSize() = 0;
 
     virtual bool isClickable() { return false; }

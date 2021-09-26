@@ -25,7 +25,5 @@ public:
     virtual void turnOff() override { isBlowing = false; };
 
     // TODO Unimplemented methods
-    std::unique_ptr<GUIEvent> onHoverEnd() override;
-    std::unique_ptr<GUIEvent> onHoverStart() override;
-    std::unique_ptr<GUIEvent> click() override;
+    void click() override;
 };

@@ -1,4 +1,5 @@
 #include "EventConductor.h"
+#include "CreatingGui.h"
 
 bool EventConductor::waitEvent(Event &event) {
     int key = getch();
@@ -8,11 +9,9 @@ bool EventConductor::waitEvent(Event &event) {
         event.type = Event::key_up;
     else if (key == KEY_DOWN)
         event.type = Event::key_down;
-    else if (key >= '1' && key <= '9') {
-        if (lastScene != key - '0') {
-            event.type = Event::changeScene;
-            event.changingScene.nextScene = key - '0';
-        }
+    else if (key >= '1' && key <= AMOUNT_OF_MENUS + '0') {
+        event.type = Event::changeScene;
+        event.changingScene.nextScene = key - '0';
     }
     else
         event.type = Event::noEvent;

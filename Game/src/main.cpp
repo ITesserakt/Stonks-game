@@ -1,60 +1,10 @@
 #include "thread"
 #include "Frontend.h"
 #include "EventConductor.h"
+#include "CreatingGui.h"
+#include "Canvas.h"
 #include <ncurses.h>
 #include <unistd.h>
-
-// Libraries for presentation
-#include "widgets/Button.h"
-#include "widgets/PlainText.h"
-#include "Canvas.h"
-
-void presentationOfGui() {
-    auto canvas = std::make_shared<Canvas>("Main Menu", Centered);
-    auto label = std::make_shared<PlainText>("STONKS GAME\n");
-    label->turnOn(COLOR_YELLOW);
-    auto butPl = std::make_shared<Button>("play", CanvasChanger);
-    auto butSt = std::make_shared<Button>("settings", CanvasChanger);
-    auto butQ = std::make_shared<Button>("quit", Quiter);
-    canvas->bind(label);
-    canvas->bind(butPl);
-    canvas->bind(butSt);
-    canvas->bind(butQ);
-    butQ->onHoverStart();
-
-    canvas->show();
-    refresh();
-    int key;
-    while ((key = getch()) != 'q') {
-        if (key == KEY_UP) {
-            auto list = canvas->getChildren();
-            int index = std::distance(list.begin(),
-                                      find(list.begin(), list.end(),
-                                           canvas->whoOnHover()));
-            if (index - 1 >= 1) {
-                std::dynamic_pointer_cast<Button>(list[index])->onHoverEnd();
-                std::dynamic_pointer_cast<Button>(
-                        list[index - 1])->onHoverStart();
-            }
-        } else if (key == KEY_DOWN) {
-            auto list = canvas->getChildren();
-            int index = std::distance(list.begin(),
-                                      find(list.begin(), list.end(),
-                                           canvas->whoOnHover()));
-            if (index + 1 < list.size()) {
-                std::dynamic_pointer_cast<Button>(list[index])->onHoverEnd();
-                std::dynamic_pointer_cast<Button>(
-                        list[index + 1])->onHoverStart();
-            }
-        } else if (key == '\n') {
-            auto item = std::dynamic_pointer_cast<Button>(canvas->whoOnHover());
-            if (item->isClickable()) { item->click(); }
-        }
-        canvas->show();
-        refresh();
-    }
-
-}
 
 int main() {
     initscr();
@@ -69,35 +19,9 @@ int main() {
         return -1;
     }
 
-    // Section of Gui init
-    auto MainMenu = std::make_shared<Canvas>("MainMenu", Centered);
-    auto label1 = std::make_shared<PlainText>("STONKS GAME\n");
-    auto butQ = std::make_shared<Button>("quit", Quiter);
-    MainMenu->bind(label1);
-    label1->turnOn(COLOR_YELLOW);
+    std::vector<std::shared_ptr<Canvas>> scenes = createCanvases();
 
-    // Test buttons
-    auto butPl = std::make_shared<Button>("play", CanvasChanger);
-    auto butSt = std::make_shared<Button>("settings", CanvasChanger);
-    auto space = std::make_shared<PlainText>("");
-    MainMenu->bind(butPl);
-    MainMenu->bind(butSt);
-    MainMenu->bind(butQ);
-    MainMenu->bind(space);
-
-    auto GameField = std::make_shared<Canvas>("GameField", Left);
-    auto label2 = std::make_shared<PlainText>("Game Field\n");
-    GameField->bind(label2);
-    label2->turnOn(COLOR_YELLOW);
-
-    auto Inventory = std::make_shared<Canvas>("Inventory", Left);
-    auto label3 = std::make_shared<PlainText>("Inventory\n");
-    Inventory->bind(label3);
-    label3->turnOn(COLOR_YELLOW);
-
-    std::vector<std::shared_ptr<Canvas>> scenes = {nullptr, MainMenu, GameField,
-                                                   Inventory};
-    auto &current = MainMenu;
+    auto current = scenes[0];
     current->firstOnHover();
 
     bool gameRunning = true;
@@ -125,7 +49,7 @@ int main() {
                 current->whoOnHover()->click();
                 break;
             case Event::changeScene:
-                current = scenes[game.changingScene.nextScene];
+                current = scenes[game.changingScene.nextScene - 1];
                 current->firstOnHover();
                 break;
             case Event::noEvent:

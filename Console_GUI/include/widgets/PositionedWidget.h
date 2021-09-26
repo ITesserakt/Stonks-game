@@ -7,12 +7,17 @@
 class PositionedWidget : public virtual Widget
 {
 public:
-    virtual UISize getSize() = 0;
     bool getBlowing() { return isBlowing; }
     virtual UIPoint getPosition() { return position; }
-    virtual void changePos(int x, int y) {
+    void changePos(int x, int y) override {
         position.x = x;
         position.y = y;
+    }
+
+    void changeName(const std::string &str) override {
+        Widget::changeName(str);
+        size.width  = getWidth(name);
+        size.height = getHeight(name);
     }
 
     // light a button

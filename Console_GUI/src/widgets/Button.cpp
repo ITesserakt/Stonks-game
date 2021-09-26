@@ -24,25 +24,14 @@ void Button::show() {
     // else big button
 }
 
-std::unique_ptr<GUIEvent> Button::click() {
+void Button::click() {
     if (destiny == CanvasChanger)
-        return std::unique_ptr<GUIEvent>();
+        return;
     else if (destiny == Quiter) {
         endwin();
+        printf("See you later\n");
         exit(0);
     }
     else
-        return nullptr;
-}
-
-std::unique_ptr<GUIEvent> Button::onHoverEnd() {
-    turnOff();
-    isClicable = false;
-    return std::unique_ptr<GUIEvent>();
-}
-
-std::unique_ptr<GUIEvent> Button::onHoverStart() {
-    turnOn();
-    isClicable = true;
-    return std::unique_ptr<GUIEvent>();
+        return;
 }
