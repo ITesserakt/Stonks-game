@@ -5,6 +5,8 @@
 #include "widgets/Widget.h"
 #include "widgets/HoverableWidget.h"
 
+enum Direction{ toTheTop, toTheBot};
+
 class Canvas : public virtual Widget {
     // TODO: main widget that takes all console window (Menu)
     // It places all widgets on right place
@@ -18,6 +20,7 @@ public:
     void show() override;
 
     std::shared_ptr<HoverableWidget> whoOnHover();
+    void changeActiveWidget(Direction direct);
 
     UISize getSize() override;
 };

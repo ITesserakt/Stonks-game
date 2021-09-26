@@ -56,3 +56,7 @@ std::shared_ptr<HoverableWidget> Canvas::whoOnHover() {
     }
     return nullptr;
 }
+
+void Canvas::changeActiveWidget(Direction direct) {
+
+}
