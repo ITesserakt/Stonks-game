@@ -29,18 +29,22 @@ void presentationOfGui() {
         if (key == KEY_UP) {
             auto list = canvas->getChildren();
             int index = std::distance(list.begin(),
-                                      find(list.begin(), list.end(), canvas->whoOnHover()));
+                                      find(list.begin(), list.end(),
+                                           canvas->whoOnHover()));
             if (index - 1 >= 1) {
                 std::dynamic_pointer_cast<Button>(list[index])->onHoverEnd();
-                std::dynamic_pointer_cast<Button>(list[index - 1])->onHoverStart();
+                std::dynamic_pointer_cast<Button>(
+                        list[index - 1])->onHoverStart();
             }
         } else if (key == KEY_DOWN) {
             auto list = canvas->getChildren();
             int index = std::distance(list.begin(),
-                                      find(list.begin(), list.end(), canvas->whoOnHover()));
+                                      find(list.begin(), list.end(),
+                                           canvas->whoOnHover()));
             if (index + 1 < list.size()) {
                 std::dynamic_pointer_cast<Button>(list[index])->onHoverEnd();
-                std::dynamic_pointer_cast<Button>(list[index + 1])->onHoverStart();
+                std::dynamic_pointer_cast<Button>(
+                        list[index + 1])->onHoverStart();
             }
         } else if (key == '\n') {
             auto item = std::dynamic_pointer_cast<Button>(canvas->whoOnHover());
@@ -59,24 +63,42 @@ int main() {
     curs_set(0);                    // Removes cursor
     keypad(stdscr, true);
 
-    // Section of Govnocode
-    auto MainMenu  = std::make_shared<Canvas>("MainMenu", Centered);
-    auto label1    = std::make_shared<PlainText>("MainMenu");
+    // Section of Gui init
+    auto MainMenu = std::make_shared<Canvas>("MainMenu", Centered);
+    auto label1 = std::make_shared<PlainText>("STONKS GAME\n");
+    auto butQ = std::make_shared<Button>("quit", Quiter);
     MainMenu->bind(label1);
+    label1->turnOn(COLOR_YELLOW);
+
+    // Test buttons
+    auto butPl = std::make_shared<Button>("play", CanvasChanger);
+    auto butSt = std::make_shared<Button>("settings", CanvasChanger);
+    auto space = std::make_shared<PlainText>("");
+    MainMenu->bind(butPl);
+    MainMenu->bind(butSt);
+    MainMenu->bind(butQ);
+    MainMenu->bind(space);
+
     auto GameField = std::make_shared<Canvas>("GameField", Left);
-    auto label2    = std::make_shared<PlainText>("GameField");
+    auto label2 = std::make_shared<PlainText>("Game Field\n");
     GameField->bind(label2);
+    label2->turnOn(COLOR_YELLOW);
+
     auto Inventory = std::make_shared<Canvas>("Inventory", Left);
-    auto label3    = std::make_shared<PlainText>("inventory");
+    auto label3 = std::make_shared<PlainText>("Inventory\n");
     Inventory->bind(label3);
-    std::vector<std::shared_ptr<Canvas>> scenes = {nullptr ,MainMenu, GameField, Inventory};
-    auto& current = MainMenu;
+    label3->turnOn(COLOR_YELLOW);
+
+    std::vector<std::shared_ptr<Canvas>> scenes = {nullptr, MainMenu, GameField,
+                                                   Inventory};
+    auto &current = MainMenu;
+    current->firstOnHover();
 
     bool gameRunning = true;
     EventConductor director;
     Event game;
 
-    std::thread guiThread ([&](){
+    std::thread guiThread([&]() {
         while (gameRunning) {
             usleep(16666);
             erase();
@@ -98,15 +120,13 @@ int main() {
                 break;
             case Event::changeScene:
                 current = scenes[game.changingScene.nextScene];
+                current->firstOnHover();
                 break;
             case Event::noEvent:
                 break;
         }
         game = Event();
     }
-
-    //auto f = Frontend();
-    // presentationOfGui();
 
     endwin();
     guiThread.join();

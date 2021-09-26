@@ -21,21 +21,29 @@ protected:
 
 public:
     Widget(const Widget &) = delete;
+
     Widget &operator=(const Widget &) = delete;
+
     Widget(Widget &&) = default;
+
     Widget &operator=(Widget &&) = default;
 
     explicit Widget(std::string name)
-    : name(std::move(name)), widgetId(generateId()) {}
+            : name(std::move(name)), widgetId(generateId()) {}
 
     virtual void show() = 0;
+
     virtual void hide(bool hide) { this->isHidden = hide; }
 
     virtual void changePos(int x, int y) = 0;
+
     virtual UISize getSize() = 0;
+
     virtual bool isClickable() { return false; }
 
-    void bind(const std::shared_ptr<Widget>& widget) {
+    virtual bool isHoverable() { return false; }
+
+    void bind(const std::shared_ptr<Widget> &widget) {
         if (this == widget.get()) {
             throw std::runtime_error("Cannot add itself as a child");
         }
@@ -49,7 +57,8 @@ public:
 
     std::weak_ptr<Widget> getParent() const { return parent; }
 
-    std::vector<std::shared_ptr<Widget>> getChildren() const { return children; }
+    std::vector<std::shared_ptr<Widget>>
+    getChildren() const { return children; }
 
     std::shared_ptr<Canvas> getCanvas() const { return canvas; }
 };

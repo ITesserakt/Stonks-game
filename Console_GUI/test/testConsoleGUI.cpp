@@ -52,8 +52,8 @@ TEST(api, wrong_child_creation) {
 
     g1->bind(g2);
     ASSERT_NO_THROW({
-                        ASSERT_EQ(g1->getChildren()[0]->getParent().lock(), g1);
-                    });
+        ASSERT_EQ(g1->getChildren()[0]->getParent().lock(),g1);
+    });
 }
 
 TEST(api, wrong_canvas_creation) {

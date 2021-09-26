@@ -10,6 +10,6 @@ target_include_directories(Console_GUI
 target_link_libraries(Console_GUI ncurses)
 
 enable_testing()
-add_executable(tests ${TEST_FILES} ${SOURCE_FILES} ${HEADER_FILES})
-target_include_directories(tests PRIVATE include)
-target_link_libraries(tests gtest_main ncurses)
+add_executable(GUI_test ${TEST_FILES} ${SOURCE_FILES} ${HEADER_FILES})
+target_include_directories(GUI_test  PRIVATE include)
+target_link_libraries(GUI_test gtest_main ncurses)
