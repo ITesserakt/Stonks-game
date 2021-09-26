@@ -1,9 +1,12 @@
 #include "widgets/Button.h"
 #include "utils.h"
+#include "events/ChangeCanvas.h"
+#include <stdlib.h>
 #include <ncurses.h>
 
 Button::Button(std::string Name) : Widget(Name) {
     isBlowing = false;
+    isClicable = false;
     size.height = getHeight(Name);
     size.width = getWidth(Name) + 4;
 }
@@ -21,6 +24,25 @@ void Button::show() {
     // else big button
 }
 
-EventSequence Button::onHoverEnd() {}
-EventSequence Button::onHoverStart() {}
-EventSequence Button::click() {}
+std::unique_ptr<GUIEvent> Button::click() {
+    if (destiny == CanvasChanger)
+        return std::unique_ptr<GUIEvent>();
+    else if (destiny == Quiter) {
+        endwin();
+        exit(0);
+    }
+    else
+        return nullptr;
+}
+
+std::unique_ptr<GUIEvent> Button::onHoverEnd() {
+    turnOff();
+    isClicable = false;
+    return std::unique_ptr<GUIEvent>();
+}
+
+std::unique_ptr<GUIEvent> Button::onHoverStart() {
+    turnOn();
+    isClicable = true;
+    return std::unique_ptr<GUIEvent>();
+}

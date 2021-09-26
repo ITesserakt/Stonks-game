@@ -29,12 +29,13 @@ public:
     : name(std::move(name)), widgetId(generateId()) {}
 
     virtual void show() = 0;
-    virtual void hide(bool isHidden) { this->isHidden = isHidden; }
+    virtual void hide(bool hide) { this->isHidden = hide; }
 
     virtual void changePos(int x, int y) = 0;
     virtual Size<unsigned> getSize() = 0;
+    virtual bool isClickable() { return false; }
 
-    void bind(std::shared_ptr<Widget> widget) {
+    void bind(const std::shared_ptr<Widget>& widget) {
         if (this == widget.get()) {
             throw std::runtime_error("Cannot add itself as a child");
         }

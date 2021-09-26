@@ -1,13 +1,18 @@
 #pragma once
 
+#include <utility>
+
 #include "widgets/Widget.h"
 
 class GUIEvent {
+protected:
     // TODO: this abstract class contains all data to process event
-     Widget &sender; // TODO: this string is not working
+     std::shared_ptr<Widget> sender;
+     GUIEvent(std::shared_ptr<Widget> father): sender(std::move(father)) {}
 
 public:
-    virtual void action() = 0;
+     virtual void action() = 0;
+     virtual ~GUIEvent() = default;
 };
 
 //class ChangeColor : public GUIEvent {

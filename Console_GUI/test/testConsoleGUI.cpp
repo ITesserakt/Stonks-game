@@ -4,6 +4,7 @@
 #include "utils.h"
 #include <gtest/gtest.h>
 #include "widgets/Group.h"
+#include "Canvas.h"
 
 TEST(logic, get_height_of_text) {
     ASSERT_EQ(getHeight("Hello"), 1);
@@ -53,6 +54,14 @@ TEST(api, wrong_child_creation) {
     ASSERT_NO_THROW({
                         ASSERT_EQ(g1->getChildren()[0]->getParent().lock(), g1);
                     });
+}
+
+TEST(api, wrong_canvas_creation) {
+    auto can = std::make_shared<Canvas>("Main menu", Centered);
+    auto but = std::make_shared<Group>("Group");
+    can->bind(but);
+
+    ASSERT_EQ(but->getCanvas(), can);
 }
 
 /*This main is for testing GUI module*/

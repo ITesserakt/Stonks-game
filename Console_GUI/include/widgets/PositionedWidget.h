@@ -8,6 +8,7 @@ class PositionedWidget : public virtual Widget
 {
 public:
     virtual Size<unsigned> getSize() = 0;
+    bool getBlowing() { return isBlowing; }
     virtual UIPoint getPosition() { return position; }
     virtual void changePos(int x, int y) {
         position.x = x;

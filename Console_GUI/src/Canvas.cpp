@@ -49,3 +49,10 @@ Size<unsigned int> Canvas::getSize() {
     sizeOfWindow.height = getmaxy(initscr());
     return sizeOfWindow;
 }
+
+std::shared_ptr<HoverableWidget> Canvas::whoOnHover() {
+    for (const auto& child: children) {
+        if (child->isClickable()) { return std::dynamic_pointer_cast<HoverableWidget>(child); }
+    }
+    return nullptr;
+}
