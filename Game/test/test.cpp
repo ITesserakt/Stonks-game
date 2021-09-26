@@ -7,6 +7,7 @@
 #include <exception>
 #include <ObjectFactory.h>
 #include <World.h>
+#include <Player.h>
 
 TEST(game_logic, config_parsing) {
     auto json = R"({
@@ -19,8 +20,15 @@ TEST(game_logic, config_parsing) {
         "cost": 10000.0
     }]
 })";
-    auto f = ObjectFactory::fromText(json);
+    auto f = ObjectFactory(nlohmann::json::parse(json), 3);
     ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000}));
+}
+
+TEST(game_logic, empty_factory) {
+    ASSERT_NO_FATAL_FAILURE({
+                                auto f = ObjectFactory::empty();
+                                ASSERT_THROW({f.generateNext();}, std::runtime_error);
+                            });
 }
 
 TEST(game_logic, objects_generating) {
@@ -45,8 +53,8 @@ TEST(game_logic, objects_generating) {
     }]
 })"_json;
     auto f = ObjectFactory(json, 0);
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000}));
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty"}, 1, 7500}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty", "shiny", "red"}, 0, 15750}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty", "red", "shiny"}, 1, 15750}));
     ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 2, 1000000}));
 }
 
@@ -96,25 +104,66 @@ TEST(game_logic, profitness) {
             "cost": 10
         }]
 })"_json;
-    auto f = ObjectFactory(json, 6);
+    auto f = ObjectFactory(json, 9);
     auto w = World(std::move(f));
-    std::vector<double> expected = {0.455, 2.2275, 0.355, 0.101667, 0.1275};
+    std::vector<double> expected = {0, 0, 1.29603174, 2.8466666, 0};
 
     for (int x: {0, 1, 2, 3, 4}) {
-        w.slots.push_back(std::make_unique<GameObject>(w.factory.generateNext()));
+        auto next = w.factory.generateNext();
+        w.container[next.id] = std::make_unique<GameObject>(next);
         w.availableSlots--;
-        ASSERT_NEAR(w.getProfitness(x), expected[x], 1e-5);
+        auto p = w.getProfitness(x);
+        ASSERT_NEAR(p, expected[x], 1e-5) << next << ", profitness: " << p << std::endl;
     }
     EXPECT_THAT(w.getSlots(), (testing::ElementsAreArray({0, 1, 2, 3, 4})));
 }
 
 TEST(game_logic, non_existing_gameobject) {
-    auto json = R"({"Objects":[]})"_json;
-    auto f = ObjectFactory(json);
-    auto w = World(std::move(f));
+    auto w = World();
     ASSERT_THROW({
-        w.getProfitness(1);
-    }, std::runtime_error);
+                     w.getProfitness(1);
+                 }, std::runtime_error);
+    ASSERT_THROW({
+                     w.viewItem(1);
+                 }, std::runtime_error);
+    ASSERT_THROW({
+                     w.takeItem(1);
+                 }, std::runtime_error);
+}
+
+TEST(game_logic, trade_properties) {
+    auto w = World(ObjectFactory(R"({
+        "Objects" : [{
+            "name" : "car",
+            "descriptions": [{
+                "value" : "red",
+                "multiplier" : 1.05
+            }, {
+                "value": "shiny",
+                        "multiplier": 2
+            }, {
+                "value" : "dirty",
+                        "multiplier": 0.75
+            }],
+            "cost": 10000
+        }, {
+            "name": "dress",
+            "descriptions": [{
+                "value": "gucci",
+                "multiplier": 15
+            }],
+            "cost": 10
+        }]
+})"_json));
+    w.fillUp();
+    auto p = std::make_shared<Player>();
+    w.addPlayer(p);
+    p->buyItem(w.takeItem(0));
+    ASSERT_THROW({ w.takeItem(0); }, std::runtime_error);
+    ASSERT_THROW({ w.viewItem(0); }, std::runtime_error);
+    auto item = p->Gamer::sellItem(0);
+    ASSERT_EQ(item->timesSold, 1);
+    ASSERT_EQ(item->lastSeller, p);
 }
 
 int main(int argc, char **argv) {

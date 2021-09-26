@@ -4,13 +4,13 @@
 #include <list>
 #include "Gamer.h"
 #include "ObjectFactory.h"
+#include "ViewableContainer.h"
 
-class World {
+class World: public ViewableContainer<GameObject, GameObject::Id> {
     friend class game_logic_profitness_Test;
 
 private:
     std::vector<std::shared_ptr<Gamer>> players;
-    std::list<std::unique_ptr<GameObject>> slots;
     unsigned int availableSlots;
     ObjectFactory factory;
 
@@ -25,6 +25,5 @@ public:
 
     void fillUp();
 
-    std::unique_ptr<GameObject> takeItem(GameObject::Id itemId);
-    const GameObject& viewItem(GameObject::Id itemId) const;
+    std::unique_ptr<GameObject> takeItem(GameObject::Id itemId) override;
 };

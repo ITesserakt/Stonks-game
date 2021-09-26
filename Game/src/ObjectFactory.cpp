@@ -7,6 +7,9 @@ std::random_device ObjectFactory::engine = std::random_device();
  * Holy, that's so unoptimized!
  */
 GameObject ObjectFactory::generateNext() {
+    if (data.empty())
+        throw std::runtime_error("Could not generate item from nothing");
+
     auto object = data.begin();
     std::advance(object, random() % data.size());
     auto name = object->first;
@@ -14,7 +17,7 @@ GameObject ObjectFactory::generateNext() {
 
     auto descriptions = std::vector<GameObject::Description>();
     for (const auto&[k, _]: kind.descriptions) descriptions.emplace_back(k);
-    auto descCount = random() % (kind.descriptions.empty() ? 1 : kind.descriptions.size());
+    auto descCount = random() % (kind.descriptions.empty() ? 1 : kind.descriptions.size() + 1);
     std::shuffle(descriptions.begin(), descriptions.end(), random);
     descriptions = std::vector(descriptions.begin(), descriptions.begin() + descCount);
 

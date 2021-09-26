@@ -3,17 +3,15 @@
 #include <vector>
 #include <memory>
 #include "GameObject.h"
+#include "ViewableContainer.h"
 
-class Gamer: public std::enable_shared_from_this<Gamer> {
+class Gamer: public std::enable_shared_from_this<Gamer>, public ViewableContainer<GameObject, GameObject::Id> {
 protected:
-    std::vector<std::unique_ptr<GameObject>> inventory;
     double money;
 
 public:
     // TODO: should only affect gamer's inventories and cash, not world, world will do this itself
     virtual void buyItem(std::unique_ptr<GameObject> item);
     virtual std::unique_ptr<GameObject> sellItem(GameObject::Id itemId, GameObject::Cost newCost);
-
-    std::unique_ptr<GameObject> takeItem(GameObject::Id itemId);
-    const GameObject& viewItem(GameObject::Id itemId) const;
+    std::unique_ptr<GameObject> sellItem(GameObject::Id itemId);
 };

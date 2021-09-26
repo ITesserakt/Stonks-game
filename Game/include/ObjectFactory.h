@@ -33,5 +33,5 @@ public:
 
     static ObjectFactory fromText(const std::string &text) { return ObjectFactory(nlohmann::json::parse(text.begin(),  text.end())); }
 
-    static ObjectFactory empty() { return ObjectFactory(R"({"Objects":[]})"); }
+    static ObjectFactory empty() { return ObjectFactory(R"({"Objects":[]})"_json); }
 };
