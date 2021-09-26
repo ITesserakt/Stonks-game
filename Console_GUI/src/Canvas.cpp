@@ -1,6 +1,5 @@
 #include "Canvas.h"
 #include "widgets/Group.h"
-#include "widgets/Button.h"
 #include <ncurses.h>
 
 void Canvas::show() {

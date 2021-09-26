@@ -63,6 +63,12 @@ int main() {
     curs_set(0);                    // Removes cursor
     keypad(stdscr, true);
 
+    if (getmaxx(stdscr) < 80 || getmaxy(stdscr) < 24) {
+        endwin();
+        printf("Your terminal should be bigger or equal to 80x24 size\n");
+        return -1;
+    }
+
     // Section of Gui init
     auto MainMenu = std::make_shared<Canvas>("MainMenu", Centered);
     auto label1 = std::make_shared<PlainText>("STONKS GAME\n");
