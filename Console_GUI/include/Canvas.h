@@ -19,5 +19,5 @@ public:
 
     std::shared_ptr<HoverableWidget> whoOnHover();
 
-    Size<unsigned int> getSize() override;
+    UISize getSize() override;
 };

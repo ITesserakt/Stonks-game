@@ -6,7 +6,7 @@
 
 class Group : public virtual PositionedWidget {
 public:
-    Size<unsigned> getSize() override {
+    UISize getSize() override {
         unsigned int maxx = 0;
         unsigned int maxy = 0;
 

@@ -7,7 +7,7 @@
 class PositionedWidget : public virtual Widget
 {
 public:
-    virtual Size<unsigned> getSize() = 0;
+    virtual UISize getSize() = 0;
     bool getBlowing() { return isBlowing; }
     virtual UIPoint getPosition() { return position; }
     virtual void changePos(int x, int y) {
@@ -24,7 +24,7 @@ protected:
     bool isBlowing;
     int col;        // COLor of Button
 
-    Size<unsigned> size;
+    UISize size;
     UIPoint position;
     Align align;
 };

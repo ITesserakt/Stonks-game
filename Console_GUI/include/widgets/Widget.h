@@ -32,7 +32,7 @@ public:
     virtual void hide(bool hide) { this->isHidden = hide; }
 
     virtual void changePos(int x, int y) = 0;
-    virtual Size<unsigned> getSize() = 0;
+    virtual UISize getSize() = 0;
     virtual bool isClickable() { return false; }
 
     void bind(const std::shared_ptr<Widget>& widget) {

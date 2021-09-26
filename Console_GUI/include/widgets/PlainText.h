@@ -8,7 +8,7 @@ public:
     PlainText(std::string name);
     void show() override;
 
-    Size<unsigned int> getSize() override { return size; }
+    UISize getSize() override { return size; }
 };
 
 #endif //STONKS_GAME_PLAINTEXT_H

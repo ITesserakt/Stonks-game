@@ -36,6 +36,10 @@ struct Size {
     T width, height;
 };
 
+using UISize = Size<unsigned int>;
+using ISize = Size<int>;
+using FSize = Size<float>;
+
 // Simple point that has x and y
 template<typename T>
 struct Point {

@@ -43,8 +43,8 @@ void Canvas::show() {
     }
 }
 
-Size<unsigned int> Canvas::getSize() {
-    Size<unsigned> sizeOfWindow;
+UISize Canvas::getSize() {
+    UISize sizeOfWindow;
     sizeOfWindow.width  = getmaxx(initscr());
     sizeOfWindow.height = getmaxy(initscr());
     return sizeOfWindow;

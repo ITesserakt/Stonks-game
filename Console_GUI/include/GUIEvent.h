@@ -8,7 +8,7 @@ class GUIEvent {
 protected:
     // TODO: this abstract class contains all data to process event
      std::shared_ptr<Widget> sender;
-     GUIEvent(std::shared_ptr<Widget> father): sender(std::move(father)) {}
+     explicit GUIEvent(std::shared_ptr<Widget> father): sender(father) {}
 
 public:
      virtual void action() = 0;

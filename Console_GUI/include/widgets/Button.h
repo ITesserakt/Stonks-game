@@ -18,7 +18,7 @@ public:
     { destiny = forWhat; }
 
     void show() override;
-    Size<unsigned int> getSize() override { return size; };
+    UISize getSize() override { return size; };
     // light a button
     virtual void turnOn(int color = COLOR_GREEN) override { col = color; isBlowing = true; };
     // put out the light
