@@ -15,10 +15,10 @@ TEST(logic, get_height_of_text) {
 TEST(logic, get_max_width_of_text) {
     ASSERT_EQ(getWidth("4let"), 4);
     ASSERT_EQ(getWidth("4let\n"
-                            "8letters"), 8);
+                       "8letters"), 8);
     ASSERT_EQ(getWidth("4let\n"
-                            "8letters\n"
-                            "10letters "), 10);
+                       "8letters\n"
+                       "10letters "), 10);
     ASSERT_EQ(getWidth(""), 0);
 }
 
@@ -47,21 +47,24 @@ TEST(api, right_child_creation) {
 }
 
 TEST(api, wrong_child_creation) {
-    auto g1 = std::make_shared<Group>("Main");
+    auto g1 = Group("Main");
     auto g2 = std::make_shared<Group>("Test");
 
-    g1->bind(g2);
+    g1.bind(g2);
     ASSERT_NO_THROW({
-        ASSERT_EQ(g1->getChildren()[0]->getParent().lock(),g1);
-    });
+                        ASSERT_EQ(g1.getChildren()[0]->getParent().lock(),
+                                  nullptr);
+                    });
 }
 
-TEST(api, wrong_canvas_creation) {
+TEST(api, get_canvas) {
     auto can = std::make_shared<Canvas>("Main menu", Centered);
     auto but = std::make_shared<Group>("Group");
     can->bind(but);
 
     ASSERT_EQ(but->getCanvas(), can);
+    ASSERT_EQ(can->getCanvas(), can);
+    ASSERT_EQ(can->getParent().lock(), nullptr);
 }
 
 /*This main is for testing GUI module*/

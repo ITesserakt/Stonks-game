@@ -16,7 +16,7 @@ std::vector<GameObject::Id> World::getSlots() const {
     return res;
 }
 
-World::World(ObjectFactory &&factory, unsigned int maxSlots) : factory(factory), availableSlots(maxSlots) {}
+World::World(ObjectFactory &&factory, unsigned int maxSlots) : availableSlots(maxSlots), factory(factory) {}
 
 void World::fillUp() {
     while (availableSlots > 0) {

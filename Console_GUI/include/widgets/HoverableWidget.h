@@ -5,7 +5,7 @@
 
 class HoverableWidget : public virtual PositionedWidget {
 protected:
-    bool isClicable;
+    int tabIndex;
 public:
     // We are on button
     virtual std::unique_ptr<GUIEvent> onHoverStart() = 0;
@@ -16,13 +16,9 @@ public:
     // We pushed enter on button and started click
     virtual std::unique_ptr<GUIEvent> click() = 0;
 
-    bool isClickable() override {
-        return isClicable;
-    }
+    int getTabIndex() const { return tabIndex; }
 
-    bool isHoverable() override {
-        return true;
-    };
+    HoverableWidget(int index): tabIndex(index) {}
 };
 
 // EventSequence => Frontend

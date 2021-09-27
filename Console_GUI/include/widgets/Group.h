@@ -10,7 +10,7 @@ public:
         unsigned int maxx = 0;
         unsigned int maxy = 0;
 
-        for (const auto &child: children) {
+        for (auto child : getChildrenWithType<PositionedWidget>()) {
             if (child->getSize().width > maxx) {
                 maxx = child->getSize().width;
             }
@@ -31,7 +31,7 @@ public:
     }
 
     void hide(bool isHidden) override {
-        for (const auto& child: children) {
+        for (auto child: getChildrenWithType<PositionedWidget>()) {
             child->hide(isHidden);
         }
     }

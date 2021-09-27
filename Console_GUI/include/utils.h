@@ -10,8 +10,8 @@
  * This file contains necessary utilities, such as geometric abstractions
  */
 
-int getHeight(std::string str);
-int getWidth(std::string str);
+unsigned int getHeight(std::string str);
+unsigned int getWidth(std::string str);
 
 int generateId();
 

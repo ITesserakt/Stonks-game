@@ -9,53 +9,6 @@
 #include "widgets/PlainText.h"
 #include "Canvas.h"
 
-void presentationOfGui() {
-    auto canvas = std::make_shared<Canvas>("Main Menu", Centered);
-    auto label = std::make_shared<PlainText>("STONKS GAME\n");
-    label->turnOn(COLOR_YELLOW);
-    auto butPl = std::make_shared<Button>("play", CanvasChanger);
-    auto butSt = std::make_shared<Button>("settings", CanvasChanger);
-    auto butQ = std::make_shared<Button>("quit", Quiter);
-    canvas->bind(label);
-    canvas->bind(butPl);
-    canvas->bind(butSt);
-    canvas->bind(butQ);
-    butQ->onHoverStart();
-
-    canvas->show();
-    refresh();
-    int key;
-    while ((key = getch()) != 'q') {
-        if (key == KEY_UP) {
-            auto list = canvas->getChildren();
-            int index = std::distance(list.begin(),
-                                      find(list.begin(), list.end(),
-                                           canvas->whoOnHover()));
-            if (index - 1 >= 1) {
-                std::dynamic_pointer_cast<Button>(list[index])->onHoverEnd();
-                std::dynamic_pointer_cast<Button>(
-                        list[index - 1])->onHoverStart();
-            }
-        } else if (key == KEY_DOWN) {
-            auto list = canvas->getChildren();
-            int index = std::distance(list.begin(),
-                                      find(list.begin(), list.end(),
-                                           canvas->whoOnHover()));
-            if (index + 1 < list.size()) {
-                std::dynamic_pointer_cast<Button>(list[index])->onHoverEnd();
-                std::dynamic_pointer_cast<Button>(
-                        list[index + 1])->onHoverStart();
-            }
-        } else if (key == '\n') {
-            auto item = std::dynamic_pointer_cast<Button>(canvas->whoOnHover());
-            if (item->isClickable()) { item->click(); }
-        }
-        canvas->show();
-        refresh();
-    }
-
-}
-
 int main() {
     initscr();
     start_color();
@@ -72,13 +25,13 @@ int main() {
     // Section of Gui init
     auto MainMenu = std::make_shared<Canvas>("MainMenu", Centered);
     auto label1 = std::make_shared<PlainText>("STONKS GAME\n");
-    auto butQ = std::make_shared<Button>("quit", Quiter);
+    auto butQ = std::make_shared<Button>("quit", Quiter, 2);
     MainMenu->bind(label1);
     label1->turnOn(COLOR_YELLOW);
 
     // Test buttons
-    auto butPl = std::make_shared<Button>("play", CanvasChanger);
-    auto butSt = std::make_shared<Button>("settings", CanvasChanger);
+    auto butPl = std::make_shared<Button>("play", CanvasChanger, 0);
+    auto butSt = std::make_shared<Button>("settings", CanvasChanger, 1);
     auto space = std::make_shared<PlainText>("");
     MainMenu->bind(butPl);
     MainMenu->bind(butSt);
@@ -98,7 +51,6 @@ int main() {
     std::vector<std::shared_ptr<Canvas>> scenes = {nullptr, MainMenu, GameField,
                                                    Inventory};
     auto &current = MainMenu;
-    current->firstOnHover();
 
     bool gameRunning = true;
     EventConductor director;
@@ -122,11 +74,10 @@ int main() {
                 current->changeActiveWidget(toTheBot);
                 break;
             case Event::key_enter:
-                current->whoOnHover()->click();
+                current->getActiveWidget()->click();
                 break;
             case Event::changeScene:
                 current = scenes[game.changingScene.nextScene];
-                current->firstOnHover();
                 break;
             case Event::noEvent:
                 break;

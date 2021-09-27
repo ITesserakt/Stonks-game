@@ -1,15 +1,6 @@
 #include "widgets/Button.h"
 #include "utils.h"
-#include "events/ChangeCanvas.h"
-#include <stdlib.h>
-#include <ncurses.h>
-
-Button::Button(std::string Name) : Widget(Name) {
-    isBlowing = false;
-    isClicable = false;
-    size.height = getHeight(Name);
-    size.width = getWidth(Name) + 4;
-}
+#include <cstdlib>
 
 void Button::show() {
     if (isHidden) return;
@@ -37,12 +28,10 @@ std::unique_ptr<GUIEvent> Button::click() {
 
 std::unique_ptr<GUIEvent> Button::onHoverEnd() {
     turnOff();
-    isClicable = false;
     return std::unique_ptr<GUIEvent>();
 }
 
 std::unique_ptr<GUIEvent> Button::onHoverStart() {
     turnOn();
-    isClicable = true;
     return std::unique_ptr<GUIEvent>();
 }

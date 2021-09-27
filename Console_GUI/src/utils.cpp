@@ -2,14 +2,14 @@
 #include "utils.h"
 
 // Returns height of sentence
-int getHeight(std::string str) {
+unsigned int getHeight(std::string str) {
     return std::count(str.begin(), str.end(), '\n') + 1;
 }
 
 // Returns max width of line
 // Example: getWidth("one\n"
 //                   "three") == 5
-int getWidth(std::string str) {
+unsigned int getWidth(std::string str) {
     int width;
     int maxWidth = 0;
     while ((width = str.find('\n')) != std::string::npos) {

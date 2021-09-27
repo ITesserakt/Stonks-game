@@ -2,19 +2,18 @@
 
 #include <utility>
 
-#include "widgets/Widget.h"
+#include "widgets/SizeableWidget.h"
 #include "widgets/HoverableWidget.h"
 
 enum Direction {
-    toTheTop, toTheBot
+    toTheTop = -1, toTheBot = 1
 };
 
 // It places all widgets on right place
-class Canvas : public virtual Widget {
+class Canvas : public virtual SizeableWidget {
 private:
     Align align;
-
-    void changePos(int x, int y) override {}  // doesn't need to be used
+    std::shared_ptr<HoverableWidget> activeWidget;
 
 public:
     Canvas(std::string name, Align al)
@@ -22,12 +21,13 @@ public:
 
     void show() override;
 
-    std::shared_ptr<HoverableWidget> whoOnHover();
-
     // Makes first hoverable children onHoverStart()
     void firstOnHover();
 
     void changeActiveWidget(Direction direct);
+    auto getActiveWidget() const { return activeWidget; }
+
+    void bind(std::shared_ptr<Widget> widget) override;
 
     UISize getSize() override;
 };

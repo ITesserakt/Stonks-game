@@ -1,15 +1,12 @@
 #include "Canvas.h"
 #include "widgets/Group.h"
-#include <ncurses.h>
 
 void Canvas::show() {
     int y = 0;
     int x = 0;
 
-    if (isHidden) { return; }
-
     if (align == Left) {
-        for (const auto &child: children) {
+        for (auto child: getChildrenWithType<PositionedWidget>()) {
             child->changePos(x, y);             // DON'T USE move() from ncurses
             child->show();
             y += child->getSize().height;
@@ -26,14 +23,14 @@ void Canvas::show() {
         int xInd = (xMax - w) / 2; // x Indent
         int yInd = (yMax - h) / 2;
 
-        for (const auto &child: children) {
+        for (auto child: getChildrenWithType<PositionedWidget>()) {
             child->changePos(xInd, yInd);
             child->show();
             yInd += child->getSize().height;
         }
     } else if (align == Right) {
-        x = getmaxx(initscr());
-        for (const auto &child: children) {
+        x = getSize().width;
+        for (auto child: getChildrenWithType<PositionedWidget>()) {
             child->changePos(x - child->getSize().width, y);
             child->show();
             y += child->getSize().height;
@@ -41,62 +38,32 @@ void Canvas::show() {
     }
 }
 
-UISize Canvas::getSize() {
-    UISize sizeOfWindow;
-    sizeOfWindow.width = getmaxx(initscr());
-    sizeOfWindow.height = getmaxy(initscr());
-    return sizeOfWindow;
-}
-
-std::shared_ptr<HoverableWidget> Canvas::whoOnHover() {
-    for (const auto &child: children) {
-        if (child->isClickable()) {
-            return std::dynamic_pointer_cast<HoverableWidget>(child);
-        }
-    }
-    return nullptr;
-}
-
 void Canvas::changeActiveWidget(Direction direct) {
-    if (direct == toTheTop) {
-        if (this->whoOnHover() == nullptr) {
-            return;
+    if (activeWidget == nullptr)
+        return;
+    activeWidget->onHoverEnd();
+    for (auto x: getChildrenRecursively<HoverableWidget>())
+        if (x->getTabIndex() == activeWidget->getTabIndex() + direct) {
+            activeWidget = x;
+            break;
         }
-
-        int index = std::distance(children.begin(),
-                                  find(children.begin(),
-                                       children.end(),
-                                       this->whoOnHover()));
-        if (children[index - 1]->isHoverable()) {
-            std::dynamic_pointer_cast<HoverableWidget>(
-                    children[index])->onHoverEnd();
-            std::dynamic_pointer_cast<HoverableWidget>(
-                    children[index - 1])->onHoverStart();
-        }
-    }
-    if (direct == toTheBot) {
-        if (this->whoOnHover() == nullptr) {
-            return;
-        }
-
-        int index = std::distance(children.begin(),
-                                  find(children.begin(),
-                                       children.end(),
-                                       this->whoOnHover()));
-        if (children[index + 1]->isHoverable()) {
-            std::dynamic_pointer_cast<HoverableWidget>(
-                    children[index])->onHoverEnd();
-            std::dynamic_pointer_cast<HoverableWidget>(
-                    children[index + 1])->onHoverStart();
-        }
-    }
+    activeWidget->onHoverStart();
 }
 
 void Canvas::firstOnHover() {
-    for (const auto& child: children) {
-        if (child->isHoverable()) {
-            std::dynamic_pointer_cast<HoverableWidget>(child)->onHoverStart();
-            return;
-        }
+    if (activeWidget != nullptr)
+        activeWidget->onHoverStart();
+}
+
+void Canvas::bind(std::shared_ptr<Widget> widget) {
+    if (widget->is<HoverableWidget>() && widget->as<HoverableWidget>()->getTabIndex() == 0) {
+        activeWidget = widget->as<HoverableWidget>();
+        activeWidget->onHoverStart();
     }
+    canvas = shared_from_this()->as<Canvas>();
+    Widget::bind(widget);
+}
+
+UISize Canvas::getSize() {
+    return {(unsigned) getmaxx(stdscr), (unsigned) getmaxy(stdscr)};
 }

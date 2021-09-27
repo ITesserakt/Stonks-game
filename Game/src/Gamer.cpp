@@ -16,7 +16,7 @@ std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::C
     item->lastSeller = shared_from_this();
     item->cost = newCost;
     item->timesSold++;
-    return std::move(item);
+    return item;
 }
 
 std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId) {

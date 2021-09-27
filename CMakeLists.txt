@@ -7,6 +7,8 @@ include(Install_libs.cmake)
 file(GLOB_RECURSE SOURCE_FILES Game/src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES Game/include/*.h)
 
+add_compile_options(-Wall -Wextra)
+
 add_executable(main ${SOURCE_FILES} ${HEADER_FILES})
 
 add_subdirectory(Console_GUI)

@@ -4,6 +4,9 @@
 #include "PositionedWidget.h"
 
 class PlainText: public PositionedWidget {
+private:
+    UISize size;
+
 public:
     PlainText(std::string name);
     void show() override;
