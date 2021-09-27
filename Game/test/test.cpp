@@ -157,7 +157,7 @@ TEST(game_logic, trade_properties) {
 })"_json));
     w.fillUp();
     auto p = std::make_shared<Player>();
-    w.addPlayer(p);
+    w.addGamer(p);
     p->buyItem(w.takeItem(0));
     ASSERT_THROW({ w.takeItem(0); }, std::runtime_error);
     ASSERT_THROW({ w.viewItem(0); }, std::runtime_error);

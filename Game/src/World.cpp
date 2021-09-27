@@ -2,10 +2,13 @@
 
 double World::getProfitness(const GameObject::Id &itemId) const {
     auto item = viewItem(itemId);
-    auto sellByKind = std::count_if(container.begin(), container.end(), [item](const auto &x) {
-        return x.second != nullptr && x.second->name == item.name;
-    });
-    return (1 - factory.getCostForKind(item.name) / item.cost) * (availableSlots + 0.1) / sellByKind /
+    auto sellByKind = std::count_if(container.begin(), container.end(),
+                                    [item](const auto &x) {
+                                        return x.second != nullptr &&
+                                               x.second->name == item.name;
+                                    });
+    return (1 - factory.getCostForKind(item.name) / item.cost) *
+           (availableSlots + 0.1) / sellByKind /
            (item.timesSold + 1);
 }
 
@@ -16,7 +19,8 @@ std::vector<GameObject::Id> World::getSlots() const {
     return res;
 }
 
-World::World(ObjectFactory &&factory, unsigned int maxSlots) : availableSlots(maxSlots), factory(factory) {}
+World::World(ObjectFactory &&factory, unsigned int maxSlots) : availableSlots(
+        maxSlots), factory(factory) {}
 
 void World::fillUp() {
     while (availableSlots > 0) {
@@ -26,7 +30,7 @@ void World::fillUp() {
     }
 }
 
-void World::addPlayer(std::shared_ptr<Gamer> &&gamer) {
+void World::addGamer(std::shared_ptr<Gamer> &&gamer) {
     players.emplace_back(gamer);
 }
 
