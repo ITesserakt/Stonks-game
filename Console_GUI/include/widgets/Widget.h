@@ -62,6 +62,10 @@ public:
 
     virtual void show() = 0;
 
+    virtual void changeName(const std::string& str) {
+        name = str;
+    }
+
     virtual void bind(std::shared_ptr<Widget> widget) {
         if (this == widget.get()) {
             throw std::runtime_error("Cannot add itself as a child");

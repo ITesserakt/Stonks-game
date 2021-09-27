@@ -8,13 +8,19 @@ protected:
     int tabIndex;
 public:
     // We are on button
-    virtual std::unique_ptr<GUIEvent> onHoverStart() = 0;
+    virtual void onHoverStart(){
+        turnOn(COLOR_GREEN);
+        isClicable = true;
+    }
 
     // We go out of button
-    virtual std::unique_ptr<GUIEvent> onHoverEnd() = 0;
+    virtual void onHoverEnd() {
+        turnOff();
+        isClicable = false;
+    }
 
     // We pushed enter on button and started click
-    virtual std::unique_ptr<GUIEvent> click() = 0;
+    virtual void click() = 0;
 
     int getTabIndex() const { return tabIndex; }
 

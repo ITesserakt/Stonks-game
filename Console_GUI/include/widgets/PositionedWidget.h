@@ -11,6 +11,12 @@ public:
         position.y = y;
     }
 
+    void changeName(const std::string &str) override {
+        Widget::changeName(str);
+        size.width  = getWidth(name);
+        size.height = getHeight(name);
+    }
+
     virtual void hide(bool hide) { this->isHidden = hide; }
 
     // light a button
@@ -28,4 +34,5 @@ protected:
     bool isHidden;
     UIPoint position;
     Align align;
+    UISize size;
 };
