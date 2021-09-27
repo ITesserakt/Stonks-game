@@ -2,13 +2,14 @@
 #define STONKS_GAME_PLAINTEXT_H
 
 #include "PositionedWidget.h"
+#include "ColorWidget.h"
 
-class PlainText: public PositionedWidget {
+class PlainText: public virtual PositionedWidget, public virtual ColorWidget {
 private:
     UISize size;
 
 public:
-    PlainText(std::string name);
+    explicit PlainText(std::string name);
     void show() override;
 
     UISize getSize() override { return size; }

@@ -1,19 +1,19 @@
 #pragma once
 
 #include "PositionedWidget.h"
-#include "../EventSequence.h"
+#include "ColorWidget.h"
 
-class HoverableWidget : public virtual PositionedWidget {
+class HoverableWidget : public virtual PositionedWidget, public virtual ColorWidget {
 protected:
     int tabIndex;
 public:
     // We are on button
-    virtual void onHoverStart(){
+    void onHoverStart(){
         turnOn(COLOR_GREEN);
     }
 
     // We go out of button
-    virtual void onHoverEnd() {
+    void onHoverEnd() {
         turnOff();
     }
 

@@ -5,12 +5,13 @@
 #include <ncurses.h>
 #include <string>
 #include <utility>
+#include "ColorWidget.h"
 
 enum ButtonSpec {
     CanvasChanger, Quiter
 };
 
-class Button : public HoverableWidget {
+class Button : public virtual HoverableWidget {
 private:
     ButtonSpec destiny;
 
@@ -27,15 +28,5 @@ public:
 
     UISize getSize() override { return size; };
 
-    // light a button
-    virtual void turnOn(int color = COLOR_GREEN) override {
-        col = color;
-        isBlowing = true;
-    };
-
-    // put out the light
-    virtual void turnOff() override { isBlowing = false; };
-
-    // TODO Unimplemented methods
     void click() override;
 };

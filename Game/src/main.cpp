@@ -1,5 +1,4 @@
 #include "thread"
-#include "Frontend.h"
 #include "EventConductor.h"
 #include "CreatingGui.h"
 #include "Canvas.h"

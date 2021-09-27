@@ -6,14 +6,6 @@
 #include <string>
 #include <memory>
 #include <iostream>
-#include <range/v3/all.hpp>
-
-// ncurses and lib 'meta' both defines 'meta' entity
-#define meta meta_ncurses
-
-#include <ncurses.h>
-
-#undef meta
 
 class Canvas;
 
@@ -106,7 +98,7 @@ public:
 
     std::weak_ptr<Widget> getParent() const { return parent; }
 
-    std::vector<std::shared_ptr<Widget>>
+    const std::vector<std::shared_ptr<Widget>>&
     getChildren() const { return children; }
 
     std::shared_ptr<Canvas> getCanvas() const { return canvas; }

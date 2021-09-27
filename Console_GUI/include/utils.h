@@ -5,6 +5,14 @@
 #include <numeric>
 #include <sstream>
 #include <string>
+#include <range/v3/all.hpp>
+
+// ncurses and lib 'meta' both defines 'meta' entity
+#define meta meta_ncurses
+
+#include <ncurses.h>
+
+#undef meta
 
 /*
  * This file contains necessary utilities, such as geometric abstractions
