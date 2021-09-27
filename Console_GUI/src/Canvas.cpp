@@ -58,11 +58,15 @@ void Canvas::firstOnHover() {
 void Canvas::bind(std::shared_ptr<Widget> widget) {
     canvas = shared_from_this()->as<Canvas>();
     Widget::bind(widget);
-    for (auto x: getChildrenRecursively<HoverableWidget>())
-        if (x->getTabIndex() == 0) {
-            activeWidget = x;
-            activeWidget->onHoverStart();
-        }
+    if (widget->is<HoverableWidget>() &&
+        widget->as<HoverableWidget>()->getTabIndex() == 0)
+        activeWidget = widget->as<HoverableWidget>();
+    else
+        for (auto x: widget->getChildrenRecursively<HoverableWidget>())
+            if (x->getTabIndex() == 0)
+                activeWidget = x;
+    if (activeWidget != nullptr)
+        activeWidget->onHoverStart();
 }
 
 UISize Canvas::getSize() {
