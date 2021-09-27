@@ -19,6 +19,7 @@ public:
         return result;
     }
 
+    // We get element that cannot be modified
     virtual const T& viewItem(ID itemID) const {
         auto it = container.find(itemID);
         if (it == container.end() || it->second == nullptr)

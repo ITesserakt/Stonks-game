@@ -2,23 +2,25 @@
 #include "EventConductor.h"
 #include "CreatingGui.h"
 #include "Canvas.h"
+#include "World.h"
+#include "Player.h"
+#include "AI.h"
 #include <ncurses.h>
 #include <unistd.h>
 
+
 int main() {
-    initscr();
-    start_color();
-    noecho();                       // Removes characters when typed
-    curs_set(0);                    // Removes cursor
-    keypad(stdscr, true);
+    setupCurses();
 
-    if (getmaxx(stdscr) < 80 || getmaxy(stdscr) < 24) {
-        endwin();
-        printf("Your terminal should be bigger or equal to 80x24 size\n");
-        return -1;
-    }
+    checkWindowSize();
 
-    std::vector<std::shared_ptr<Canvas>> scenes = createCanvases();
+    auto Earth = World();
+    auto I     = std::make_shared<Player>();
+    auto Bot   = std::make_shared<AI>(Earth);
+    Earth.addGamer(I);
+    Earth.addGamer(Bot);
+
+    auto scenes = createCanvases(I);
 
     auto current = scenes[0];
     current->firstOnHover();

@@ -21,7 +21,7 @@ public:
 
     std::vector<GameObject::Id> getSlots() const;
 
-    void addPlayer(std::shared_ptr<Gamer> &&gamer);
+    void addGamer(std::shared_ptr<Gamer> &&gamer);
 
     void fillUp();
 

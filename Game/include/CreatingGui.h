@@ -3,6 +3,8 @@
 #include "widgets/Button.h"
 #include "widgets/Purchase.h"
 #include "widgets/Label.h"
+#include "Player.h"
+#include "Canvas.h"
 
 #define AMOUNT_OF_MENUS 3
 
@@ -34,3 +36,7 @@ inline std::vector<std::shared_ptr<Canvas>> createCanvases() {
 
     return {MainMenu, GameField, Inventory};
 }
+
+void setupCurses();
+
+void checkWindowSize();
