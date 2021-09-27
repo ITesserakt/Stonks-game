@@ -10,13 +10,11 @@ public:
     // We are on button
     virtual void onHoverStart(){
         turnOn(COLOR_GREEN);
-        isClicable = true;
     }
 
     // We go out of button
     virtual void onHoverEnd() {
         turnOff();
-        isClicable = false;
     }
 
     // We pushed enter on button and started click
@@ -24,7 +22,7 @@ public:
 
     int getTabIndex() const { return tabIndex; }
 
-    HoverableWidget(int index): tabIndex(index) {}
+    explicit HoverableWidget(int index): tabIndex(index) {}
 };
 
 // EventSequence => Frontend

@@ -4,7 +4,7 @@
 
 class Purchase : HoverableWidget {
 public:
-    Purchase();
+    Purchase(int index);
 
     void click() override;
 

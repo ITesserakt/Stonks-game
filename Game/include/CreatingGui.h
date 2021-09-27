@@ -11,13 +11,13 @@ inline std::vector<std::shared_ptr<Canvas>> createCanvases() {
 
     auto MainMenu = std::make_shared<Canvas>("MainMenu", Centered);
     auto label1 = std::make_shared<PlainText>("STONKS GAME\n");
-    auto butQ = std::make_shared<Button>("quit", Quiter);
+    auto butQ = std::make_shared<Button>("quit", Quiter, 2);
     MainMenu->bind(label1);
     label1->turnOn(COLOR_YELLOW);
 
     // Test buttons
-    auto butPl = std::make_shared<Button>("play", CanvasChanger);
-    auto butSt = std::make_shared<Button>("settings", CanvasChanger);
+    auto butPl = std::make_shared<Button>("play", CanvasChanger, 0);
+    auto butSt = std::make_shared<Button>("settings", CanvasChanger, 1);
     auto space = std::make_shared<PlainText>("");
     MainMenu->bind(butPl);
     MainMenu->bind(butSt);

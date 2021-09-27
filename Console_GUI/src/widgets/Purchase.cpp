@@ -19,7 +19,7 @@ void Purchase::show() {
     }
 }
 
-Purchase::Purchase() : Widget("Purchase") {
+Purchase::Purchase(int index) : Widget("Purchase"), HoverableWidget(index) {
     size.height = getHeight(name);
     size.width = getWidth(name);
 }
