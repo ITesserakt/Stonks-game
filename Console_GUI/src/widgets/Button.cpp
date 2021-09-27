@@ -1,6 +1,7 @@
 #include "widgets/Button.h"
 #include "utils.h"
 #include <cstdlib>
+#include <iostream>
 
 void Button::show() {
     if (isHidden) return;
@@ -12,17 +13,13 @@ void Button::show() {
         printw("[ %s ]", name.c_str());
         if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
     }
-    // else big button
 }
 
 void Button::click() {
-    if (destiny == CanvasChanger)
-        return;
-    else if (destiny == Quiter) {
+    if (destiny == Quiter) {
         endwin();
-        printf("See you later\n");
+        std::cout << "See you later" << std::endl;
         exit(0);
-    }
-    else
+    } else
         return;
 }

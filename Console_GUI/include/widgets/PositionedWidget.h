@@ -6,16 +6,12 @@
 
 class PositionedWidget : public virtual SizeableWidget {
 public:
-    void changePos(int x, int y) {
+    void changePos(unsigned int x, unsigned int y) {
         position.x = x;
         position.y = y;
     }
 
-    void changeName(const std::string &str) override {
-        Widget::changeName(str);
-        size.width  = getWidth(name);
-        size.height = getHeight(name);
-    }
+    UIPoint getPosition() { return position; }
 
     virtual void hide(bool hide) { this->isHidden = hide; }
 

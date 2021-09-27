@@ -15,8 +15,6 @@ class Button : public virtual HoverableWidget {
 private:
     ButtonSpec destiny;
 
-    UISize size;
-
 public:
     Button(std::string name, ButtonSpec forWhat, int index) : Widget(
             std::move(name)), HoverableWidget(index), destiny(forWhat) {

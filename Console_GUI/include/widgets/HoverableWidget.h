@@ -10,11 +10,17 @@ public:
     // We are on button
     void onHoverStart(){
         turnOn(COLOR_GREEN);
+
+        for (auto x: getChildrenRecursively<ColorWidget>())
+            x->turnOn(COLOR_GREEN);
     }
 
     // We go out of button
     void onHoverEnd() {
         turnOff();
+
+        for (auto x: getChildrenRecursively<ColorWidget>())
+            x->turnOff();
     }
 
     // We pushed enter on button and started click

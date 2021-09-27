@@ -1,16 +1,16 @@
-#include "widgets/PlainText.h"
+#include "widgets/Label.h"
 
-PlainText::PlainText(std::string name) : Widget(name) {
-    size.width = getWidth(name);
-    size.height = getHeight(name);
+Label::Label(std::string name, const std::string& text) : Widget(name), text(text) {
+    size.width = getWidth(text);
+    size.height = getHeight(text);
 }
 
-void PlainText::show() {
+void Label::show() {
     if (isHidden) return;
 
     move(position.y, position.x);
     if (isBlowing) { init_pair(widgetId, COLOR_BLACK, col); }
     if (isBlowing) { attron(COLOR_PAIR(widgetId)); }
-    printw("%s", name.c_str());
+    printw("%s\n", text.c_str());
     if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
 }

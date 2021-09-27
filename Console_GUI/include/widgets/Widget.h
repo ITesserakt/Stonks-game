@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <iostream>
 
 class Canvas;
 
@@ -49,25 +48,11 @@ public:
 
     Widget &operator=(Widget &&) = default;
 
-    explicit Widget(std::string name)
-            : widgetId(generateId()), name(std::move(name)) {}
+    explicit Widget(std::string name);
 
     virtual void show() = 0;
 
-    virtual void changeName(const std::string& str) {
-        name = str;
-    }
-
-    virtual void bind(std::shared_ptr<Widget> widget) {
-        if (this == widget.get()) {
-            throw std::runtime_error("Cannot add itself as a child");
-        }
-
-        widget->parent = weak_from_this();
-        widget->canvas = canvas;
-        children.push_back(widget);
-        visitMap[widget.get()] = false;
-    }
+    virtual void bind(std::shared_ptr<Widget> widget);
 
     template<typename T>
     bool is() { return dynamic_cast<T *>(this); }
@@ -94,12 +79,13 @@ public:
         return result;
     }
 
-    const std::string &getName() const { return name; }
+    const std::string &getName() const;
 
-    std::weak_ptr<Widget> getParent() const { return parent; }
+    std::weak_ptr<Widget> getParent() const;
 
-    const std::vector<std::shared_ptr<Widget>>&
-    getChildren() const { return children; }
+    const std::vector<std::shared_ptr<Widget>>& getChildren() const;
 
-    std::shared_ptr<Canvas> getCanvas() const { return canvas; }
+    std::shared_ptr<Canvas> getCanvas() const;
+
+    friend std::ostream &operator<<(std::ostream &os, const Widget &widget);
 };
