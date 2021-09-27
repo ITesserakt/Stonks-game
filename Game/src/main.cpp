@@ -20,7 +20,7 @@ int main() {
     Earth.addGamer(I);
     Earth.addGamer(Bot);
 
-    auto scenes = createCanvases(I);
+    auto scenes = createCanvases(I, Earth);
 
     auto current = scenes[0];
     current->firstOnHover();

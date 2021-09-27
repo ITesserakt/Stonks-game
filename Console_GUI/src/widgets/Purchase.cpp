@@ -1,7 +1,11 @@
 #include "widgets/Purchase.h"
+#include "Canvas.h"
 
 UISize Purchase::getSize() {
-    return UISize();
+    size.height = this->getCanvas()->getActiveWidget().get() == this ?
+            getHeight(name) + 2 : getHeight(name);
+    size.width = getWidth(name) + 4;
+    return size;
 }
 
 void Purchase::show() {
@@ -11,17 +15,15 @@ void Purchase::show() {
     if (isBlowing) {
         init_pair(widgetId, COLOR_BLACK, col);
         attron(COLOR_PAIR(widgetId));
-        printw("%s", name.c_str());
+        printw("%d. %s", tabIndex + 1, name.c_str());
         attroff(COLOR_PAIR(widgetId));
     }
     else {
-        printw("%s", name.c_str());
+        printw("%d. %s", tabIndex + 1, name.c_str());
     }
 }
 
 Purchase::Purchase(int index) : Widget("Purchase"), HoverableWidget(index) {
-    size.height = getHeight(name);
-    size.width = getWidth(name);
 }
 
 void Purchase::click() {

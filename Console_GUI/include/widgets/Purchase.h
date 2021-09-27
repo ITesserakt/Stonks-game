@@ -2,7 +2,7 @@
 
 #include "HoverableWidget.h"
 
-class Purchase : HoverableWidget {
+class Purchase : public HoverableWidget {
 public:
     Purchase(int index);
 
