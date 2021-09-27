@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Gamer.h"
 
 class Player : public Gamer {
