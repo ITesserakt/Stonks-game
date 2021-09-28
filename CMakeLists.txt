@@ -6,6 +6,7 @@ include(Install_libs.cmake)
 
 file(GLOB_RECURSE SOURCE_FILES Game/src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES Game/include/*.h)
+file(GLOB_RECURSE RESOURCES Game/resources/*)
 
 add_compile_options(-Wall -Wextra)
 
@@ -18,3 +19,14 @@ target_include_directories(main PRIVATE Console_GUI/include)
 target_include_directories(main PRIVATE Game/include)
 
 target_link_libraries(main PRIVATE Console_GUI nlohmann_json::nlohmann_json ncurses)
+
+install(FILES ${RESOURCES}
+        TYPE DATA)
+install(TARGETS main
+        TYPE RUNTIME)
+
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/share)
+foreach(item IN LISTS RESOURCES)
+    configure_file(${item} ${CMAKE_BINARY_DIR}/share COPYONLY)
+endforeach()

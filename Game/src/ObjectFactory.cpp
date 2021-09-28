@@ -15,18 +15,27 @@ GameObject ObjectFactory::generateNext() {
     auto name = object->first;
     auto kind = object->second;
 
-    auto descriptions = kind.descriptions | ranges::views::keys | ranges::to<std::vector<std::string>> | ranges::actions::shuffle(random);
-    auto descCount = random() % (kind.descriptions.empty() ? 1 : kind.descriptions.size() + 1);
-    descriptions = std::vector(descriptions.begin(), descriptions.begin() + descCount);
+    auto descriptions = kind.descriptions | ranges::views::keys |
+                        ranges::to<std::vector<std::string>> |
+                        ranges::actions::shuffle(random);
+    auto descCount = random() %
+                     (kind.descriptions.empty() ? 1 : kind.descriptions.size() +
+                                                      1);
+    descriptions = std::vector(descriptions.begin(),
+                               descriptions.begin() + descCount);
 
-    auto cost = kind.basicCost * ranges::accumulate(descriptions, 1.0, [&](const auto& acc, const auto& b) {
-        return acc * kind.descriptions[b];
-    });
+    auto cost = kind.basicCost * ranges::accumulate(descriptions, 1.0,
+                                                    [&](const auto &acc,
+                                                        const auto &b) {
+                                                        return acc *
+                                                               kind.descriptions[b];
+                                                    });
 
     return {name, descriptions, lastId++, cost};
 }
 
-ObjectFactory::ObjectFactory(const nlohmann::json &config, unsigned int randomSeed) : random(randomSeed) {
+ObjectFactory::ObjectFactory(const nlohmann::json &config,
+                             unsigned int randomSeed) : random(randomSeed) {
     auto objects = config["Objects"];
 
     for (const auto &object: objects) {
@@ -42,6 +51,22 @@ ObjectFactory::ObjectFactory(const nlohmann::json &config, unsigned int randomSe
     }
 }
 
-GameObject::Cost ObjectFactory::getCostForKind(const GameObject::Name& kind) const {
+GameObject::Cost
+ObjectFactory::getCostForKind(const GameObject::Name &kind) const {
     return data.at(kind).basicCost;
+}
+
+ObjectFactory ObjectFactory::fromFile(const std::string &filename) {
+    std::ifstream file(filename);
+    if (!file.is_open())
+        throw std::runtime_error("Cannot open specified file");
+    return ObjectFactory(nlohmann::json::parse(file));
+}
+
+ObjectFactory ObjectFactory::fromText(const std::string &text) {
+    return ObjectFactory(nlohmann::json::parse(text.begin(), text.end()));
+}
+
+ObjectFactory ObjectFactory::empty() {
+    return ObjectFactory(R"({"Objects":[]})"_json);
 }

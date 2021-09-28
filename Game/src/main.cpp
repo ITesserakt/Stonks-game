@@ -8,36 +8,12 @@
 #include <ncurses.h>
 #include <unistd.h>
 
-std::string json = R"({
-        "Objects" : [{
-            "name" : "car",
-            "descriptions": [{
-                "value" : "red",
-                "multiplier" : 1.05
-            }, {
-                "value": "shiny",
-                        "multiplier": 2
-            }, {
-                "value" : "dirty",
-                        "multiplier": 0.75
-            }],
-            "cost": 10000
-        }, {
-            "name": "dress",
-            "descriptions": [{
-                "value": "gucci",
-                "multiplier": 15
-            }],
-            "cost": 10
-        }]
-})";
-
 int main() {
     setupCurses();
 
     checkWindowSize();
 
-    auto Earth = World(ObjectFactory(nlohmann::json::parse(json)));
+    auto Earth = World(ObjectFactory::fromFile("../share/objects.json"));
     auto I = std::make_shared<Player>();
     auto Bot = std::make_shared<AI>(Earth);
     Earth.addGamer(I);
@@ -87,6 +63,7 @@ int main() {
         game = Event();
     }
 
+    curs_set(1);
     endwin();
     guiThread.join();
     //worldThread.join();
