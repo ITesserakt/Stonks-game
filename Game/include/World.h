@@ -26,6 +26,7 @@ public:
 
     void addGamer(std::shared_ptr<Gamer> &&gamer);
 
+    // FIXME when i'm starting random button in MainMenu is hiding from us
     void fillUp();
 
     std::unique_ptr<GameObject> takeItem(GameObject::Id itemId) override;

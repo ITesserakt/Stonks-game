@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Canvas.h"
-
 class Event{
 public:
     Event() {}
