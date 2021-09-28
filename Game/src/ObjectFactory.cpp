@@ -1,5 +1,5 @@
-#include <algorithm>
 #include "ObjectFactory.h"
+#include <range/v3/all.hpp>
 
 std::random_device ObjectFactory::engine = std::random_device();
 
@@ -15,14 +15,13 @@ GameObject ObjectFactory::generateNext() {
     auto name = object->first;
     auto kind = object->second;
 
-    auto descriptions = std::vector<GameObject::Description>();
-    for (const auto&[k, _]: kind.descriptions) descriptions.emplace_back(k);
+    auto descriptions = kind.descriptions | ranges::views::keys | ranges::to<std::vector<std::string>> | ranges::actions::shuffle(random);
     auto descCount = random() % (kind.descriptions.empty() ? 1 : kind.descriptions.size() + 1);
-    std::shuffle(descriptions.begin(), descriptions.end(), random);
     descriptions = std::vector(descriptions.begin(), descriptions.begin() + descCount);
 
-    auto cost = kind.basicCost * std::accumulate(descriptions.begin(), descriptions.end(), 1.0,
-                                                 [&](auto &a, auto &b) { return a * kind.descriptions[b]; });
+    auto cost = kind.basicCost * ranges::accumulate(descriptions, 1.0, [&](const auto& acc, const auto& b) {
+        return acc * kind.descriptions[b];
+    });
 
     return {name, descriptions, lastId++, cost};
 }

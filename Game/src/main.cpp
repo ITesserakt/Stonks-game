@@ -8,7 +8,6 @@
 #include <ncurses.h>
 #include <unistd.h>
 
-
 int main() {
     setupCurses();
 

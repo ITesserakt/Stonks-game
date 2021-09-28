@@ -3,19 +3,10 @@
 //
 
 #include <AI.h>
+#include <range/v3/all.hpp>
 
 GameObject::Id AI::predict() {
-    auto slots = world.getSlots();
-    GameObject::Cost max = -std::numeric_limits<GameObject::Cost>::infinity();
-    GameObject::Id maxId;
-    for (auto slot: slots) {
-        GameObject::Cost next = world.getProfitness(slot);
-        if (next > max) {
-            max = next;
-            maxId = slot;
-        }
-    }
-    return maxId;
+    return ranges::max(world.getSlots(), {}, [&](int slot) { return world.getProfitness(slot); });
 }
 
 void AI::buyItem(std::unique_ptr<GameObject> item) {

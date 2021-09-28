@@ -23,20 +23,6 @@ unsigned int getWidth(std::string str);
 
 int generateId();
 
-template<typename InputIterator>
-std::string joinToString(InputIterator begin, InputIterator end, const std::string& separator) {
-    auto size = std::distance(begin, end);
-    if (size == 0)
-        return "";
-    std::stringstream ss;
-    ss << *begin;
-    return std::accumulate(++begin, end, ss.str(), [&separator](const auto& acc, const auto& x) {
-        std::stringstream ss;
-        ss << x;
-        return acc + separator + ss.str();
-    });
-}
-
 // Size of widget
 // width == x; height == y
 template<typename T>

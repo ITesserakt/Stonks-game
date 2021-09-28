@@ -25,9 +25,7 @@ public:
     void show() override {
         if (isHidden) return;
 
-        for (const auto& child: children) {
-            child->show();
-        }
+        ranges::for_each(children, &Widget::show);
     }
 
     void hide(bool isHidden) override {

@@ -6,7 +6,6 @@
 #include <ostream>
 #include <sstream>
 #include <limits>
-#include <algorithm>
 #include <numeric>
 #include <memory>
 

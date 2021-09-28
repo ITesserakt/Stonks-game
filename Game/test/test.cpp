@@ -53,8 +53,8 @@ TEST(game_logic, objects_generating) {
     }]
 })"_json;
     auto f = ObjectFactory(json, 0);
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty", "shiny", "red"}, 0, 15750}));
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"dirty", "red", "shiny"}, 1, 15750}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"shiny", "dirty", "red"}, 0, 15750}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 1, 1000000}));
     ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 2, 1000000}));
 }
 
@@ -106,7 +106,7 @@ TEST(game_logic, profitness) {
 })"_json;
     auto f = ObjectFactory(json, 9);
     auto w = World(std::move(f));
-    std::vector<double> expected = {0, 0, 1.29603174, 2.8466666, 0};
+    std::vector<double> expected = {0, 0, 6.62666666, 0, -0.424999999};
 
     for (int x: {0, 1, 2, 3, 4}) {
         auto next = w.factory.generateNext();
@@ -115,13 +115,13 @@ TEST(game_logic, profitness) {
         auto p = w.getProfitness(x);
         ASSERT_NEAR(p, expected[x], 1e-5) << next << ", profitness: " << p << std::endl;
     }
-    EXPECT_THAT(w.getSlots(), (testing::ElementsAreArray({0, 1, 2, 3, 4})));
+    EXPECT_THAT(w.getSlots() | ranges::to<std::vector<int>>, (testing::ElementsAreArray({0, 1, 2, 3, 4})));
 }
 
 TEST(game_logic, non_existing_gameobject) {
     auto w = World();
     ASSERT_THROW({
-                     w.getProfitness(1);
+                     auto unused = w.getProfitness(1);
                  }, std::runtime_error);
     ASSERT_THROW({
                      w.viewItem(1);

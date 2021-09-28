@@ -5,16 +5,21 @@
 #include "GameObject.h"
 #include "utils.h"
 
+using namespace std::string_literals;
+
 std::ostream &operator<<(std::ostream &os, const GameObject &object) {
     return os << "Object {name: " << object.name << ", desc: ["
-              << joinToString(object.description.begin(),  object.description.end(), ", ")
-              << "], cost: " << object.cost << ", times sold: " << object.timesSold << "}";
+              << (object.description | ranges::views::join(", "s) |
+                  ranges::to<std::string>())
+              << "], cost: " << object.cost << ", times sold: "
+              << object.timesSold << "}";
 }
 
 bool GameObject::operator==(const GameObject &rhs) const {
     return name == rhs.name &&
            description == rhs.description &&
-           std::abs(cost - rhs.cost) < std::numeric_limits<GameObject::Cost>::epsilon() * 10000 &&
+           std::abs(cost - rhs.cost) <
+           std::numeric_limits<GameObject::Cost>::epsilon() * 10000 &&
            timesSold == rhs.timesSold &&
            id == rhs.id;
 }
@@ -25,8 +30,7 @@ bool GameObject::operator!=(const GameObject &rhs) const {
 
 std::string GameObject::fullName() const {
     std::stringstream ss;
-    ss << name << " ";
-    for (auto &desc: description)
-        ss << desc << " ";
+    ss << name << " " << (description | ranges::views::join(" "s) |
+                          ranges::to<std::string>());
     return ss.str();
 }
