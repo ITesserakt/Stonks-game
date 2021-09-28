@@ -42,7 +42,7 @@ int main() {
     auto Bot = std::make_shared<AI>(Earth);
     Earth.addGamer(I);
     Earth.addGamer(Bot);
-    //Earth.fillUp();           // Buggie function call
+    Earth.fillUp();           // Buggie function call
 
     auto scenes = createCanvases(I, Earth);
 
@@ -59,9 +59,7 @@ int main() {
             erase();
             auto slots = Earth.getSlots();
             auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
-            for (unsigned int i = 0; i < slots.size(); i++) {
-                auto slot = slots[i];
-                auto purch = purches[i];
+            for (auto [slot, purch]: ranges::views::zip(slots, purches)) {
                 purch->setName(Earth.viewItem(slot).fullName());
             }
             current->show();
