@@ -25,7 +25,8 @@ void Purchase::show() {
     }
 }
 
-Purchase::Purchase(int index) : Widget("Purchase"), HoverableWidget(index) {
+Purchase::Purchase(int index) : Widget(""), HoverableWidget(index) {
+
 }
 
 void Purchase::click(Event &event) {

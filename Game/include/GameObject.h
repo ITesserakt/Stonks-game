@@ -26,6 +26,7 @@ public:
     unsigned int timesSold = 0;
     std::shared_ptr<Gamer> lastSeller = {};
 
+    // This function returns name and all description of items
     [[nodiscard]] std::string fullName() const;
 
     friend std::ostream &operator<<(std::ostream &os, const GameObject &object);
