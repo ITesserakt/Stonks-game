@@ -1,5 +1,6 @@
 #include "widgets/Button.h"
 #include "utils.h"
+#include "Event.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -15,11 +16,15 @@ void Button::show() {
     }
 }
 
-void Button::click() {
+void Button::click(Event &event) {
     if (destiny == Quiter) {
         endwin();
         std::cout << "See you later" << std::endl;
         exit(0);
-    } else
-        return;
+    } else if (destiny == CanvasChanger && nextCanvasID != ID_NOT_SET) {
+        event.type = Event::changeScene;
+        // Shift on 1 is needed because user input 1 and we should go to the
+        // canvas with ID 0
+        event.changingScene.nextScene = nextCanvasID + 1;
+    }
 }

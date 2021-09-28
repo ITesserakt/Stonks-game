@@ -1,5 +1,7 @@
+#include <Event.h>
 #include "widgets/Purchase.h"
 #include "Canvas.h"
+#include "Event.h"
 
 UISize Purchase::getSize() {
     size.height = this->getCanvas()->getActiveWidget().get() == this ?
@@ -26,6 +28,6 @@ void Purchase::show() {
 Purchase::Purchase(int index) : Widget("Purchase"), HoverableWidget(index) {
 }
 
-void Purchase::click() {
+void Purchase::click(Event &event) {
 
 }

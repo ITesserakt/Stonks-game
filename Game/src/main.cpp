@@ -47,8 +47,8 @@ int main() {
                 current->changeActiveWidget(toTheBot);
                 break;
             case Event::key_enter:
-                current->getActiveWidget()->click();
-                break;
+                current->getActiveWidget()->click(game);
+                /*break; doesn't need here*/
             case Event::changeScene:
                 current = scenes[game.changingScene.nextScene - 1];
                 break;

@@ -6,7 +6,7 @@ class Purchase : public HoverableWidget {
 public:
     Purchase(int index);
 
-    void click() override;
+    void click(Event &event) override;
 
     UISize getSize() override;
 

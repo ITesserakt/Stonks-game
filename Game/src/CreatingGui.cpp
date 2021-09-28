@@ -3,10 +3,17 @@
 #include "widgets/Purchase.h"
 #include "widgets/Widget.h"
 
+int findCanvsID(std::vector<std::shared_ptr<Canvas>> list,
+                std::shared_ptr<Canvas> can) {
+    return std::distance(list.begin(),
+                         std::find(list.begin(), list.end(), can));
+}
+
 std::vector<std::shared_ptr<Canvas>> createCanvases(std::shared_ptr<Player> guy, const World& world) {
     std::vector<std::shared_ptr<Canvas>> res;
 
     auto MainMenu = std::make_shared<Canvas>("MainMenu", Centered);
+    res.push_back(MainMenu);
     auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
     auto butQ = std::make_shared<Button>("quit", Quiter, 2);
     MainMenu->bind(label1);
@@ -22,12 +29,13 @@ std::vector<std::shared_ptr<Canvas>> createCanvases(std::shared_ptr<Player> guy,
     MainMenu->bind(space);
 
     auto GameField = std::make_shared<Canvas>("GameField", Left);
+    res.push_back(GameField);
     auto label2 = std::make_shared<Label>("stocks", "Game field\n");
     GameField->bind(label2);
+    butPl->setNextCanID(findCanvsID(res, GameField));
     label2->turnOn(COLOR_YELLOW);
 
     // Purchase
-    // TODO fix bug with >1 purchase button show();
     auto purch1 = std::make_shared<Purchase>(0);
     GameField->bind(purch1);
     auto purch2 = std::make_shared<Purchase>(1);
@@ -50,11 +58,12 @@ std::vector<std::shared_ptr<Canvas>> createCanvases(std::shared_ptr<Player> guy,
     GameField->bind(purch10);
 
     auto Inventory = std::make_shared<Canvas>("Inventory", Left);
+    res.push_back(Inventory);
     auto label3 = std::make_shared<Label>("inventory", "Inventory\n");
     Inventory->bind(label3);
     label3->turnOn(COLOR_YELLOW);
 
-    return {MainMenu, GameField, Inventory};
+    return res;
 }
 
 void setupCurses() {

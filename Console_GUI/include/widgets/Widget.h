@@ -16,8 +16,9 @@ private:
 
     template<typename F>
     void dfs(F action) {
-        for (auto &v: visitMap | ranges::views::values)
+        for (auto &v: visitMap | ranges::views::values) {
             v = false;
+        }
         std::stack<Widget *> dfs;
         dfs.push(this);
         while (!dfs.empty()) {
@@ -47,6 +48,7 @@ public:
     Widget &operator=(const Widget &) = delete;
 
     Widget(Widget &&) = default;
+    virtual ~Widget() = default;
 
     Widget &operator=(Widget &&) = default;
 
