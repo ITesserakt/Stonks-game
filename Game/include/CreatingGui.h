@@ -1,7 +1,7 @@
 #pragma once
 
 #include "widgets/Button.h"
-#include "widgets/Purchase.h"
+#include "Purchase.h"
 #include "widgets/Label.h"
 #include "Player.h"
 #include "Canvas.h"

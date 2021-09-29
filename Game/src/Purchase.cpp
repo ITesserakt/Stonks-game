@@ -1,5 +1,5 @@
 #include <Event.h>
-#include "widgets/Purchase.h"
+#include "Purchase.h"
 #include "Canvas.h"
 #include "Event.h"
 
@@ -24,6 +24,10 @@ void Purchase::show() {
     }
     else {
         printw("%d. %s", tabIndex + 1, name.c_str());
+    }
+    if (isBlowing && cost != 0) {
+        move(position.y + 1, position.x);
+        printw("Cost: $%lf", cost);
     }
 }
 

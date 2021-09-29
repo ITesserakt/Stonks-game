@@ -7,6 +7,9 @@
 #include "EventHandler.h"
 #include <ncurses.h>
 #include <unistd.h>
+#include <random>
+#include <iostream>
+#include <sstream>
 
 int main() {
     setupCurses();
@@ -33,9 +36,15 @@ int main() {
             if (current == scenes[SceneNames::GameField].get()) {
                 auto slots = Earth.getSlots();
                 auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
+                for(const auto& purch : purches) {
+                    purch->setName("");
+                    purch->setItemId(-1);
+                    purch->setCost(0);
+                }
                 for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
                     purch->setItemId(slot);
                     purch->setName(Earth.viewItem(slot).fullName());
+                    purch->setCost(Earth.viewItem(slot).cost);
                 }
             }
             current->show();
@@ -43,9 +52,18 @@ int main() {
         }
     });
 
+    std::thread worldThread([&](){
+        std::random_device seed;
+        std::mt19937 randie(seed());
+        while (!gameRunning) {
+            usleep(1000000 + randie() % 9000000);
+            Earth.fillUp();
+        }
+    });
+
     handler.startLoop();
     curs_set(1);
     endwin();
     guiThread.join();
-    //worldThread.join();
+    worldThread.join();
 }

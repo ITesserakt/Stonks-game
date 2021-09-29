@@ -1,7 +1,8 @@
-#include <World.h>
+#include "World.h"
 #include "CreatingGui.h"
-#include "widgets/Purchase.h"
+#include "Purchase.h"
 #include "widgets/Widget.h"
+#include <iostream>
 
 int findCanvsID(std::vector<std::shared_ptr<Canvas>> list,
                 std::shared_ptr<Canvas> can) {
@@ -31,12 +32,14 @@ createCanvases(std::shared_ptr<Player> guy, World &world, Canvas* current) {
 
     // TODO make ChangeCanvaser it doesn't work
     // Possible variants: Create group of canvases and ...
-    auto butPl = std::make_shared<Button>("play", 0, [&](auto& x) {});
+    auto butPl = std::make_shared<Button>("play", 0, [&](Button& x) {
+    });
     MainMenu->bind(butPl);
     auto butSt = std::make_shared<Button>("settings", 1, [](auto& x) {});
     MainMenu->bind(butSt);
     auto butQ = std::make_shared<Button>("quit", 2, [&](auto &x) {
         endwin();
+        std::cout << "See you later ;)" << std::endl;
         exit(0);
     });
     MainMenu->bind(butQ);
@@ -44,9 +47,13 @@ createCanvases(std::shared_ptr<Player> guy, World &world, Canvas* current) {
 
     std::vector<std::shared_ptr<Purchase>> container;
     container.reserve(world.getSlots().size());
-    for (int i = 0; i < world.getSlots().size(); i++) {
+    for (unsigned long i = 0; i < world.getSlots().size(); i++) {
         container.emplace_back(new Purchase(i, [&](Purchase& x) {
+            if (x.getItemId() != (unsigned int)-1) {
                 guy->buyItem(world.takeItem(x.getItemId()));
+                x.setCost(0);
+                x.setName("");
+            }
             }));
         GameField->bind(container[i]);
     }

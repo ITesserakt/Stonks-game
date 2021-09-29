@@ -53,7 +53,7 @@ TEST(game_logic, objects_generating) {
     }]
 })"_json;
     auto f = ObjectFactory(json, 0);
-    ASSERT_EQ(f.generateNext(), (GameObject{"car", {"shiny", "dirty", "red"}, 0, 15750}));
+    ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000}));
     ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 1, 1000000}));
     ASSERT_EQ(f.generateNext(), (GameObject{"laba, tipovik", {}, 2, 1000000}));
 }
@@ -106,7 +106,7 @@ TEST(game_logic, profitness) {
 })"_json;
     auto f = ObjectFactory(json, 9);
     auto w = World(std::move(f));
-    std::vector<double> expected = {0, 0, 6.62666666, 0, -0.424999999};
+    std::vector<double> expected = {4.5499999, 2.0249999, 0, -0.548677, 0};
 
     for (int x: {0, 1, 2, 3, 4}) {
         auto next = w.factory.generateNext();

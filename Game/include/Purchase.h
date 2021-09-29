@@ -2,12 +2,15 @@
 
 #include <utility>
 
-#include "HoverableWidget.h"
+#include "widgets/HoverableWidget.h"
+#include "GameObject.h"
 
 class Purchase : public HoverableWidget {
 private:
     std::function<void(Purchase&)> todo;
-    unsigned int itemId;
+    GameObject::Id itemId;
+    GameObject::Cost cost;
+
 public:
     Purchase(int index, std::function<void(Purchase&)> f);
 
@@ -17,11 +20,10 @@ public:
 
     void setName(std::string newName) { name = std::move(newName); }
     void setItemId(unsigned int id) { itemId = id; }
+    void setCost(GameObject::Cost newCost) { cost = newCost; }
     unsigned int getItemId() { return itemId; }
 
-    operator std::shared_ptr<Purchase>() {
-        return std::make_shared<Purchase>(std::move(*this));
-    }
+
 
     void show() override;
 };

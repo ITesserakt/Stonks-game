@@ -27,6 +27,6 @@ void World::addGamer(std::shared_ptr<Gamer> &&gamer) {
 
 std::unique_ptr<GameObject> World::takeItem(GameObject::Id itemId) {
     auto result = ViewableContainer::takeItem(itemId);
-    availableSlots--;
+    availableSlots++;
     return result;
 }
