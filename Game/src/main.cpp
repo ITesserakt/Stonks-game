@@ -55,7 +55,7 @@ int main() {
     std::thread worldThread([&](){
         std::random_device seed;
         std::mt19937 randie(seed());
-        while (!gameRunning) {
+        while (gameRunning) {
             usleep(1000000 + randie() % 9000000);
             Earth.fillUp();
         }
