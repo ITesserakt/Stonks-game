@@ -23,7 +23,7 @@ int main() {
     Earth.fillUp();           // Buggie function call
 
     bool gameRunning = true;
-    Canvas* current;
+    Canvas *current;
     auto scenes = createCanvases(I, Earth, current);
     current = scenes[SceneNames::MainMenu].get();
 
@@ -36,7 +36,7 @@ int main() {
             if (current == scenes[SceneNames::GameField].get()) {
                 auto slots = Earth.getSlots();
                 auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
-                for(const auto& purch : purches) {
+                for (const auto &purch: purches) {
                     purch->setName("");
                     purch->setItemId(-1);
                     purch->setCost(0);
@@ -52,7 +52,7 @@ int main() {
         }
     });
 
-    std::thread worldThread([&](){
+    std::thread worldThread([&]() {
         std::random_device seed;
         std::mt19937 randie(seed());
         while (gameRunning) {
@@ -61,9 +61,20 @@ int main() {
         }
     });
 
+    std::thread aiThread([&]() {
+        std::random_device seed;
+        std::mt19937 randie(seed());
+        while (gameRunning) {
+            usleep(1000000 + randie() % 9000000);
+            if (Earth.getSlots().size() != 0)
+                Bot->buyItem(Earth.takeItem(Bot->predict()));
+        }
+    });
+
     handler.startLoop();
     curs_set(1);
     endwin();
     guiThread.join();
     worldThread.join();
+    aiThread.join();
 }
