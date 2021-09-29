@@ -24,10 +24,6 @@ public:
         return container | ranges::views::keys;
     }
 
-    auto viewAll() const {
-        return container | ranges::views::values | ranges::views::ref;
-    }
-
     // We get element that cannot be modified
     virtual const T& viewItem(ID itemID) const {
         auto it = container.find(itemID);

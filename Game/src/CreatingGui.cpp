@@ -48,7 +48,8 @@ createCanvases(std::shared_ptr<Player> guy, World &world, Canvas* current) {
     for (unsigned long i = 0; i < world.getSlots().size() + EXTRA_SLOTS; i++) {
         container.emplace_back(new Purchase(i, [&](HoverableWidget& x) {
             if (x.as<Purchase>()->getItemId() != (unsigned int)-1 &&
-                    guy->getBalance() >= world.viewItem(x.as<Purchase>()->getItemId()).cost) {
+                    guy->getBalance() >= world.viewItem(x.as<Purchase>()->getItemId()).cost &&
+                    guy->getAvailableSlotsAmount() != 0) {
                 guy->buyItem(world.takeItem(x.as<Purchase>()->getItemId()));
                 x.as<Purchase>()->setCost(0);
                 x.as<Purchase>()->setName("");
@@ -64,8 +65,8 @@ createCanvases(std::shared_ptr<Player> guy, World &world, Canvas* current) {
     label3->turnOn(COLOR_YELLOW);
 
     std::vector<std::shared_ptr<Sale>> sellContainer;
-    sellContainer.reserve(world.getSlots().size());
-    for (unsigned long i = 0; i < world.getSlots().size(); i++) {
+    sellContainer.reserve(guy->getInventorySize());
+    for (unsigned long i = 0; i < guy->getInventorySize(); i++) {
         sellContainer.emplace_back(new Sale(i, [&](HoverableWidget& x) {
             //guy->Gamer::sellItem(x.getTabIndex(), 100);
             //x.setName(guy->viewItem(x.getItemId()).fullName());
