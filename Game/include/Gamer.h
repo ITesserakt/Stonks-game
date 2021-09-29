@@ -14,4 +14,5 @@ public:
     virtual void buyItem(std::unique_ptr<GameObject> item);
     virtual std::unique_ptr<GameObject> sellItem(GameObject::Id itemId, GameObject::Cost newCost);
     std::unique_ptr<GameObject> sellItem(GameObject::Id itemId);
+    double getBalance() { return money; }
 };

@@ -13,15 +13,13 @@ enum ButtonSpec {
 
 class Button : public virtual HoverableWidget {
 private:
-    std::function<void(Button&)> todo;
     std::shared_ptr<Canvas> currCan;
 
 public:
-    Button(std::string name, int index, std::function<void(Button&)> f) :
+    Button(std::string name, int index, std::function<void(
+            HoverableWidget&)> f) :
         Widget(std::move(name)),
-        ColorWidget(name),
-        HoverableWidget(index),
-        todo(std::move(f)) {
+        ColorWidget(name), HoverableWidget(index, f) {
         isBlowing = false;
         size = {getWidth(name), getHeight(name)};
     }
@@ -29,6 +27,4 @@ public:
     void show() override;
 
     UISize getSize() override { return size; };
-
-    void click() override;
 };

@@ -5,7 +5,6 @@
 #include "Gamer.h"
 #include "ObjectFactory.h"
 #include "ViewableContainer.h"
-#include <range/v3/all.hpp>
 
 class World: public ViewableContainer<GameObject, GameObject::Id> {
     friend class game_logic_profitness_Test;
@@ -20,9 +19,6 @@ public:
 
     [[nodiscard]] double getProfitness(const GameObject::Id& itemId) const;
 
-    [[nodiscard]] auto getSlots() const {
-        return container | ranges::views::keys;
-    }
 
     void addGamer(std::shared_ptr<Gamer> &&gamer);
 

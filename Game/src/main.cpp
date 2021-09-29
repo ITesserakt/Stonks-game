@@ -47,6 +47,10 @@ int main() {
                     purch->setCost(Earth.viewItem(slot).cost);
                 }
             }
+            else if (current == scenes[SceneNames::Inventory].get()) {
+                auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
+                auto items = I->getSlots();
+            }
             current->show();
             refresh();
         }

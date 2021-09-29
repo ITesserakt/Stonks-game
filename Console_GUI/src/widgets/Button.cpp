@@ -16,7 +16,3 @@ void Button::show() {
 
     return Widget::show();
 }
-
-void Button::click() {
-    todo(*this);
-}
