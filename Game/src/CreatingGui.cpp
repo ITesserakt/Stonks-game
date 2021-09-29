@@ -1,71 +1,8 @@
-#include "World.h"
 #include "CreatingGui.h"
 #include "Purchase.h"
 #include "widgets/Widget.h"
 #include <iostream>
-
-int findCanvsID(std::vector<std::shared_ptr<Canvas>> list,
-                std::shared_ptr<Canvas> can) {
-    return std::distance(list.begin(),
-                         std::find(list.begin(), list.end(), can));
-}
-
-std::vector<std::shared_ptr<Canvas>>
-createCanvases(std::shared_ptr<Player> guy, World &world, Canvas* current) {
-    std::vector<std::shared_ptr<Canvas>> res;
-
-    auto MainMenu = std::make_shared<Canvas>("MainMenu", Centered);
-    res.push_back(MainMenu);
-    auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
-    label1->turnOn(COLOR_YELLOW);
-    MainMenu->bind(label1);
-
-    // Test buttons
-    //auto space = std::make_shared<Label>("space", "");
-    //MainMenu->bind(space);
-
-    auto GameField = std::make_shared<Canvas>("GameField", Left);
-    res.push_back(GameField);
-    auto label2 = std::make_shared<Label>("stocks", "Game field\n");
-    GameField->bind(label2);
-    label2->turnOn(COLOR_YELLOW);
-
-    // TODO make ChangeCanvaser it doesn't work
-    // Possible variants: Create group of canvases and ...
-    auto butPl = std::make_shared<Button>("play", 0, [&](Button& x) {
-    });
-    MainMenu->bind(butPl);
-    auto butSt = std::make_shared<Button>("settings", 1, [](auto& x) {});
-    MainMenu->bind(butSt);
-    auto butQ = std::make_shared<Button>("quit", 2, [&](auto &x) {
-        endwin();
-        std::cout << "See you later ;)" << std::endl;
-        exit(0);
-    });
-    MainMenu->bind(butQ);
-
-
-    std::vector<std::shared_ptr<Purchase>> container;
-    container.reserve(world.getSlots().size());
-    for (unsigned long i = 0; i < world.getSlots().size(); i++) {
-        container.emplace_back(new Purchase(i, [&](Purchase& x) {
-            if (x.getItemId() != (unsigned int)-1) {
-                guy->buyItem(world.takeItem(x.getItemId()));
-                x.setCost(0);
-                x.setName("");
-            }
-            }));
-        GameField->bind(container[i]);
-    }
-
-    auto Inventory = std::make_shared<Canvas>("Inventory", Left);
-    res.push_back(Inventory);
-    auto label3 = std::make_shared<Label>("inventory", "Inventory\n");
-    Inventory->bind(label3);
-    label3->turnOn(COLOR_YELLOW);
-
-    return res;
-}
+#include "WorldState.h"
 
 void setupCurses() {
     initscr();
@@ -81,4 +18,54 @@ void checkWindowSize() {
         throw std::runtime_error("Your terminal should be bigger or equal "
                                  "to 80x24 size\n");
     }
+}
+
+void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField) {
+    auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
+    label1->turnOn(COLOR_YELLOW);
+    auto butPl =
+            std::make_shared<Button>("play", 0, state,
+                                     [&](WorldState &state, Button &x) {
+                                         state.changeCurrentScene(gameField);
+                                     });
+    auto butSt =
+            std::make_shared<Button>("settings", 1, state,
+                                     [](auto &_, auto &x) {});
+    auto butQ =
+            std::make_shared<Button>("quit", 2, state,
+                                     [&](WorldState &s, auto &x) {
+                                         std::cout << "See you later ;)"
+                                                   << std::endl;
+                                         clear();
+                                         endwin();
+                                         exit(0);
+                                     });
+    mainMenu.bind(label1);
+    mainMenu.bind(butPl);
+    mainMenu.bind(butSt);
+    mainMenu.bind(butQ);
+}
+
+void setupGameField(WorldState &state, Canvas &gameField) {
+    auto label2 = std::make_shared<Label>("stocks", "Game field\n");
+    label2->turnOn(COLOR_YELLOW);
+    gameField.bind(label2);
+
+    std::vector<std::shared_ptr<Purchase>> container;
+    for (unsigned long i = 0; i < state.getWorld().getSlots().size(); i++) {
+        container.emplace_back(new Purchase(i, state, [&](WorldState& s, Purchase& x) {
+            if (x.getItemId() != (unsigned int)-1) {
+                s.getPlayer().buyItem(s.getWorld().takeItem(x.getItemId()));
+                x.setCost(0);
+                x.setName("");
+            }
+        }));
+        gameField.bind(container[i]);
+    }
+}
+
+void setupInventory(Canvas &inventory) {
+    auto label3 = std::make_shared<Label>("inventory", "Inventory\n");
+    inventory.bind(label3);
+    label3->turnOn(COLOR_YELLOW);
 }

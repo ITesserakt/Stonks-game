@@ -95,4 +95,8 @@ public:
     std::shared_ptr<Canvas> getCanvas() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Widget &widget);
+
+    bool operator==(const Widget &rhs) const;
+
+    bool operator!=(const Widget &rhs) const;
 };

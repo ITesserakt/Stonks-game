@@ -31,12 +31,12 @@ void Purchase::show() {
     }
 }
 
-Purchase::Purchase(int index, std::function<void(Purchase&)> f) :
+Purchase::Purchase(int index, WorldState& state, std::function<void(WorldState& s, Purchase&)> f) :
     Widget(""),
     ColorWidget(""),
-    HoverableWidget(index),
+    HoverableWidget(index, state),
     todo(std::move(f)) {}
 
 void Purchase::click() {
-    todo(*this);
+    todo(state, *this);
 }

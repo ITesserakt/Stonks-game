@@ -3,8 +3,11 @@
 #include "PositionedWidget.h"
 #include "ColorWidget.h"
 
+class WorldState;
+
 class HoverableWidget : public virtual PositionedWidget, public virtual ColorWidget {
 protected:
+    WorldState& state;
     int tabIndex;
 public:
     // We are on button
@@ -28,7 +31,8 @@ public:
 
     int getTabIndex() const { return tabIndex; }
 
-    explicit HoverableWidget(int index): tabIndex(index) {}
+    explicit HoverableWidget(int index, WorldState &state)
+            : state(state), tabIndex(index) {}
 };
 
 // EventSequence => Frontend

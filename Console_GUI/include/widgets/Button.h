@@ -7,20 +7,16 @@
 #include <utility>
 #include "ColorWidget.h"
 
-enum ButtonSpec {
-    CanvasChanger, Quiter
-};
-
 class Button : public virtual HoverableWidget {
 private:
-    std::function<void(Button&)> todo;
+    std::function<void(WorldState&, Button&)> todo;
     std::shared_ptr<Canvas> currCan;
 
 public:
-    Button(std::string name, int index, std::function<void(Button&)> f) :
+    Button(std::string name, int index, WorldState& state, std::function<void(WorldState&, Button&)> f) :
         Widget(std::move(name)),
         ColorWidget(name),
-        HoverableWidget(index),
+        HoverableWidget(index, state),
         todo(std::move(f)) {
         isBlowing = false;
         size = {getWidth(name), getHeight(name)};

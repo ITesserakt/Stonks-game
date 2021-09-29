@@ -18,5 +18,5 @@ void Button::show() {
 }
 
 void Button::click() {
-    todo(*this);
+    todo(state, *this);
 }

@@ -12,10 +12,12 @@ enum SceneNames {
     MainMenu = 0, GameField, Inventory
 };
 
-std::vector<std::shared_ptr<Canvas>> createCanvases(std::shared_ptr<Player> guy,
-                                                    World &world,
-                                                    Canvas *current);
-
 void setupCurses();
 
 void checkWindowSize();
+
+void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField);
+
+void setupGameField(WorldState& state, Canvas& gameField);
+
+void setupInventory(Canvas& inventory);

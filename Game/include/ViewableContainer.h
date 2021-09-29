@@ -10,6 +10,10 @@ protected:
     std::map<ID, std::unique_ptr<T>> container;
 
 public:
+    ViewableContainer(const ViewableContainer&) = delete;
+    ViewableContainer& operator=(const ViewableContainer&) = delete;
+    ViewableContainer() = default;
+
     virtual std::unique_ptr<T> takeItem(ID itemId) {
         auto it = container.find(itemId);
         if (it == container.end() || it->second == nullptr)
