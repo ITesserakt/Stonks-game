@@ -5,7 +5,7 @@
 
 class Sale : public HoverableWidget {
 public:
-    Sale(int index, std::function<void(HoverableWidget&)> f);
+    Sale(int index, WorldState& s, std::function<void(WorldState&, HoverableWidget&)> f);
 
     UISize getSize() override;
     void show() override;

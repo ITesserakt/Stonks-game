@@ -10,10 +10,14 @@
 class Button : public virtual HoverableWidget {
 private:
 public:
-    Button(std::string name, int index, WorldState& state, std::function<void(WorldState&, Button&)> f) :
-        Widget(std::move(name)),
-        ColorWidget(name),
-        HoverableWidget(index, state, std::move(f)) {
+    Button(std::string name, int index, WorldState &state,
+           std::function<void(WorldState &, Button &)> f) :
+            Widget(std::move(name)),
+            ColorWidget(name),
+            HoverableWidget(index, state,
+                            [f](WorldState &s, HoverableWidget &w) {
+                                f(s, *w.as<Button>());
+                            }) {
         isBlowing = false;
         size = {getWidth(name), getHeight(name)};
     }

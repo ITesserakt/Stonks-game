@@ -74,7 +74,7 @@ void setupInventory(WorldState& state, Canvas &inventory) {
     std::vector<std::shared_ptr<Sale>> sellContainer;
     sellContainer.reserve(state.getWorld().getSlots().size());
     for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
-        sellContainer.emplace_back(new Sale(i, [&](WorldState& s, HoverableWidget& x) {
+        sellContainer.emplace_back(new Sale(i, state, [&](WorldState& s, HoverableWidget& x) {
             //guy->Gamer::sellItem(x.getTabIndex(), 100);
             //x.setName(guy->viewItem(x.getItemId()).fullName());
             x.setName("");

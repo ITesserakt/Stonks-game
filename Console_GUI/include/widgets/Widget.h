@@ -66,6 +66,8 @@ public:
 
     template<typename T>
     std::shared_ptr<T> as() {
+        if (!is<T>())
+            throw std::runtime_error("Bad cast");
         return std::dynamic_pointer_cast<T>(shared_from_this());
     }
 

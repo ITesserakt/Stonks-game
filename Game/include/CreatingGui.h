@@ -21,4 +21,4 @@ void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField);
 
 void setupGameField(WorldState& state, Canvas& gameField);
 
-void setupInventory(Canvas& inventory);
+void setupInventory(WorldState& state, Canvas& inventory);
