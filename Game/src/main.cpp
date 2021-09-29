@@ -17,8 +17,7 @@ int main() {
     auto mainMenu = std::make_shared<Canvas>("MainMenu", Centered);
     auto gameField = std::make_shared<Canvas>("GameField", Left);
     auto inventory = std::make_shared<Canvas>("Inventory", Left);
-    std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField,
-                                                   inventory};
+    std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory};
     WorldState state(*scenes[SceneNames::MainMenu], 1);
 
     setupMainMenu(state, *mainMenu, *gameField);
@@ -44,8 +43,7 @@ int main() {
                     purch->setName(state.getWorld().viewItem(slot).fullName());
                     purch->setCost(state.getWorld().viewItem(slot).cost);
                 }
-            }
-            else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
+            } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = state.getPlayer().getSlots();
             }
@@ -58,7 +56,7 @@ int main() {
         std::random_device seed;
         std::mt19937 randie(seed());
         while (state.running()) {
-            usleep(1000000 + randie() % 9000000);
+            usleep(1000000 + randie() % 99000000);
             state.getWorld().fillUp();
         }
     }).detach();
@@ -70,8 +68,7 @@ int main() {
             usleep(1000000 + randie() % 9000000);
             auto &randomBot = state.getRandomBot();
             if (state.getWorld().getSlots().size() != 0)
-                randomBot.buyItem(
-                        state.getWorld().takeItem(randomBot.predict()));
+                randomBot.buyItem(state.getWorld().takeItem(randomBot.predict()));
         }
     }).detach();
 

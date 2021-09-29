@@ -17,31 +17,23 @@ void setupCurses() {
 void checkWindowSize() {
     if (getmaxx(stdscr) < 80 || getmaxy(stdscr) < 24) {
         endwin();
-        throw std::runtime_error("Your terminal should be bigger or equal "
-                                 "to 80x24 size\n");
+        throw std::runtime_error("Your terminal should be bigger or equal to 80x24 size\n");
     }
 }
 
 void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField) {
     auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
     label1->turnOn(COLOR_YELLOW);
-    auto butPl =
-            std::make_shared<Button>("play", 0, state,
-                                     [&](WorldState &state, Button &x) {
-                                         state.changeCurrentScene(gameField);
-                                     });
-    auto butSt =
-            std::make_shared<Button>("settings", 1, state,
-                                     [](auto &_, auto &x) {});
-    auto butQ =
-            std::make_shared<Button>("quit", 2, state,
-                                     [&](WorldState &s, auto &x) {
-                                         std::cout << "See you later ;)"
-                                                   << std::endl;
-                                         clear();
-                                         endwin();
-                                         exit(0);
-                                     });
+    auto butPl = std::make_shared<Button>("play", 0, state, [&](WorldState &state, Button &x) {
+        state.changeCurrentScene(gameField);
+    });
+    auto butSt = std::make_shared<Button>("settings", 1, state, [](auto &_, auto &x) {});
+    auto butQ = std::make_shared<Button>("quit", 2, state, [&](WorldState &s, auto &x) {
+        std::cout << "See you later ;)" << std::endl;
+        clear();
+        endwin();
+        exit(0);
+    });
     mainMenu.bind(label1);
     mainMenu.bind(butPl);
     mainMenu.bind(butSt);
@@ -55,8 +47,8 @@ void setupGameField(WorldState &state, Canvas &gameField) {
 
     std::vector<std::shared_ptr<Purchase>> container;
     for (unsigned long i = 0; i < state.getWorld().getSlots().size(); i++) {
-        container.emplace_back(new Purchase(i, state, [&](WorldState& s, Purchase& x) {
-            if (x.getItemId() != (unsigned int)-1) {
+        container.emplace_back(new Purchase(i, state, [&](WorldState &s, Purchase &x) {
+            if (x.getItemId() != (unsigned int) -1) {
                 s.getPlayer().buyItem(s.getWorld().takeItem(x.getItemId()));
                 x.setCost(0);
                 x.setName("");
@@ -66,7 +58,7 @@ void setupGameField(WorldState &state, Canvas &gameField) {
     }
 }
 
-void setupInventory(WorldState& state, Canvas &inventory) {
+void setupInventory(WorldState &state, Canvas &inventory) {
     auto label3 = std::make_shared<Label>("inventory", "Inventory\n");
     inventory.bind(label3);
     label3->turnOn(COLOR_YELLOW);
@@ -74,7 +66,7 @@ void setupInventory(WorldState& state, Canvas &inventory) {
     std::vector<std::shared_ptr<Sale>> sellContainer;
     sellContainer.reserve(state.getWorld().getSlots().size());
     for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
-        sellContainer.emplace_back(new Sale(i, state, [&](WorldState& s, HoverableWidget& x) {
+        sellContainer.emplace_back(new Sale(i, state, [&](WorldState &s, HoverableWidget &x) {
             //guy->Gamer::sellItem(x.getTabIndex(), 100);
             //x.setName(guy->viewItem(x.getItemId()).fullName());
             x.setName("");
