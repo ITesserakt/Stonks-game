@@ -6,7 +6,7 @@
 #include "widgets/HoverableWidget.h"
 
 enum Direction {
-    toTheTop = -1, toTheBot = 1
+    UP = -1, DOWN = 1
 };
 
 // It places all widgets on right place
@@ -20,9 +20,6 @@ public:
             : Widget(std::move(name)), align(al) {}
 
     void show() override;
-
-    // Makes first hoverable children onHoverStart()
-    void firstOnHover();
 
     void changeActiveWidget(Direction direct);
     auto getActiveWidget() const { return activeWidget; }

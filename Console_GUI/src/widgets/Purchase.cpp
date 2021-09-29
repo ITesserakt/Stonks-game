@@ -3,6 +3,8 @@
 #include "Canvas.h"
 #include "Event.h"
 
+#include <utility>
+
 UISize Purchase::getSize() {
     size.height = this->getCanvas()->getActiveWidget().get() == this ?
             getHeight(name) + 2 : getHeight(name);
@@ -25,10 +27,12 @@ void Purchase::show() {
     }
 }
 
-Purchase::Purchase(int index) : Widget(""), HoverableWidget(index) {
+Purchase::Purchase(int index, std::function<void(Purchase&)> f) :
+    Widget(""),
+    ColorWidget(""),
+    HoverableWidget(index),
+    todo(std::move(f)) {}
 
-}
-
-void Purchase::click(Event &event) {
-
+void Purchase::click() {
+    todo(*this);
 }

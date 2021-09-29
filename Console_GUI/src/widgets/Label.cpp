@@ -1,6 +1,8 @@
 #include "widgets/Label.h"
 
-Label::Label(std::string name, const std::string& text) : Widget(name), text(text) {
+Label::Label(std::string name, const std::string &text) : Widget(name),
+                                                          ColorWidget(name),
+                                                          text(text) {
     size.width = getWidth(text);
     size.height = getHeight(text);
 }
@@ -13,4 +15,6 @@ void Label::show() {
     if (isBlowing) { attron(COLOR_PAIR(widgetId)); }
     printw("%s\n", text.c_str());
     if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
+
+    Widget::show();
 }

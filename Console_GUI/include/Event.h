@@ -1,21 +1,26 @@
 #pragma once
 
-class Event{
+struct Event{
 public:
     Event() {}
     ~Event() {}
 
     enum Type {
-        key_up, key_down, key_enter, changeScene, noEvent
-    } type;
+        KEY_ENTERED, SCENE_CHANGED, NO_EVENT
+    };
 
     struct SceneChanged {
-        SceneChanged() = default;
         int nextScene;
     };
 
+    struct KeyEntered {
+        int key;
+    };
+
+    Type type;
     union {
-        SceneChanged changingScene;
+        SceneChanged sceneChanged;
+        KeyEntered keyEntered;
     };
 };
 

@@ -2,7 +2,6 @@
 #include "utils.h"
 #include "Event.h"
 #include <cstdlib>
-#include <iostream>
 
 void Button::show() {
     if (isHidden) return;
@@ -14,17 +13,10 @@ void Button::show() {
         printw("[ %s ]", name.c_str());
         if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
     }
+
+    return Widget::show();
 }
 
-void Button::click(Event &event) {
-    if (destiny == Quiter) {
-        endwin();
-        std::cout << "See you later" << std::endl;
-        exit(0);
-    } else if (destiny == CanvasChanger && nextCanvasID != ID_NOT_SET) {
-        event.type = Event::changeScene;
-        // Shift on 1 is needed because user input 1 and we should go to the
-        // canvas with ID 0
-        event.changingScene.nextScene = nextCanvasID + 1;
-    }
+void Button::click() {
+    todo(*this);
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Event.h"
 #include "PositionedWidget.h"
 #include "ColorWidget.h"
 
@@ -25,7 +24,7 @@ public:
     }
 
     // We pushed enter on button and started click
-    virtual void click(Event &event) = 0;
+    virtual void click() = 0;
 
     int getTabIndex() const { return tabIndex; }
 

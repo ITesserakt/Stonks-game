@@ -11,9 +11,12 @@ public:
         position.y = y;
     }
 
-    UIPoint getPosition() { return position; }
-
-    virtual void hide(bool hide) { this->isHidden = hide; }
+    virtual void hide(bool hide) {
+        this->isHidden = hide;
+        for (auto child: getChildrenWithType<PositionedWidget>()) {
+            child->hide(isHidden);
+        }
+    }
 
 protected:
     bool isHidden;

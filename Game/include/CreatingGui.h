@@ -11,7 +11,7 @@
 enum SceneNames { MainMenu = 0, GameField, Inventory};
 
 std::vector<std::shared_ptr<Canvas>> createCanvases(std::shared_ptr<Player> guy,
-                                                    const World & world);
+                                                    World& world);
 
 void setupCurses();
 

@@ -25,13 +25,7 @@ public:
     void show() override {
         if (isHidden) return;
 
-        ranges::for_each(children, &Widget::show);
-    }
-
-    void hide(bool isHidden) override {
-        for (auto child: getChildrenWithType<PositionedWidget>()) {
-            child->hide(isHidden);
-        }
+        Widget::show();
     }
 
     explicit Group(std::string name) : Widget(std::move(name)) {}

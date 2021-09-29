@@ -54,7 +54,10 @@ public:
 
     explicit Widget(std::string name);
 
-    virtual void show() = 0;
+    virtual void show() {
+        for (auto child: children)
+            child->show();
+    }
 
     virtual void bind(std::shared_ptr<Widget> widget);
 

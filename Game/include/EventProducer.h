@@ -2,8 +2,8 @@
 
 #include "Event.h"
 
-class EventConductor {
-    int lastScene = -1;
+class EventProducer {
+    int lastScene = 0;
 public:
     bool waitEvent(Event& event);
 };

@@ -41,18 +41,13 @@ void Canvas::show() {
 void Canvas::changeActiveWidget(Direction direct) {
     if (activeWidget == nullptr)
         return;
-    activeWidget->onHoverEnd();
     for (auto x: getChildrenRecursively<HoverableWidget>())
         if (x->getTabIndex() == activeWidget->getTabIndex() + direct) {
+            activeWidget->onHoverEnd();
             activeWidget = x;
             break;
         }
     activeWidget->onHoverStart();
-}
-
-void Canvas::firstOnHover() {
-    if (activeWidget != nullptr)
-        activeWidget->onHoverStart();
 }
 
 void Canvas::bind(std::shared_ptr<Widget> widget) {

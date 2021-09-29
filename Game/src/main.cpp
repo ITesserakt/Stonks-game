@@ -1,16 +1,15 @@
 #include "thread"
-#include "EventConductor.h"
 #include "CreatingGui.h"
 #include "Canvas.h"
 #include "World.h"
 #include "Player.h"
 #include "AI.h"
+#include "EventHandler.h"
 #include <ncurses.h>
 #include <unistd.h>
 
 int main() {
     setupCurses();
-
     checkWindowSize();
 
     auto Earth = World(ObjectFactory::fromFile("../share/objects.json"));
@@ -20,49 +19,41 @@ int main() {
     Earth.addGamer(Bot);
     Earth.fillUp();           // Buggie function call
 
-    auto scenes = createCanvases(I, Earth);
-
-    auto current = scenes[0];
-    current->firstOnHover();
-
     bool gameRunning = true;
-    EventConductor director;
-    Event game;
+    auto scenes = createCanvases(I, Earth);
+    auto current = scenes[SceneNames::MainMenu].get();
+    auto butPl = std::make_shared<Button>("play", 0, [&](auto& x) {
+        current = scenes[SceneNames::GameField].get();
+    });
+    auto butQ = std::make_shared<Button>("quit", 2, [&](auto &x) {
+        gameRunning = false;
+        endwin();
+        exit(0);
+    });
+    auto butSt = std::make_shared<Button>("settings", 1, [](auto& x) {});
+    scenes[SceneNames::MainMenu]->bind(butPl);
+    scenes[SceneNames::MainMenu]->bind(butSt);
+    scenes[SceneNames::MainMenu]->bind(butQ);
+    auto handler = EventHandler(scenes, current);
 
     std::thread guiThread([&]() {
         while (gameRunning) {
             usleep(16666);
-            erase();
-            auto slots = Earth.getSlots();
-            auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
-            for (auto [slot, purch]: ranges::views::zip(slots, purches)) {
-                purch->setName(Earth.viewItem(slot).fullName());
+            clear();
+            if (current == scenes[SceneNames::GameField].get()) {
+                auto slots = Earth.getSlots();
+                auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
+                for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
+                    purch->setItemId(slot);
+                    purch->setName(Earth.viewItem(slot).fullName());
+                }
             }
             current->show();
             refresh();
         }
     });
 
-    while (director.waitEvent(game)) {
-        switch (game.type) {
-            case Event::key_up:
-                current->changeActiveWidget(toTheTop);
-                break;
-            case Event::key_down:
-                current->changeActiveWidget(toTheBot);
-                break;
-            case Event::key_enter:
-                current->getActiveWidget()->click(game);
-                /*break; doesn't need here*/
-            case Event::changeScene:
-                current = scenes[game.changingScene.nextScene - 1];
-                break;
-            case Event::noEvent:
-                break;
-        }
-        game = Event();
-    }
-
+    handler.startLoop();
     curs_set(1);
     endwin();
     guiThread.join();

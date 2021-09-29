@@ -2,17 +2,27 @@
 
 #include "Widget.h"
 
-class ColorWidget: public virtual Widget {
+class ColorWidget : public virtual Widget {
 protected:
-    bool isBlowing;
-    int col;        // COLor of Button
+    bool isBlowing = false;
+    int col = COLOR_WHITE;        // COLor of Button
 public:
+    explicit ColorWidget(const std::string &name) : Widget(name) {}
+
     // light a button
-    virtual void turnOn(int color) {
+    void turnOn(int color) {
         col = color;
         isBlowing = true;
+
+        for (auto child: getChildrenWithType<ColorWidget>())
+            child->turnOn(color);
     };
 
     // put out the light
-    virtual void turnOff() { isBlowing = false; };
+    void turnOff() {
+        isBlowing = false;
+
+        for (auto child: getChildrenWithType<ColorWidget>())
+            child->turnOff();
+    };
 };

@@ -30,7 +30,8 @@ bool GameObject::operator!=(const GameObject &rhs) const {
 
 std::string GameObject::fullName() const {
     std::stringstream ss;
-    ss << name << " " << (description | ranges::views::join(" "s) |
-                          ranges::to<std::string>());
+    for (const auto& d: description)
+        ss << d << " ";
+    ss << name;
     return ss.str();
 }

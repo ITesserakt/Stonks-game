@@ -15,20 +15,21 @@ enum ButtonSpec {
 
 class Button : public virtual HoverableWidget {
 private:
-    ButtonSpec destiny;
+    std::function<void(Button&)> todo;
     int nextCanvasID;
 
 public:
-    Button(std::string name, ButtonSpec forWhat, int index) : Widget(
-            std::move(name)), HoverableWidget(index), destiny(forWhat),
-            nextCanvasID(ID_NOT_SET) {
+    Button(std::string name, int index, std::function<void(Button&)> f) :
+        Widget(std::move(name)),
+        ColorWidget(name),
+        HoverableWidget(index),
+        todo(std::move(f)),
+        nextCanvasID(ID_NOT_SET) {
         isBlowing = false;
         size = {getWidth(name), getHeight(name)};
     }
 
     void setNextCanID(int ID) {
-        if (destiny != CanvasChanger)
-            throw std::runtime_error("Wrong destiny of Button\n");
         nextCanvasID = ID;
     }
 
@@ -36,5 +37,5 @@ public:
 
     UISize getSize() override { return size; };
 
-    void click(Event &event) override;
+    void click() override;
 };
