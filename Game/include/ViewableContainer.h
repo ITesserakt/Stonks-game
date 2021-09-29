@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include <exception>
+#include <range/v3/all.hpp>
 
 template<typename T, typename ID>
 class ViewableContainer {
@@ -21,6 +22,14 @@ public:
         auto result = std::move(it->second);
         container.erase(it);
         return result;
+    }
+
+    [[nodiscard]] auto getSlots() const {
+        return container | ranges::views::keys;
+    }
+
+    auto viewAll() const {
+        return container | ranges::views::values | ranges::views::ref;
     }
 
     // We get element that cannot be modified

@@ -34,9 +34,4 @@ void Purchase::show() {
 Purchase::Purchase(int index, WorldState& state, std::function<void(WorldState& s, Purchase&)> f) :
     Widget(""),
     ColorWidget(""),
-    HoverableWidget(index, state),
-    todo(std::move(f)) {}
-
-void Purchase::click() {
-    todo(state, *this);
-}
+    HoverableWidget(index, state, std::move(f)) {}

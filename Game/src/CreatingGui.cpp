@@ -4,6 +4,8 @@
 #include <iostream>
 #include "WorldState.h"
 
+constexpr auto EXTRA_SLOTS = 2;
+
 void setupCurses() {
     initscr();
     start_color();
@@ -64,8 +66,19 @@ void setupGameField(WorldState &state, Canvas &gameField) {
     }
 }
 
-void setupInventory(Canvas &inventory) {
+void setupInventory(WorldState& state, Canvas &inventory) {
     auto label3 = std::make_shared<Label>("inventory", "Inventory\n");
     inventory.bind(label3);
     label3->turnOn(COLOR_YELLOW);
+
+    std::vector<std::shared_ptr<Sale>> sellContainer;
+    sellContainer.reserve(state.getWorld().getSlots().size());
+    for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
+        sellContainer.emplace_back(new Sale(i, [&](WorldState& s, HoverableWidget& x) {
+            //guy->Gamer::sellItem(x.getTabIndex(), 100);
+            //x.setName(guy->viewItem(x.getItemId()).fullName());
+            x.setName("");
+        }));
+        inventory.bind(sellContainer[i]);
+    }
 }

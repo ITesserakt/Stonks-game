@@ -1,9 +1,7 @@
 #include "thread"
 #include "CreatingGui.h"
 #include "Canvas.h"
-#include "World.h"
 #include "Player.h"
-#include "AI.h"
 #include "EventHandler.h"
 #include "WorldState.h"
 #include <ncurses.h>
@@ -25,7 +23,7 @@ int main() {
 
     setupMainMenu(state, *mainMenu, *gameField);
     setupGameField(state, *gameField);
-    setupInventory(*inventory);
+    setupInventory(state, *inventory);
 
     auto handler = EventHandler(scenes, state);
 
@@ -46,6 +44,10 @@ int main() {
                     purch->setName(state.getWorld().viewItem(slot).fullName());
                     purch->setCost(state.getWorld().viewItem(slot).cost);
                 }
+            }
+            else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
+                auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
+                auto items = state.getPlayer().getSlots();
             }
             state.getCurrentScene().show();
             refresh();

@@ -1,6 +1,5 @@
 #include "widgets/Button.h"
 #include "utils.h"
-#include "Event.h"
 #include <cstdlib>
 
 void Button::show() {
@@ -15,8 +14,4 @@ void Button::show() {
     }
 
     return Widget::show();
-}
-
-void Button::click() {
-    todo(state, *this);
 }

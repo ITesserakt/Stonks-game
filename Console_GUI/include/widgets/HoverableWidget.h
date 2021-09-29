@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "PositionedWidget.h"
 #include "ColorWidget.h"
 
@@ -8,7 +10,9 @@ class WorldState;
 class HoverableWidget : public virtual PositionedWidget, public virtual ColorWidget {
 protected:
     WorldState& state;
+    std::function<void(WorldState&, HoverableWidget&)> todo;
     int tabIndex;
+
 public:
     // We are on button
     void onHoverStart(){
@@ -26,14 +30,14 @@ public:
             x->turnOff();
     }
 
-    // We pushed enter on button and started click
-    virtual void click() = 0;
+    void click() {
+        todo(state, *this);
+    }
+
+    void setName(std::string newName) { name = std::move(newName); }
 
     int getTabIndex() const { return tabIndex; }
 
-    explicit HoverableWidget(int index, WorldState &state)
-            : state(state), tabIndex(index) {}
+    explicit HoverableWidget(int index, WorldState &state, std::function<void(WorldState&, HoverableWidget&)> f)
+            : state(state), todo(std::move(f)), tabIndex(index) {}
 };
-
-// EventSequence => Frontend
-// GuiEvent => change color <== widget, color, action == widget.powerOn(Color)
