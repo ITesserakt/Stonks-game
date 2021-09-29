@@ -50,6 +50,9 @@ int main() {
             else if (current == scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = I->getSlots();
+                for (auto[item, sale]: ranges::views::zip(items, sales)) {
+                    sale->setName(I->viewItem(item).fullName());
+                }
             }
             current->show();
             refresh();

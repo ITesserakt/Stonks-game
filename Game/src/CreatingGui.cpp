@@ -65,7 +65,7 @@ createCanvases(std::shared_ptr<Player> guy, World &world, Canvas* current) {
 
     std::vector<std::shared_ptr<Sale>> sellContainer;
     sellContainer.reserve(world.getSlots().size());
-    for (unsigned long i = 0; i < world.getSlots().size() + EXTRA_SLOTS; i++) {
+    for (unsigned long i = 0; i < world.getSlots().size(); i++) {
         sellContainer.emplace_back(new Sale(i, [&](HoverableWidget& x) {
             //guy->Gamer::sellItem(x.getTabIndex(), 100);
             //x.setName(guy->viewItem(x.getItemId()).fullName());
