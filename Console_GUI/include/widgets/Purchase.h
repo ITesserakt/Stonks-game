@@ -19,5 +19,9 @@ public:
     void setItemId(unsigned int id) { itemId = id; }
     unsigned int getItemId() { return itemId; }
 
+    operator std::shared_ptr<Purchase>() {
+        return std::make_shared<Purchase>(std::move(*this));
+    }
+
     void show() override;
 };

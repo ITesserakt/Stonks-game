@@ -19,7 +19,7 @@ public:
     }
 
 protected:
-    bool isHidden;
+    bool isHidden = false;
     UIPoint position;
     Align align;
     UISize size;

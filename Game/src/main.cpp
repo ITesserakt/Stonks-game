@@ -20,20 +20,10 @@ int main() {
     Earth.fillUp();           // Buggie function call
 
     bool gameRunning = true;
-    auto scenes = createCanvases(I, Earth);
-    auto current = scenes[SceneNames::MainMenu].get();
-    auto butPl = std::make_shared<Button>("play", 0, [&](auto& x) {
-        current = scenes[SceneNames::GameField].get();
-    });
-    auto butQ = std::make_shared<Button>("quit", 2, [&](auto &x) {
-        gameRunning = false;
-        endwin();
-        exit(0);
-    });
-    auto butSt = std::make_shared<Button>("settings", 1, [](auto& x) {});
-    scenes[SceneNames::MainMenu]->bind(butPl);
-    scenes[SceneNames::MainMenu]->bind(butSt);
-    scenes[SceneNames::MainMenu]->bind(butQ);
+    Canvas* current;
+    auto scenes = createCanvases(I, Earth, current);
+    current = scenes[SceneNames::MainMenu].get();
+
     auto handler = EventHandler(scenes, current);
 
     std::thread guiThread([&]() {

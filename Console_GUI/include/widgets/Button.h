@@ -7,8 +7,6 @@
 #include <utility>
 #include "ColorWidget.h"
 
-#define ID_NOT_SET -10
-
 enum ButtonSpec {
     CanvasChanger, Quiter
 };
@@ -16,21 +14,16 @@ enum ButtonSpec {
 class Button : public virtual HoverableWidget {
 private:
     std::function<void(Button&)> todo;
-    int nextCanvasID;
+    std::shared_ptr<Canvas> currCan;
 
 public:
     Button(std::string name, int index, std::function<void(Button&)> f) :
         Widget(std::move(name)),
         ColorWidget(name),
         HoverableWidget(index),
-        todo(std::move(f)),
-        nextCanvasID(ID_NOT_SET) {
+        todo(std::move(f)) {
         isBlowing = false;
         size = {getWidth(name), getHeight(name)};
-    }
-
-    void setNextCanID(int ID) {
-        nextCanvasID = ID;
     }
 
     void show() override;

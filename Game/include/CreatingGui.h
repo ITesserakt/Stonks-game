@@ -8,10 +8,13 @@
 #include "World.h"
 
 #define AMOUNT_OF_MENUS 3
-enum SceneNames { MainMenu = 0, GameField, Inventory};
+enum SceneNames {
+    MainMenu = 0, GameField, Inventory
+};
 
 std::vector<std::shared_ptr<Canvas>> createCanvases(std::shared_ptr<Player> guy,
-                                                    World& world);
+                                                    World &world,
+                                                    Canvas *current);
 
 void setupCurses();
 
