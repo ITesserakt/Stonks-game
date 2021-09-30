@@ -12,7 +12,7 @@ private:
 public:
     Label(std::string name, const std::string& text);
     void show() override;
-    void updateText(std::string next) { text = std::move(next); }
+    void changeText(std::string next) { text = std::move(next); }
 
     UISize getSize() override { return size; }
 };

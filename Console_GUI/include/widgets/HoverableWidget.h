@@ -14,6 +14,9 @@ protected:
     int tabIndex;
 
 public:
+    explicit HoverableWidget(int index, WorldState &state, std::function<void(WorldState&, HoverableWidget&)> f)
+            : state(state), todo(std::move(f)), tabIndex(index) {}
+
     // We are on button
     void onHoverStart(){
         turnOn(COLOR_GREEN);
@@ -37,7 +40,4 @@ public:
     void setName(std::string newName) { name = std::move(newName); }
 
     int getTabIndex() const { return tabIndex; }
-
-    explicit HoverableWidget(int index, WorldState &state, std::function<void(WorldState&, HoverableWidget&)> f)
-            : state(state), todo(std::move(f)), tabIndex(index) {}
 };

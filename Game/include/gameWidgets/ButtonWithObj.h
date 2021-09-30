@@ -3,7 +3,7 @@
 #include "widgets/HoverableWidget.h"
 #include "GameObject.h"
 
-class ButtonWithObj : virtual public HoverableWidget {
+class ButtonWithObj : public virtual HoverableWidget {
 protected:
     GameObject::Id objectId;
     GameObject::Cost cost;

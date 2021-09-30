@@ -78,6 +78,12 @@ public:
                ranges::views::transform(&Widget::as<T>);
     }
 
+    auto getChildrenWithName(const std::string& name) {
+        return *ranges::find_if(children, [&](auto a){
+                return a->name == name;
+            });
+    }
+
     template<typename T>
     auto getChildrenRecursively() {
         std::vector<std::shared_ptr<T>> result;

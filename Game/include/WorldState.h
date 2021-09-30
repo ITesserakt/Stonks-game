@@ -20,7 +20,7 @@ public:
     WorldState &operator=(const WorldState &) = delete;
 
     explicit WorldState(Canvas& currentScene, unsigned int maxBots):
-        bots(maxBots), currentScene(&currentScene) {
+            bots(maxBots), currentScene(&currentScene) {
         player = std::make_shared<Player>();
         world.addGamer(player);
         for (unsigned int index = 0; index < maxBots; index++) {

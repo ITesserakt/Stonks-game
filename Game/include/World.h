@@ -12,13 +12,16 @@ class World: public ViewableContainer<GameObject, GameObject::Id> {
 private:
     std::vector<std::shared_ptr<Gamer>> players;
     unsigned int availableSlots;
+    unsigned extraSlots;
     ObjectFactory factory;
 
 public:
-    explicit World(ObjectFactory &&factory = ObjectFactory::empty(), unsigned int maxSlots = 10);
+    explicit World(ObjectFactory &&factory = ObjectFactory::empty(),
+                   unsigned int maxSlots = 10, unsigned extraSlots = 2);
 
     [[nodiscard]] double getProfitness(const GameObject::Id& itemId) const;
 
+    void putItem(std::unique_ptr<GameObject> obj) { container[obj->id] = std::move(obj); }
 
     void addGamer(std::shared_ptr<Gamer> &&gamer);
 

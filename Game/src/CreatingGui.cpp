@@ -1,8 +1,8 @@
 #include "CreatingGui.h"
 #include "gameWidgets/Purchase.h"
 #include "widgets/Widget.h"
-#include <iostream>
 #include "WorldState.h"
+#include <iostream>
 
 constexpr auto EXTRA_SLOTS = 2;
 
@@ -45,10 +45,13 @@ void setupGameField(WorldState &state, Canvas &gameField) {
     label2->turnOn(COLOR_YELLOW);
     gameField.bind(label2);
 
+    auto balance = std::make_shared<Label>("Money Amount","Balance: \n");
+    gameField.bind(balance);
+
     std::vector<std::shared_ptr<Purchase>> container;
     for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
         container.emplace_back(new Purchase(i, state, [&](WorldState &s, Purchase &x) {
-            if (x.getItemId() != (unsigned int) -1) {
+            if (x.getItemId() != static_cast<unsigned int>(-1)) {
                 s.getPlayer().buyItem(s.getWorld().takeItem(x.getItemId()));
                 x.setCost(0);
                 x.setName("");
@@ -67,9 +70,7 @@ void setupInventory(WorldState &state, Canvas &inventory) {
     sellContainer.reserve(state.getPlayer().getInventorySize());
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
         sellContainer.emplace_back(new Sale(i, state, [&](WorldState &s, Sale&x) {
-            // TODO: where is item now?
-            // TODO: implement user input lower the item
-            s.getPlayer().sellItem(s.getPlayer().takeItem(x.getItemId()), 100);
+            s.getWorld().putItem(s.getPlayer().sellItem(s.getPlayer().takeItem(x.getItemId()), 100));
             x.setName("");
         }));
         inventory.bind(sellContainer[i]);

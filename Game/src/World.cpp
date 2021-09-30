@@ -10,8 +10,9 @@ double World::getProfitness(const GameObject::Id &itemId) const {
            (item.timesSold + 1);
 }
 
-World::World(ObjectFactory &&factory, unsigned int maxSlots) : availableSlots(
-        maxSlots), factory(factory) {}
+World::World(ObjectFactory &&factory, unsigned int maxSlots,
+             unsigned extraSlots) : availableSlots(
+        maxSlots), factory(factory), extraSlots(extraSlots) {}
 
 void World::fillUp() {
     while (availableSlots > 0) {

@@ -43,6 +43,11 @@ int main() {
                     purch->setName(state.getWorld().viewItem(slot).fullName());
                     purch->setCost(state.getWorld().viewItem(slot).cost);
                 }
+                std::ostringstream os;
+                os << "Balance: " << state.getPlayer().getBalance() ;
+                scenes[SceneNames::GameField]
+                ->getChildrenWithName("Money Amount")
+                ->as<Label>()->changeText(os.str());
             } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = state.getPlayer().getSlots();
