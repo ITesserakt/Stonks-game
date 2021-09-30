@@ -51,7 +51,7 @@ void setupGameField(WorldState &state, Canvas &gameField) {
     std::vector<std::shared_ptr<Purchase>> container;
     for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
         container.emplace_back(new Purchase(i, state, [&](WorldState &s, Purchase &x) {
-            if (x.getItemId() != static_cast<unsigned int>(-1)) {
+            if (x.getItemId() != static_cast<unsigned int>(-1) && s.getPlayer().getBalance() - s.getWorld().viewItem(x.getItemId()).cost > 0 ) {
                 s.getPlayer().buyItem(s.getWorld().takeItem(x.getItemId()));
                 x.setCost(0);
                 x.setName("");
@@ -70,8 +70,11 @@ void setupInventory(WorldState &state, Canvas &inventory) {
     sellContainer.reserve(state.getPlayer().getInventorySize());
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
         sellContainer.emplace_back(new Sale(i, state, [&](WorldState &s, Sale&x) {
-            s.getWorld().putItem(s.getPlayer().sellItem(s.getPlayer().takeItem(x.getItemId()), 100));
-            x.setName("");
+            if (x.getItemId() != static_cast<unsigned int>(-1)) {
+                s.getWorld().putItem(s.getPlayer().sellItem(s.getPlayer().takeItem(x.getItemId()), x.getPrice()));
+                x.updatePrice();
+                x.setName("");
+            }
         }));
         inventory.bind(sellContainer[i]);
     }

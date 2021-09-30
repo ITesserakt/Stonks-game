@@ -1,6 +1,5 @@
 #include "gameWidgets/Purchase.h"
 #include "Canvas.h"
-
 #include <utility>
 
 UISize Purchase::getSize() {

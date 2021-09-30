@@ -14,6 +14,8 @@ void Sale::show() {
         attron(COLOR_PAIR(widgetId));
         printw("%d. %s", tabIndex + 1, name.c_str());
         attroff(COLOR_PAIR(widgetId));
+        move(position.y + 1, position.x);
+        printw("Your price: %d", newPrice);
     }
     else {
         printw("%d. %s", tabIndex + 1, name.c_str());

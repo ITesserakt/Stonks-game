@@ -69,8 +69,8 @@ int main() {
         std::random_device seed;
         std::mt19937 randie(seed());
         while (state.running()) {
-            //usleep(1000000 + randie() % 99000000);
-            usleep(10000 + randie() % 990000);
+            usleep(1000000 + randie() % 99000000);
+            //usleep(10000 + randie() % 990000);        // Debug speed
             state.getWorld().fillUp();
         }
     }).detach();
