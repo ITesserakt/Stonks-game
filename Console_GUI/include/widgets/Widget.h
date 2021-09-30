@@ -66,6 +66,8 @@ public:
 
     template<typename T>
     std::shared_ptr<T> as() {
+        if (!is<T>())
+            throw std::runtime_error("Bad cast");
         return std::dynamic_pointer_cast<T>(shared_from_this());
     }
 
@@ -95,4 +97,8 @@ public:
     std::shared_ptr<Canvas> getCanvas() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Widget &widget);
+
+    bool operator==(const Widget &rhs) const;
+
+    bool operator!=(const Widget &rhs) const;
 };

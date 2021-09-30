@@ -1,11 +1,16 @@
 #pragma once
 
+#include <utility>
+
 #include "PositionedWidget.h"
 #include "ColorWidget.h"
 
+class WorldState;
+
 class HoverableWidget : public virtual PositionedWidget, public virtual ColorWidget {
 protected:
-    std::function<void(HoverableWidget&)> todo;
+    WorldState& state;
+    std::function<void(WorldState&, HoverableWidget&)> todo;
     int tabIndex;
 
 public:
@@ -26,16 +31,13 @@ public:
     }
 
     void click() {
-        todo(*this);
+        todo(state, *this);
     }
 
     void setName(std::string newName) { name = std::move(newName); }
 
     int getTabIndex() const { return tabIndex; }
 
-    explicit HoverableWidget(int index, std::function<void(
-            HoverableWidget&)> f): todo(f), tabIndex(index) {}
+    explicit HoverableWidget(int index, WorldState &state, std::function<void(WorldState&, HoverableWidget&)> f)
+            : state(state), todo(std::move(f)), tabIndex(index) {}
 };
-
-// EventSequence => Frontend
-// GuiEvent => change color <== widget, color, action == widget.powerOn(Color)

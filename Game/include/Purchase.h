@@ -11,13 +11,13 @@ private:
     GameObject::Cost cost;
 
 public:
-    Purchase(int index, std::function<void(HoverableWidget&)> f);
+    Purchase(int index, WorldState& state, std::function<void(WorldState&, Purchase&)> f);
 
     UISize getSize() override;
 
     void setItemId(unsigned int id) { itemId = id; }
     void setCost(GameObject::Cost newCost) { cost = newCost; }
-    unsigned int getItemId() { return itemId; }
+    unsigned int getItemId() const { return itemId; }
 
     void show() override;
 };

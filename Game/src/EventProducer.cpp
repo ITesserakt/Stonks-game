@@ -7,10 +7,6 @@ bool EventProducer::waitEvent(Event &event) {
         return false;
 
     if (key >= '1' && key <= AMOUNT_OF_MENUS + '0') {
-        if (lastScene == key - '0' - 1) {
-            event.type = Event::NO_EVENT;
-            return true;
-        }
         event.type = Event::SCENE_CHANGED;
         event.sceneChanged.nextScene = key - '0' - 1;
         lastScene = key - '0' - 1;

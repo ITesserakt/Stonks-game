@@ -7,23 +7,25 @@
 
 void EventHandler::startLoop() {
     Event event;
-    while (producer.waitEvent(event)) {
+    while (state.running() && producer.waitEvent(event)) {
         switch (event.type) {
             case Event::KEY_ENTERED:
                 switch (event.keyEntered.key) {
                     case KEY_UP:
-                        (*currentScene)->changeActiveWidget(Direction::UP);
+                        state.getCurrentScene().changeActiveWidget(
+                                Direction::UP);
                         break;
                     case KEY_DOWN:
-                        (*currentScene)->changeActiveWidget(Direction::DOWN);
+                        state.getCurrentScene().changeActiveWidget(
+                                Direction::DOWN);
                         break;
                     case '\n':
-                        (*currentScene)->getActiveWidget()->click();
+                        state.getCurrentScene().getActiveWidget()->click();
                         break;
                 }
                 break;
             case Event::SCENE_CHANGED:
-                *currentScene = scenes[event.sceneChanged.nextScene].get();
+                state.changeCurrentScene(*scenes[event.sceneChanged.nextScene]);
                 break;
             case Event::NO_EVENT:
                 break;
@@ -33,6 +35,5 @@ void EventHandler::startLoop() {
 }
 
 EventHandler::EventHandler(const std::vector<std::shared_ptr<Canvas>> &scenes,
-                           Canvas *&currentScene) : scenes(scenes),
-                                                   currentScene(&currentScene) {}
+                           WorldState &state) : scenes(scenes), state(state) {}
 

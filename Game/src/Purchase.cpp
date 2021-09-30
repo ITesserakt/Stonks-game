@@ -31,9 +31,9 @@ void Purchase::show() {
     }
 }
 
-Purchase::Purchase(int index, std::function<void(HoverableWidget&)> f) :
+Purchase::Purchase(int index, WorldState& state, std::function<void(WorldState& s, Purchase&)> f) :
     Widget(""),
     ColorWidget(""),
-    HoverableWidget(index, std::move(f))
-    {}
-
+    HoverableWidget(index, state, [f](WorldState& s, HoverableWidget& w) {
+        f(s, *w.as<Purchase>());
+    }) {}

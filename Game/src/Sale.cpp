@@ -1,11 +1,10 @@
 #include <Sale.h>
 
-#include <utility>
-
-Sale::Sale(int index, std::function<void(HoverableWidget &)> f) :
+Sale::Sale(int index, WorldState& state, std::function<void(WorldState&, HoverableWidget &)> f) :
     Widget(""),ColorWidget(""),
-    HoverableWidget(index, std::move(f))
-{}
+    HoverableWidget(index, state, [f](WorldState& s, HoverableWidget& w) {
+        f(s, w);
+    }) {}
 
 void Sale::show() {
     move(position.y, position.x);

@@ -30,3 +30,11 @@ void Widget::bind(std::shared_ptr<Widget> widget) {
 
 Widget::Widget(std::string name)
         : widgetId(generateId()), name(std::move(name)) {}
+
+bool Widget::operator==(const Widget &rhs) const {
+    return widgetId == rhs.widgetId;
+}
+
+bool Widget::operator!=(const Widget &rhs) const {
+    return !(rhs == *this);
+}

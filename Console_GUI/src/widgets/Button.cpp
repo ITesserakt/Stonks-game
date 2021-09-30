@@ -1,6 +1,5 @@
 #include "widgets/Button.h"
 #include "utils.h"
-#include "Event.h"
 #include <cstdlib>
 
 void Button::show() {

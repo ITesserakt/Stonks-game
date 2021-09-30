@@ -1,10 +1,9 @@
 #include "thread"
 #include "CreatingGui.h"
 #include "Canvas.h"
-#include "World.h"
 #include "Player.h"
-#include "AI.h"
 #include "EventHandler.h"
+#include "WorldState.h"
 #include <ncurses.h>
 #include <unistd.h>
 #include <random>
@@ -15,26 +14,24 @@ int main() {
     setupCurses();
     checkWindowSize();
 
-    auto Earth = World(ObjectFactory::fromFile("../share/objects.json"));
-    auto I = std::make_shared<Player>();
-    auto Bot = std::make_shared<AI>(Earth);
-    Earth.addGamer(I);
-    Earth.addGamer(Bot);
-    Earth.fillUp();           // Buggie function call
+    auto mainMenu = std::make_shared<Canvas>("MainMenu", Centered);
+    auto gameField = std::make_shared<Canvas>("GameField", Left);
+    auto inventory = std::make_shared<Canvas>("Inventory", Left);
+    std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory};
+    WorldState state(*scenes[SceneNames::MainMenu], 1);
 
-    bool gameRunning = true;
-    Canvas *current;
-    auto scenes = createCanvases(I, Earth, current);
-    current = scenes[SceneNames::MainMenu].get();
+    setupMainMenu(state, *mainMenu, *gameField);
+    setupGameField(state, *gameField);
+    setupInventory(state, *inventory);
 
-    auto handler = EventHandler(scenes, current);
+    auto handler = EventHandler(scenes, state);
 
-    std::thread guiThread([&]() {
-        while (gameRunning) {
+    std::thread([&]() {
+        while (state.running()) {
             usleep(16666);
             clear();
-            if (current == scenes[SceneNames::GameField].get()) {
-                auto slots = Earth.getSlots();
+            if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
+                auto slots = state.getWorld().getSlots();
                 auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
                 for (const auto &purch: purches) {
                     purch->setName("");
@@ -43,45 +40,37 @@ int main() {
                 }
                 for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
                     purch->setItemId(slot);
-                    purch->setName(Earth.viewItem(slot).fullName());
-                    purch->setCost(Earth.viewItem(slot).cost);
+                    purch->setName(state.getWorld().viewItem(slot).fullName());
+                    purch->setCost(state.getWorld().viewItem(slot).cost);
                 }
-            }
-            else if (current == scenes[SceneNames::Inventory].get()) {
+            } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
-                auto items = I->getSlots();
-                for (auto[item, sale]: ranges::views::zip(items, sales)) {
-                    sale->setName(I->viewItem(item).fullName());
-                }
+                auto items = state.getPlayer().getSlots();
             }
-            current->show();
+            state.getCurrentScene().show();
             refresh();
         }
-    });
+    }).detach();
 
-    std::thread worldThread([&]() {
+    std::thread([&]() {
         std::random_device seed;
         std::mt19937 randie(seed());
-        while (gameRunning) {
-            usleep(1000000 + randie() % 9000000);
-            Earth.fillUp();
+        while (state.running()) {
+            usleep(1000000 + randie() % 99000000);
+            state.getWorld().fillUp();
         }
-    });
+    }).detach();
 
-    std::thread aiThread([&]() {
+    std::thread([&]() {
         std::random_device seed;
         std::mt19937 randie(seed());
-        while (gameRunning) {
+        while (state.running()) {
             usleep(1000000 + randie() % 9000000);
-            if (Earth.getSlots().size() != 0)
-                Bot->buyItem(Earth.takeItem(Bot->predict()));
+            auto &randomBot = state.getRandomBot();
+            if (state.getWorld().getSlots().size() != 0)
+                randomBot.buyItem(state.getWorld().takeItem(randomBot.predict()));
         }
-    });
+    }).detach();
 
     handler.startLoop();
-    curs_set(1);
-    endwin();
-    guiThread.join();
-    worldThread.join();
-    aiThread.join();
 }

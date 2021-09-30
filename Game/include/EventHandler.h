@@ -2,15 +2,17 @@
 
 #include "EventProducer.h"
 #include "Canvas.h"
+#include "WorldState.h"
 
 class EventHandler {
 private:
-    std::vector<std::shared_ptr<Canvas>> scenes;
-    Canvas** currentScene;
+    const std::vector<std::shared_ptr<Canvas>>& scenes;
     EventProducer producer;
+    WorldState& state;
+
 public:
     EventHandler(const std::vector<std::shared_ptr<Canvas>> &scenes,
-                 Canvas *&currentScene);
+                 WorldState& state);
 
     void startLoop();
 };
