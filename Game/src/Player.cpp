@@ -15,3 +15,9 @@ std::unique_ptr<GameObject> Player::sellItem(GameObject::Id itemId, GameObject::
     availableSlots++;
     return Gamer::sellItem(itemId, newCost);
 }
+
+std::unique_ptr<GameObject>
+Player::sellItem(std::unique_ptr<GameObject> item, GameObject::Cost newCost) {
+    availableSlots++;
+    return Gamer::sellItem(std::move(item), newCost);
+}

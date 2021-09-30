@@ -1,7 +1,5 @@
-#include <Event.h>
-#include "Purchase.h"
+#include "gameWidgets/Purchase.h"
 #include "Canvas.h"
-#include "Event.h"
 
 #include <utility>
 

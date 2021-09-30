@@ -46,6 +46,14 @@ int main() {
             } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = state.getPlayer().getSlots();
+                for (const auto &sale: sales) {
+                    sale->setName("");
+                    sale->setItemId(-1);
+                }
+                for (auto[item, sale]: ranges::views::zip(items, sales)) {
+                    sale->setItemId(item);
+                    sale->setName(state.getPlayer().viewItem(item).fullName());
+                }
             }
             state.getCurrentScene().show();
             refresh();
@@ -56,7 +64,8 @@ int main() {
         std::random_device seed;
         std::mt19937 randie(seed());
         while (state.running()) {
-            usleep(1000000 + randie() % 99000000);
+            //usleep(1000000 + randie() % 99000000);
+            usleep(10000 + randie() % 990000);
             state.getWorld().fillUp();
         }
     }).detach();

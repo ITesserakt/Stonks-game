@@ -1,9 +1,10 @@
-#include <Sale.h>
+#include <gameWidgets/Sale.h>
 
-Sale::Sale(int index, WorldState& state, std::function<void(WorldState&, HoverableWidget &)> f) :
+Sale::Sale(int index, WorldState& state, std::function<void(WorldState &,
+                                                            Sale &)> f) :
     Widget(""),ColorWidget(""),
     HoverableWidget(index, state, [f](WorldState& s, HoverableWidget& w) {
-        f(s, w);
+        f(s, *w.as<Sale>());
     }) {}
 
 void Sale::show() {
@@ -21,6 +22,7 @@ void Sale::show() {
 
 UISize Sale::getSize() {
     size.height = getHeight(name);
+    size.height += this->isBlowing ? 2 : 0;
     size.width = getWidth(name) + 4;
     return size;
 }

@@ -10,6 +10,7 @@ private:
 
 public:
     explicit AI(const World &world);
+    virtual ~AI() = default;
 
     GameObject::Id predict();
 

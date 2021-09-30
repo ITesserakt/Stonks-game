@@ -1,5 +1,5 @@
 #include "CreatingGui.h"
-#include "Purchase.h"
+#include "gameWidgets/Purchase.h"
 #include "widgets/Widget.h"
 #include <iostream>
 #include "WorldState.h"
@@ -29,9 +29,9 @@ void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField) {
     });
     auto butSt = std::make_shared<Button>("settings", 1, state, [](auto &_, auto &x) {});
     auto butQ = std::make_shared<Button>("quit", 2, state, [&](WorldState &s, auto &x) {
-        std::cout << "See you later ;)" << std::endl;
         clear();
         endwin();
+        std::cout << "See you later ;)" << std::endl;
         exit(0);
     });
     mainMenu.bind(label1);
@@ -46,7 +46,7 @@ void setupGameField(WorldState &state, Canvas &gameField) {
     gameField.bind(label2);
 
     std::vector<std::shared_ptr<Purchase>> container;
-    for (unsigned long i = 0; i < state.getWorld().getSlots().size(); i++) {
+    for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
         container.emplace_back(new Purchase(i, state, [&](WorldState &s, Purchase &x) {
             if (x.getItemId() != (unsigned int) -1) {
                 s.getPlayer().buyItem(s.getWorld().takeItem(x.getItemId()));
@@ -64,11 +64,12 @@ void setupInventory(WorldState &state, Canvas &inventory) {
     label3->turnOn(COLOR_YELLOW);
 
     std::vector<std::shared_ptr<Sale>> sellContainer;
-    sellContainer.reserve(state.getWorld().getSlots().size());
-    for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
-        sellContainer.emplace_back(new Sale(i, state, [&](WorldState &s, HoverableWidget &x) {
-            //guy->Gamer::sellItem(x.getTabIndex(), 100);
-            //x.setName(guy->viewItem(x.getItemId()).fullName());
+    sellContainer.reserve(state.getPlayer().getInventorySize());
+    for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
+        sellContainer.emplace_back(new Sale(i, state, [&](WorldState &s, Sale&x) {
+            // TODO: where is item now?
+            // TODO: implement user input lower the item
+            s.getPlayer().sellItem(s.getPlayer().takeItem(x.getItemId()), 100);
             x.setName("");
         }));
         inventory.bind(sellContainer[i]);

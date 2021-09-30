@@ -13,6 +13,7 @@ public:
     // TODO: should only affect gamer's inventories and cash, not world, world will do this itself
     virtual void buyItem(std::unique_ptr<GameObject> item);
     virtual std::unique_ptr<GameObject> sellItem(GameObject::Id itemId, GameObject::Cost newCost);
+    virtual std::unique_ptr<GameObject> sellItem(std::unique_ptr<GameObject> item, GameObject::Cost newCost);
     std::unique_ptr<GameObject> sellItem(GameObject::Id itemId);
     double getBalance() { return money; }
 };
