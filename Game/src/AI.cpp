@@ -43,7 +43,7 @@ void AI::startTrading() {
             auto tradeType = random() % 2;
             if (world.getSlots().size() != 0 && couldBuy() && tradeType) {
                 auto predicted = predictToBuy();
-                if (getBalance() > world.viewItem(predicted).cost)
+//                if (getBalance() > world.viewItem(predicted).cost)
                     buyItem(world.takeItem(predicted));
             }
             if (getSlots().size() != 0 && world.couldPutInto() && !tradeType) {
