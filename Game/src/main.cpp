@@ -9,7 +9,11 @@
 #include <random>
 #include <iostream>
 
-int main() {
+int main(int argc, char** argv) {
+
+    bool debugFlag = false;
+    if (argc >= 2)
+        debugFlag = std::string("-d") == std::string(argv[1]);
     setupCurses();
     checkWindowSize();
 
@@ -40,13 +44,15 @@ int main() {
                 for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
                     auto& item = state.getWorld().viewItem(slot);
                     std::stringstream ss;
-                    ss << item << ", profitness: " << state.getWorld().getProfitness(slot);
+                    if (debugFlag) { ss << item; }
+                    else { ss << item.fullName(); }
+                    ss << ", profitness: " << state.getWorld().getProfitness(slot);
                     purch->setItemId(slot);
                     purch->setName(ss.str());
                     purch->setCost(item.cost);
                 }
                 std::ostringstream os;
-                os << "Balance: " << state.getPlayer().getBalance();
+                os << "Balance: $" << std::setprecision(4) << state.getPlayer().getBalance();
                 scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
             } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
@@ -68,8 +74,11 @@ int main() {
     std::thread([&]() {
         std::random_device seed;
         std::mt19937 randie(seed());
+        useconds_t sleepTime;
+        if (debugFlag) {sleepTime = 10000 + randie() % 90000;}
+        else {sleepTime = 1000000 + randie() % 9900000;}
         while (state.running()) {
-            usleep(10000 + randie() % 90000);
+            usleep(sleepTime);
             auto &randomBot = state.getRandomBot();
             auto tradeType = random() % 2;
             if (state.getWorld().getSlots().size() != 0 && randomBot.couldBuy() && tradeType)

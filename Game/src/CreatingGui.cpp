@@ -27,7 +27,7 @@ void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField) {
     auto butPl = std::make_shared<Button>("play", 0, state, [&](WorldState &state, Button &x) {
         state.changeCurrentScene(gameField);
     });
-    auto butSt = std::make_shared<Button>("settings", 1, state, [](auto &_, auto &x) {});
+    auto butGd = std::make_shared<Button>("guide", 1, state, [](auto &_, auto &x) {});
     auto butQ = std::make_shared<Button>("quit", 2, state, [&](WorldState &s, auto &x) {
         clear();
         endwin();
@@ -36,7 +36,7 @@ void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField) {
     });
     mainMenu.bind(label1);
     mainMenu.bind(butPl);
-    mainMenu.bind(butSt);
+    mainMenu.bind(butGd);
     mainMenu.bind(butQ);
 }
 
