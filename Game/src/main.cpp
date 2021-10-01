@@ -8,8 +8,9 @@
 #include <unistd.h>
 #include <random>
 #include <iostream>
+#include <iomanip>
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 
     bool debugFlag = false;
     if (argc >= 2)
@@ -44,11 +45,10 @@ int main(int argc, char** argv) {
                     purch->setCost(0);
                 }
                 for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
-                    auto& item = state.getWorld().viewItem(slot);
+                    auto &item = state.getWorld().viewItem(slot);
                     std::stringstream ss;
                     if (debugFlag) { ss << item; }
-                    else { ss << item.fullName(); }
-                    ss << ", profitness: " << state.getWorld().getProfitness(slot);
+                    else { ss << item.fullName() << (item.timesSold > 0 ? "*" : ""); }
                     purch->setItemId(slot);
                     purch->setName(ss.str());
                     purch->setCost(item.cost);
@@ -65,30 +65,16 @@ int main(int argc, char** argv) {
                     sale->setName("");
                     sale->setItemId(-1);
                 }
-                for (auto[item, sale]: ranges::views::zip(items, sales)) {
-                    sale->setItemId(item);
-                    sale->setName(state.getPlayer().viewItem(item).fullName());
+                for (auto[itemId, sale]: ranges::views::zip(items, sales)) {
+                    sale->setItemId(itemId);
+                    std::stringstream ss;
+                    auto item = state.getPlayer().viewItem(itemId);
+                    ss << item.fullName() << ", cost: $" << item.cost;
+                    sale->setName(ss.str());
                 }
             }
             state.getCurrentScene().show();
             refresh();
-        }
-    }).detach();
-
-    std::thread([&]() {
-        std::random_device seed;
-        std::mt19937 randie(seed());
-        useconds_t sleepTime;
-        if (debugFlag) {sleepTime = 10000 + randie() % 90000;}
-        else {sleepTime = 1000000 + randie() % 9900000;}
-        while (state.running()) {
-            usleep(sleepTime);
-            auto &randomBot = state.getRandomBot();
-            auto tradeType = random() % 2;
-            if (state.getWorld().getSlots().size() != 0 && randomBot.couldBuy() && tradeType)
-                randomBot.buyItem(state.getWorld().takeItem(randomBot.predictToBuy()));
-            if (randomBot.getSlots().size() != 0 && state.getWorld().couldPutInto() && !tradeType)
-                state.getWorld().putItem(randomBot.takeItem(randomBot.predictToSell()));
         }
     }).detach();
 
