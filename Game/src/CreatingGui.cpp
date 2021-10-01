@@ -92,16 +92,27 @@ void setupInventory(WorldState &state, Canvas &inventory) {
 
 void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu) {
     auto label = std::make_shared<Label>("guide", "Guide\n");
+    label->turnOn(COLOR_YELLOW);
     guide.bind(label);
+
+    std::string guideText =
+            "STONKS GAME is a exchange trading simulator. In this game you\n"
+            "should buy items and sell them with new price.\n\n"
+
+            "Сontrol binds:\n"
+            "Arrow up   - go to higher button\n"
+            "Arrow down - go to lower button\n"
+            "Enter      - interaction with button\n"
+            "Arrow right/left - change price of item\n"
+            "KEY 1      - switch to main menu\n"
+            "KEY 2      - switch to stock exchange\n"
+            "KEY 3      - switch to your inventory\n";
+    auto guideForPlayer = std::make_shared<Label>("guide", guideText);
+    guide.bind(guideForPlayer);
 
     // button for travelling from guide to main Menu
     auto butGdMn = std::make_shared<Button>("back", 0, state, [&](WorldState& state, Button &x) {
         state.changeCurrentScene(mainMenu);
     });
     guide.bind(butGdMn);
-
-    std::string guideText =
-            "STONKS GAME is a exchange trading simulator.";
-    auto guideForPlayer = std::make_shared<Label>("guide", guideText);
-    guide.bind(guideForPlayer);
 }
