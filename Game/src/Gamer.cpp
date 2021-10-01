@@ -9,22 +9,15 @@ void Gamer::buyItem(std::unique_ptr<GameObject> item) {
         item->lastSeller->money += item->cost;
     money -= item->cost;
     container[item->id] = std::move(item);
+    availableSlots--;
 }
 
-// TODO selling item by ID is bad idea, because when you call takeItem, Item is
-// is already taken by me. Also it makes useless difference with buyItem.
 std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::Cost newCost) {
     auto item = takeItem(itemId);
     item->lastSeller = shared_from_this();
     item->cost = newCost;
     item->timesSold++;
-    return item;
-}
-
-std::unique_ptr<GameObject> Gamer::sellItem(std::unique_ptr<GameObject> item, GameObject::Cost newCost) {
-    item->lastSeller = shared_from_this();
-    item->cost = newCost;
-    item->timesSold++;
+    availableSlots++;
     return item;
 }
 

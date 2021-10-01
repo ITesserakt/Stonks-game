@@ -5,17 +5,24 @@
 #include <AI.h>
 #include <range/v3/all.hpp>
 
-GameObject::Id AI::predict() {
+GameObject::Id AI::predictToBuy() {
     return ranges::max(world.getSlots(), {}, [&](int slot) { return world.getProfitness(slot); });
 }
 
-void AI::buyItem(std::unique_ptr<GameObject> item) {
-    Gamer::buyItem(std::move(item));
+AI::AI(const World &world, unsigned int maxSlots) : world(world) {
+    money = 10000;
+    availableSlots = maxSlots;
 }
 
-std::unique_ptr<GameObject> AI::sellItem(GameObject::Id itemId, GameObject::Cost newCost) {
-    return Gamer::sellItem(itemId, newCost);
+GameObject::Id AI::predictToSell() {
+    return ranges::max(getSlots(), {}, [&](int slot) { return getProfitness(slot); });
 }
 
-AI::AI(const World &world) : world(world) {}
+double AI::getProfitness(GameObject::Id itemId) {
+    auto item = viewItem(itemId);
+    auto sellByKind = ranges::count_if(container, [&](const auto &a) {
+        return a.second->name == item.name;
+    });
+    return (availableSlots + 0.1) / sellByKind / (item.timesSold + 1) * item.cost;
+}
 

@@ -48,6 +48,7 @@ public:
     Widget &operator=(const Widget &) = delete;
 
     Widget(Widget &&) = default;
+
     virtual ~Widget() = default;
 
     Widget &operator=(Widget &&) = default;
@@ -78,10 +79,13 @@ public:
                ranges::views::transform(&Widget::as<T>);
     }
 
-    auto getChildrenWithName(const std::string& name) {
-        return *ranges::find_if(children, [&](auto a){
-                return a->name == name;
-            });
+    auto getChildWithName(const std::string &name) {
+        auto result = ranges::find_if(children, [&](auto a) {
+            return a->name == name;
+        });
+        if (result != children.end())
+            return *result;
+        throw std::runtime_error("Could not find child");
     }
 
     template<typename T>
@@ -98,7 +102,7 @@ public:
 
     std::weak_ptr<Widget> getParent() const;
 
-    const std::vector<std::shared_ptr<Widget>>& getChildren() const;
+    const std::vector<std::shared_ptr<Widget>> &getChildren() const;
 
     std::shared_ptr<Canvas> getCanvas() const;
 

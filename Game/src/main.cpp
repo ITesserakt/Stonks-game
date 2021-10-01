@@ -8,7 +8,6 @@
 #include <unistd.h>
 #include <random>
 #include <iostream>
-#include <sstream>
 
 int main() {
     setupCurses();
@@ -18,7 +17,7 @@ int main() {
     auto gameField = std::make_shared<Canvas>("GameField", Left);
     auto inventory = std::make_shared<Canvas>("Inventory", Left);
     std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory};
-    WorldState state(*scenes[SceneNames::MainMenu], 1);
+    WorldState state(*scenes[SceneNames::MainMenu], 3);
 
     setupMainMenu(state, *mainMenu, *gameField);
     setupGameField(state, *gameField);
@@ -39,15 +38,16 @@ int main() {
                     purch->setCost(0);
                 }
                 for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
+                    auto& item = state.getWorld().viewItem(slot);
+                    std::stringstream ss;
+                    ss << item << ", profitness: " << state.getWorld().getProfitness(slot);
                     purch->setItemId(slot);
-                    purch->setName(state.getWorld().viewItem(slot).fullName());
-                    purch->setCost(state.getWorld().viewItem(slot).cost);
+                    purch->setName(ss.str());
+                    purch->setCost(item.cost);
                 }
                 std::ostringstream os;
-                os << "Balance: " << state.getPlayer().getBalance() ;
-                scenes[SceneNames::GameField]
-                ->getChildrenWithName("Money Amount")
-                ->as<Label>()->changeText(os.str());
+                os << "Balance: " << state.getPlayer().getBalance();
+                scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
             } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = state.getPlayer().getSlots();
@@ -69,20 +69,13 @@ int main() {
         std::random_device seed;
         std::mt19937 randie(seed());
         while (state.running()) {
-            usleep(1000000 + randie() % 99000000);
-            //usleep(10000 + randie() % 990000);        // Debug speed
-            state.getWorld().fillUp();
-        }
-    }).detach();
-
-    std::thread([&]() {
-        std::random_device seed;
-        std::mt19937 randie(seed());
-        while (state.running()) {
-            usleep(1000000 + randie() % 9000000);
+            usleep(10000 + randie() % 90000);
             auto &randomBot = state.getRandomBot();
-            if (state.getWorld().getSlots().size() != 0)
-                randomBot.buyItem(state.getWorld().takeItem(randomBot.predict()));
+            auto tradeType = random() % 2;
+            if (state.getWorld().getSlots().size() != 0 && randomBot.couldBuy() && tradeType)
+                randomBot.buyItem(state.getWorld().takeItem(randomBot.predictToBuy()));
+            if (randomBot.getSlots().size() != 0 && state.getWorld().couldPutInto() && !tradeType)
+                state.getWorld().putItem(randomBot.takeItem(randomBot.predictToSell()));
         }
     }).detach();
 

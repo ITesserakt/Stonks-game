@@ -8,7 +8,7 @@ class WorldState {
 private:
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<AI>> bots;
-    World world = World(ObjectFactory::fromFile("../share/objects.json"));
+    World world = World(ObjectFactory::fromFile("../share/objects.json"), 16);
     bool isActive = true;
     std::random_device engine;
     std::mt19937 random = std::mt19937(engine());
@@ -24,7 +24,7 @@ public:
         player = std::make_shared<Player>();
         world.addGamer(player);
         for (unsigned int index = 0; index < maxBots; index++) {
-            bots[index] = std::make_shared<AI>(world);
+            bots[index] = std::make_shared<AI>(world, 10);
             world.addGamer(bots[index]);
         }
         world.fillUp();

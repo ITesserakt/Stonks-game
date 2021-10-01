@@ -9,12 +9,12 @@ private:
     const World& world;
 
 public:
-    explicit AI(const World &world);
+    AI(const World &world, unsigned int maxSlots);
     virtual ~AI() = default;
 
-    GameObject::Id predict();
+    GameObject::Id predictToBuy();
 
-    void buyItem(std::unique_ptr<GameObject> item) override;
+    GameObject::Id predictToSell();
 
-    std::unique_ptr<GameObject> sellItem(GameObject::Id itemId, GameObject::Cost newCost) override;
+    double getProfitness(GameObject::Id itemId);
 };

@@ -2,17 +2,17 @@
 
 double World::getProfitness(const GameObject::Id &itemId) const {
     auto item = viewItem(itemId);
-    auto sellByKind = ranges::count_if(container, [&](const auto& a) {
+    auto sellByKind = ranges::count_if(container, [&](const auto &a) {
         return a.second->name == item.name;
     });
-    return (1 - factory.getCostForKind(item.name) / item.cost) *
+    return (1 - item.cost / factory.getCostForKind(item.name)) *
            (availableSlots + 0.1) / sellByKind /
            (item.timesSold + 1);
 }
 
-World::World(ObjectFactory &&factory, unsigned int maxSlots,
-             unsigned extraSlots) : availableSlots(
-        maxSlots), factory(factory), extraSlots(extraSlots) {}
+World::World(ObjectFactory &&factory, unsigned int maxSlots) :
+        availableSlots(maxSlots),
+        factory(factory) {}
 
 void World::fillUp() {
     while (availableSlots > 0) {

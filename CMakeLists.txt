@@ -8,8 +8,6 @@ file(GLOB_RECURSE SOURCE_FILES Game/src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES Game/include/*.h)
 file(GLOB_RECURSE RESOURCES Game/resources/*)
 
-add_compile_options(-Wall -Wextra)
-
 add_executable(main ${SOURCE_FILES} ${HEADER_FILES})
 
 add_subdirectory(Console_GUI)

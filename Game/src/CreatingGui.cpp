@@ -45,19 +45,20 @@ void setupGameField(WorldState &state, Canvas &gameField) {
     label2->turnOn(COLOR_YELLOW);
     gameField.bind(label2);
 
-    auto balance = std::make_shared<Label>("Money Amount","Balance: \n");
+    auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
     gameField.bind(balance);
 
-    std::vector<std::shared_ptr<Purchase>> container;
-    for (unsigned long i = 0; i < state.getWorld().getSlots().size() + EXTRA_SLOTS; i++) {
-        container.emplace_back(new Purchase(i, state, [&](WorldState &s, Purchase &x) {
-            if (x.getItemId() != static_cast<unsigned int>(-1) && s.getPlayer().getBalance() - s.getWorld().viewItem(x.getItemId()).cost > 0 ) {
+    for (unsigned long i = 0; i < state.getWorld().getSlots().size(); i++) {
+        auto purch = std::make_shared<Purchase>(i, state, [&](WorldState &s, Purchase &x) {
+            if (x.getItemId() != static_cast<unsigned int>(-1)
+                && s.getPlayer().couldBuy()
+                && s.getPlayer().getBalance() > s.getWorld().viewItem(x.getItemId()).cost) {
                 s.getPlayer().buyItem(s.getWorld().takeItem(x.getItemId()));
                 x.setCost(0);
                 x.setName("");
             }
-        }));
-        gameField.bind(container[i]);
+        });
+        gameField.bind(purch);
     }
 }
 
@@ -66,16 +67,17 @@ void setupInventory(WorldState &state, Canvas &inventory) {
     inventory.bind(label3);
     label3->turnOn(COLOR_YELLOW);
 
-    std::vector<std::shared_ptr<Sale>> sellContainer;
-    sellContainer.reserve(state.getPlayer().getInventorySize());
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
-        sellContainer.emplace_back(new Sale(i, state, [&](WorldState &s, Sale&x) {
-            if (x.getItemId() != static_cast<unsigned int>(-1)) {
-                s.getWorld().putItem(s.getPlayer().sellItem(s.getPlayer().takeItem(x.getItemId()), x.getPrice()));
-                x.updatePrice();
-                x.setName("");
+        auto sale = std::make_shared<Sale>(i, state, [&](WorldState &s, Sale &x) {
+            if (x.getItemId() != static_cast<unsigned int>(-1) && s.getWorld().couldPutInto()) {
+                s.getWorld().putItem(s.getPlayer().sellItem(x.getItemId(), x.getPrice()));
+                for (auto sale: s.getCurrentScene().getChildrenRecursively<Sale>()) {
+                    sale->setItemId(-1);
+                    sale->setName("");
+                    sale->setCost(0);
+                }
             }
-        }));
-        inventory.bind(sellContainer[i]);
+        });
+        inventory.bind(sale);
     }
 }

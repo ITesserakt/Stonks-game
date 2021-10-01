@@ -4,16 +4,17 @@
 #include <memory>
 #include "GameObject.h"
 #include "ViewableContainer.h"
+#include <atomic>
 
 class Gamer: public std::enable_shared_from_this<Gamer>, public ViewableContainer<GameObject, GameObject::Id> {
 protected:
     double money;
+    std::atomic<unsigned int> availableSlots;
 
 public:
-    // TODO: should only affect gamer's inventories and cash, not world, world will do this itself
     virtual void buyItem(std::unique_ptr<GameObject> item);
     virtual std::unique_ptr<GameObject> sellItem(GameObject::Id itemId, GameObject::Cost newCost);
-    virtual std::unique_ptr<GameObject> sellItem(std::unique_ptr<GameObject> item, GameObject::Cost newCost);
     std::unique_ptr<GameObject> sellItem(GameObject::Id itemId);
-    double getBalance() { return money; }
+    double getBalance() const { return money; }
+    bool couldBuy() const { return availableSlots > 0; }
 };
