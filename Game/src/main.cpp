@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "EventHandler.h"
 #include "WorldState.h"
+#include "widgets/MessageBox.h"
 #include <ncurses.h>
 #include <unistd.h>
 #include <random>
@@ -56,8 +57,10 @@ int main(int argc, char **argv) {
                 std::ostringstream os;
                 os << "Balance: $" << std::setprecision(4) << state.getPlayer().getBalance();
                 scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
-                if (0/*state.isWin()*/)
-                    scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<HoverableWidget>()->hide(false);
+                if (state.getPlayer().getBalance() > 10000) {
+                    scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
+                    state.shutdown();
+                }
             } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = state.getPlayer().getSlots();
@@ -79,4 +82,5 @@ int main(int argc, char **argv) {
     }).detach();
 
     handler.startLoop();
+    endwin();
 }

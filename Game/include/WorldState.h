@@ -8,7 +8,7 @@ class WorldState {
 private:
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<AI>> bots;
-    World world = World(ObjectFactory::fromFile("../share/objects.json"), 16);
+    World world = World(ObjectFactory::fromFile("../share/objects.json"), 20);
     bool isActive = true;
     std::random_device engine;
     std::mt19937 random = std::mt19937(engine());

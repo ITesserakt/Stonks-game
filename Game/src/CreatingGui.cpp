@@ -82,7 +82,7 @@ void setupInventory(WorldState &state, Canvas &inventory) {
                 for (auto sale: s.getCurrentScene().getChildrenRecursively<Sale>()) {
                     sale->setItemId(-1);
                     sale->setName("");
-                    sale->setCost(0);
+                    sale->updatePrice(100);
                 }
             }
         });
