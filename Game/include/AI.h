@@ -6,10 +6,11 @@
 // This man buys products and sell them again
 class AI : public Gamer {
 private:
-    const World& world;
+    World& world;
+    bool debugFlag;
 
 public:
-    AI(const World &world, unsigned int maxSlots);
+    AI(World &state, bool debug, unsigned int maxSlots);
     virtual ~AI() = default;
 
     GameObject::Id predictToBuy();
@@ -17,4 +18,6 @@ public:
     GameObject::Id predictToSell();
 
     double getProfitness(GameObject::Id itemId);
+
+    void startTrading();
 };

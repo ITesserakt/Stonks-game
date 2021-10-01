@@ -15,7 +15,7 @@ void Sale::show() {
         printw("%d. %s", tabIndex + 1, name.c_str());
         attroff(COLOR_PAIR(widgetId));
         move(position.y + 1, position.x);
-        printw("Your price: $%lf", newPrice);
+        printw("Sell for: $%lf", newPrice);
     }
     else {
         printw("%d. %s", tabIndex + 1, name.c_str());

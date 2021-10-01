@@ -8,7 +8,7 @@ class WorldState {
 private:
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<AI>> bots;
-    World world = World(ObjectFactory::fromFile("../share/objects.json"), 16);
+    World world = World(ObjectFactory::fromFile("../share/objects.json"), 20);
     bool isActive = true;
     std::random_device engine;
     std::mt19937 random = std::mt19937(engine());
@@ -19,13 +19,14 @@ public:
 
     WorldState &operator=(const WorldState &) = delete;
 
-    explicit WorldState(Canvas& currentScene, unsigned int maxBots):
+    explicit WorldState(Canvas& currentScene, unsigned int maxBots, bool debug = false):
             bots(maxBots), currentScene(&currentScene) {
         player = std::make_shared<Player>();
         world.addGamer(player);
         for (unsigned int index = 0; index < maxBots; index++) {
-            bots[index] = std::make_shared<AI>(world, 10);
+            bots[index] = std::make_shared<AI>(world, debug, 10);
             world.addGamer(bots[index]);
+            bots[index]->startTrading();
         }
         world.fillUp();
     }
