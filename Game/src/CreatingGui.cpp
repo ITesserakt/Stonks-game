@@ -1,6 +1,7 @@
 #include "CreatingGui.h"
 #include "gameWidgets/Purchase.h"
 #include "widgets/Widget.h"
+#include "widgets/MessageBox.h"
 #include "WorldState.h"
 #include <iostream>
 
@@ -60,6 +61,10 @@ void setupGameField(WorldState &state, Canvas &gameField) {
         });
         gameField.bind(purch);
     }
+
+    auto winMessage = std::make_shared<MessageBox>("Win Message", "You have win!");
+    winMessage->hide(true);
+    gameField.bind(winMessage);
 }
 
 void setupInventory(WorldState &state, Canvas &inventory) {
