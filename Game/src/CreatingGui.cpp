@@ -22,13 +22,16 @@ void checkWindowSize() {
     }
 }
 
-void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField) {
+void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField,
+                   Canvas &guide) {
     auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
     label1->turnOn(COLOR_YELLOW);
     auto butPl = std::make_shared<Button>("play", 0, state, [&](WorldState &state, Button &x) {
         state.changeCurrentScene(gameField);
     });
-    auto butGd = std::make_shared<Button>("guide", 1, state, [](auto &_, auto &x) {});
+    auto butGd = std::make_shared<Button>("guide", 1, state, [&](auto &_, auto &x) {
+        state.changeCurrentScene(guide);
+    });
     auto butQ = std::make_shared<Button>("quit", 2, state, [&](WorldState &s, auto &x) {
         clear();
         endwin();
@@ -68,9 +71,9 @@ void setupGameField(WorldState &state, Canvas &gameField) {
 }
 
 void setupInventory(WorldState &state, Canvas &inventory) {
-    auto label3 = std::make_shared<Label>("inventory", "Inventory\n");
-    inventory.bind(label3);
-    label3->turnOn(COLOR_YELLOW);
+    auto label = std::make_shared<Label>("inventory", "Inventory\n");
+    inventory.bind(label);
+    label->turnOn(COLOR_YELLOW);
 
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
         auto sale = std::make_shared<Sale>(i, state, [&](WorldState &s, Sale &x) {
@@ -85,4 +88,20 @@ void setupInventory(WorldState &state, Canvas &inventory) {
         });
         inventory.bind(sale);
     }
+}
+
+void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu) {
+    auto label = std::make_shared<Label>("guide", "Guide\n");
+    guide.bind(label);
+
+    // button for travelling from guide to main Menu
+    auto butGdMn = std::make_shared<Button>("back", 0, state, [&](WorldState& state, Button &x) {
+        state.changeCurrentScene(mainMenu);
+    });
+    guide.bind(butGdMn);
+
+    std::string guideText =
+            "STONKS GAME is a exchange trading simulator.";
+    auto guideForPlayer = std::make_shared<Label>("guide", guideText);
+    guide.bind(guideForPlayer);
 }

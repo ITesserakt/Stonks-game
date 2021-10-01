@@ -8,17 +8,20 @@
 #include "Canvas.h"
 #include "World.h"
 
-#define AMOUNT_OF_MENUS 3
+#define FAST_TRAVEL_MENUS 3
 enum SceneNames {
-    MainMenu = 0, GameField, Inventory
+    MainMenu = 0, GameField, Inventory, Guide
 };
 
 void setupCurses();
 
 void checkWindowSize();
 
-void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField);
+void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField,
+                   Canvas &guide);
 
 void setupGameField(WorldState& state, Canvas& gameField);
 
 void setupInventory(WorldState& state, Canvas& inventory);
+
+void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu);

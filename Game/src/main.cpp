@@ -20,12 +20,14 @@ int main(int argc, char** argv) {
     auto mainMenu = std::make_shared<Canvas>("MainMenu", Centered);
     auto gameField = std::make_shared<Canvas>("GameField", Left);
     auto inventory = std::make_shared<Canvas>("Inventory", Left);
-    std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory};
+    auto guide = std::make_shared<Canvas>("Guide", Left);
+    std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory, guide};
     WorldState state(*scenes[SceneNames::MainMenu], 3);
 
-    setupMainMenu(state, *mainMenu, *gameField);
+    setupMainMenu(state, *mainMenu, *gameField, *guide);
     setupGameField(state, *gameField);
     setupInventory(state, *inventory);
+    setupGuide(state, *guide, *mainMenu);
 
     auto handler = EventHandler(scenes, state);
 
@@ -54,6 +56,8 @@ int main(int argc, char** argv) {
                 std::ostringstream os;
                 os << "Balance: $" << std::setprecision(4) << state.getPlayer().getBalance();
                 scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
+                if (0/*state.isWin()*/)
+                    scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<HoverableWidget>()->hide(false);
             } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = state.getPlayer().getSlots();
