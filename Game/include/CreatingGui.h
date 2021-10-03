@@ -9,6 +9,7 @@
 #include "World.h"
 
 #define FAST_TRAVEL_MENUS 3
+using canvases = std::vector<std::shared_ptr<Canvas>>;
 enum SceneNames {
     MainMenu = 0, GameField, Inventory, Guide
 };

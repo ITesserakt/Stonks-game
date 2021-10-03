@@ -1,5 +1,5 @@
-#include "thread"
 #include "CreatingGui.h"
+#include "FramePainter.h"
 #include "Canvas.h"
 #include "Player.h"
 #include "EventHandler.h"
@@ -9,6 +9,7 @@
 #include <ncurses.h>
 #include <unistd.h>
 #include <random>
+#include <thread>
 #include <iomanip>
 
 int main(int argc, char **argv) {
@@ -25,7 +26,7 @@ int main(int argc, char **argv) {
     auto gameField = std::make_shared<Canvas>("GameField", Left);
     auto inventory = std::make_shared<Canvas>("Inventory", Left);
     auto guide = std::make_shared<Canvas>("Guide", Left);
-    std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory, guide};
+    canvases scenes = {mainMenu, gameField, inventory, guide};
     WorldState state(*scenes[SceneNames::MainMenu],
                      config->getSettingByName("botsAmount"), debugFlag);
 
@@ -41,44 +42,10 @@ int main(int argc, char **argv) {
             usleep(16666);
             clear();
             if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
-                auto slots = state.getWorld().getSlots();
-                auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
-                for (const auto &purch: purches) {
-                    purch->setName("");
-                    purch->setItemId(-1);
-                    purch->setCost(0);
-                }
-                for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
-                    auto &item = state.getWorld().viewItem(slot);
-                    std::stringstream ss;
-                    if (debugFlag) { ss << item << ", profitness: " << state.getWorld().getProfitness(slot); }
-                    else { ss << item.fullName() << (item.timesSold > 0 ? "*" : ""); }
-                    purch->setItemId(slot);
-                    purch->setName(ss.str());
-                    purch->setCost(item.cost);
-                }
-                std::ostringstream os;
-                os << "Balance: $" << std::setprecision(4) << state.getPlayer().getBalance();
-                scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
-                if (state.getPlayer().getBalance() > Configuration::getInstance()->getSettingByName("winCondition")) {
-                    scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
-                    state.shutdown();
-                }
+                paintGameFieldFrame(state, scenes, debugFlag);
             }
             else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
-                auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
-                auto items = state.getPlayer().getSlots();
-                for (const auto &sale: sales) {
-                    sale->setName("");
-                    sale->setItemId(-1);
-                }
-                for (auto[itemId, sale]: ranges::views::zip(items, sales)) {
-                    sale->setItemId(itemId);
-                    std::stringstream ss;
-                    auto item = state.getPlayer().viewItem(itemId);
-                    ss << item.fullName() << ", cost: $" << item.cost;
-                    sale->setName(ss.str());
-                }
+                paintInventoryFrame(state, scenes);
             }
             state.getCurrentScene().show();
             refresh();

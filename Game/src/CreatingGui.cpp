@@ -4,6 +4,7 @@
 #include "widgets/MessageBox.h"
 #include "WorldState.h"
 #include <iostream>
+#include <vector>
 
 constexpr auto EXTRA_SLOTS = 2;
 
@@ -116,3 +117,4 @@ void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu) {
     });
     guide.bind(butGdMn);
 }
+
