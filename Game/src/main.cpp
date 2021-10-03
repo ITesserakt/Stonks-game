@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     auto guide = std::make_shared<Canvas>("Guide", Left);
     std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory, guide};
     WorldState state(*scenes[SceneNames::MainMenu],
-                     config->getSettingByName("botsAmount"));
+                     config->getSettingByName("botsAmount"), debugFlag);
 
     setupMainMenu(state, *mainMenu, *gameField, *guide);
     setupGameField(state, *gameField);
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
                 for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
                     auto &item = state.getWorld().viewItem(slot);
                     std::stringstream ss;
-                    if (debugFlag) { ss << item; }
+                    if (debugFlag) { ss << item << ", profitness: " << state.getWorld().getProfitness(slot); }
                     else { ss << item.fullName() << (item.timesSold > 0 ? "*" : ""); }
                     purch->setItemId(slot);
                     purch->setName(ss.str());
