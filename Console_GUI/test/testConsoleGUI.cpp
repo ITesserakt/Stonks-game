@@ -22,6 +22,14 @@ TEST(logic, get_max_width_of_text) {
     ASSERT_EQ(getWidth(""), 0);
 }
 
+TEST(logic, split_sentence_by_lines) {
+    ASSERT_EQ(splitBySentence("Aboba", 0), "Aboba");
+    ASSERT_EQ(splitBySentence("reset\nconfig", 0), "reset ");
+    ASSERT_EQ(splitBySentence("Aboba\nBob", 1), "Bob  ");
+    ASSERT_EQ(splitBySentence("\n\n\n", 1), "");
+    ASSERT_EQ(splitBySentence("Hey\nBro\nHo", 1), "Bro");
+}
+
 TEST(api, widget_creation) {
     auto g = Group("Test");
 

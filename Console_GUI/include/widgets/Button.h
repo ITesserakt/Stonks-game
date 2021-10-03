@@ -24,5 +24,8 @@ public:
 
     void show() override;
 
-    UISize getSize() override { return size; };
+    UISize getSize() override {
+        size = {getWidth(name), getHeight(name)};
+        return size;
+    };
 };

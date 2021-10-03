@@ -4,7 +4,7 @@
 
 #include "EventHandler.h"
 #include "utils.h"
-#include "gameWidgets/Sale.h"
+#include "GameWidgets/Sale.h"
 
 void EventHandler::startLoop() {
     Event event;

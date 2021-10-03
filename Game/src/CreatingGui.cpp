@@ -1,8 +1,8 @@
 #include "CreatingGui.h"
 #include "GameWidgets/Purchase.h"
-#include "widgets/Widget.h"
 #include "widgets/MessageBox.h"
 #include "WorldState.h"
+#include "utils.h"
 #include <iostream>
 #include <vector>
 
@@ -23,26 +23,26 @@ void checkWindowSize() {
     }
 }
 
-void setupMainMenu(WorldState &state, Canvas &mainMenu, Canvas &gameField,
-                   Canvas &guide) {
+void setupMainMenu(WorldState &state, canvases &scenes) {
     auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
     label1->turnOn(COLOR_YELLOW);
     auto butPl = std::make_shared<Button>("play", 0, state, [&](WorldState &state, Button &x) {
-        state.changeCurrentScene(gameField);
+        state.changeCurrentScene(*scenes[SceneNames::GameField].get());
     });
-    auto butGd = std::make_shared<Button>("guide", 1, state, [&](auto &_, auto &x) {
-        state.changeCurrentScene(guide);
+    auto butSt = std::make_shared<Button>("settings", 1, state, [&](WorldState& state, Button &x){
+        state.changeCurrentScene(*scenes[SceneNames::Settings].get());
     });
-    auto butQ = std::make_shared<Button>("quit", 2, state, [&](WorldState &s, auto &x) {
-        clear();
-        endwin();
-        std::cout << "See you later ;)" << std::endl;
-        exit(0);
+    auto butGd = std::make_shared<Button>("guide", 2, state, [&](auto &_, auto &x) {
+        state.changeCurrentScene(*scenes[SceneNames::Guide].get());
     });
-    mainMenu.bind(label1);
-    mainMenu.bind(butPl);
-    mainMenu.bind(butGd);
-    mainMenu.bind(butQ);
+    auto butQ = std::make_shared<Button>("quit", 3, state, [&](WorldState &s, auto &x) {
+        quitGame();
+    });
+    scenes[SceneNames::MainMenu]->bind(label1);
+    scenes[SceneNames::MainMenu]->bind(butPl);
+    scenes[SceneNames::MainMenu]->bind(butSt);
+    scenes[SceneNames::MainMenu]->bind(butGd);
+    scenes[SceneNames::MainMenu]->bind(butQ);
 }
 
 void setupGameField(WorldState &state, Canvas &gameField) {
@@ -116,5 +116,20 @@ void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu) {
         state.changeCurrentScene(mainMenu);
     });
     guide.bind(butGdMn);
+}
+
+void setupSettings(WorldState &state, canvases &scenes) {
+    auto label = std::make_shared<Label>("guide", "Settings\n");
+    label->turnOn(COLOR_YELLOW);
+    scenes[SceneNames::Settings]->bind(label);
+    auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [&](WorldState& state, Button &x){
+        Configuration::getInstance()->refresh();
+        quitGame();
+    });
+    scenes[SceneNames::Settings]->bind(butRt);
+    auto butStMn = std::make_shared<Button>("back", 1, state, [&](WorldState& state, Button &x){
+        state.changeCurrentScene(*scenes[SceneNames::MainMenu].get());
+    });
+    scenes[SceneNames::Settings]->bind(butStMn);
 }
 

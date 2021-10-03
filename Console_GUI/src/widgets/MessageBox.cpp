@@ -1,6 +1,7 @@
 #include "widgets/MessageBox.h"
 
 #include <utility>
+#include "utils.h"
 #include "sstream"
 
 void paintLine(std::stringstream& ss, const std::string& text) {
@@ -14,10 +15,6 @@ void paintInner(std::stringstream& ss, const std::string& text) {
     ss << '|';
     ss << text;
     ss << '|';
-}
-
-std::string splitBySentence(std::string str, int number) {
-    return str.substr(number*(getWidth(str) + 1), getWidth(str));
 }
 
 MessageBox::MessageBox(std::string name, std::string text, specialPosition spec)

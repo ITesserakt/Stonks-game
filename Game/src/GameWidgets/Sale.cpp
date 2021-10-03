@@ -1,4 +1,4 @@
-#include <gameWidgets/Sale.h>
+#include "GameWidgets/Sale.h"
 
 Sale::Sale(int index, WorldState& state, std::function<void(WorldState &,
                                                             Sale &)> f) :
