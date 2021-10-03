@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Gamer.h"
+#include "Config.h"
 
 class Player : public Gamer {
 private:
     unsigned inventorySize;
 public:
-    explicit Player(unsigned maxSlots = 7) : inventorySize(maxSlots) {
-        money = 5000.;
+    explicit Player(unsigned maxSlots = Configuration::getInstance()->getSettingByName("inventorySize")) : inventorySize(maxSlots) {
+        money = static_cast<double>(Configuration::getInstance()->getSettingByName("initialMoney"));
         availableSlots = maxSlots;
     }
     virtual ~Player() = default;

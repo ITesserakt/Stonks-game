@@ -4,18 +4,20 @@
 #include "Player.h"
 #include "EventHandler.h"
 #include "WorldState.h"
+#include "Config.h"
 #include "widgets/MessageBox.h"
 #include <ncurses.h>
 #include <unistd.h>
 #include <random>
-#include <iostream>
 #include <iomanip>
 
 int main(int argc, char **argv) {
+    auto config = Configuration::getInstance();
 
     bool debugFlag = false;
     if (argc >= 2)
-        debugFlag = std::string("-d") == std::string(argv[1]);
+        debugFlag = (std::string("-d") == std::string(argv[1]));
+    debugFlag |= config->getSettingByName("debug");
     setupCurses();
     checkWindowSize();
 
@@ -24,7 +26,8 @@ int main(int argc, char **argv) {
     auto inventory = std::make_shared<Canvas>("Inventory", Left);
     auto guide = std::make_shared<Canvas>("Guide", Left);
     std::vector<std::shared_ptr<Canvas>> scenes = {mainMenu, gameField, inventory, guide};
-    WorldState state(*scenes[SceneNames::MainMenu], 3);
+    WorldState state(*scenes[SceneNames::MainMenu],
+                     config->getSettingByName("botsAmount"));
 
     setupMainMenu(state, *mainMenu, *gameField, *guide);
     setupGameField(state, *gameField);
@@ -57,11 +60,12 @@ int main(int argc, char **argv) {
                 std::ostringstream os;
                 os << "Balance: $" << std::setprecision(4) << state.getPlayer().getBalance();
                 scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
-                if (state.getPlayer().getBalance() > 10000) {
+                if (state.getPlayer().getBalance() > Configuration::getInstance()->getSettingByName("winCondition")) {
                     scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
                     state.shutdown();
                 }
-            } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
+            }
+            else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
                 auto items = state.getPlayer().getSlots();
                 for (const auto &sale: sales) {
