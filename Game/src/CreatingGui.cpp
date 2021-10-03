@@ -1,5 +1,5 @@
 #include "CreatingGui.h"
-#include "gameWidgets/Purchase.h"
+#include "GameWidgets/Purchase.h"
 #include "widgets/Widget.h"
 #include "widgets/MessageBox.h"
 #include "WorldState.h"

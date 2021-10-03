@@ -1,13 +1,13 @@
-#include "gameWidgets/Purchase.h"
+#include "GameWidgets/Purchase.h"
 #include "Canvas.h"
 #include <utility>
 
-UISize Purchase::getSize() {
-    size.height = this->getCanvas()->getActiveWidget().get() == this ?
-            getHeight(name) + 2 : getHeight(name);
-    size.width = getWidth(name) + 4;
-    return size;
-}
+Purchase::Purchase(int index, WorldState& state, std::function<void(WorldState& s, Purchase&)> f) :
+        Widget(""),
+        ColorWidget(""),
+        HoverableWidget(index, state, [f](WorldState& s, HoverableWidget& w) {
+            f(s, *w.as<Purchase>());
+        }) {}
 
 void Purchase::show() {
     if (isHidden) { return; }
@@ -28,9 +28,6 @@ void Purchase::show() {
     }
 }
 
-Purchase::Purchase(int index, WorldState& state, std::function<void(WorldState& s, Purchase&)> f) :
-    Widget(""),
-    ColorWidget(""),
-    HoverableWidget(index, state, [f](WorldState& s, HoverableWidget& w) {
-        f(s, *w.as<Purchase>());
-    }) {}
+UISize Purchase::getSize() {
+    return findSize(this);
+}

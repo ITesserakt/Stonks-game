@@ -1,16 +1,13 @@
 #include "CreatingGui.h"
 #include "FramePainter.h"
 #include "Canvas.h"
-#include "Player.h"
 #include "EventHandler.h"
 #include "WorldState.h"
 #include "Config.h"
 #include "widgets/MessageBox.h"
 #include <ncurses.h>
 #include <unistd.h>
-#include <random>
 #include <thread>
-#include <iomanip>
 
 int main(int argc, char **argv) {
     auto config = Configuration::getInstance();

@@ -2,8 +2,8 @@
 
 #include "widgets/Button.h"
 #include "widgets/Label.h"
-#include "gameWidgets/Purchase.h"
-#include "gameWidgets/Sale.h"
+#include "GameWidgets/Purchase.h"
+#include "GameWidgets/Sale.h"
 #include "Player.h"
 #include "Canvas.h"
 #include "World.h"

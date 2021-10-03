@@ -15,7 +15,8 @@ void Sale::show() {
         printw("%d. %s", tabIndex + 1, name.c_str());
         attroff(COLOR_PAIR(widgetId));
         move(position.y + 1, position.x);
-        printw("Sell for: $%lf", newPrice);
+        if (getItemId() != -1)
+            printw("Sell for: $%lf", newPrice);
     }
     else {
         printw("%d. %s", tabIndex + 1, name.c_str());
@@ -23,9 +24,6 @@ void Sale::show() {
 }
 
 UISize Sale::getSize() {
-    size.height = getHeight(name);
-    size.height += this->isBlowing ? 2 : 0;
-    size.width = getWidth(name) + 4;
-    return size;
+    return findSize(this);
 }
 

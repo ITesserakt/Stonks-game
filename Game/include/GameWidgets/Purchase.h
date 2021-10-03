@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "gameWidgets/ButtonWithObj.h"
+#include "GameWidgets/ButtonWithObj.h"
 #include "GameObject.h"
 
 class Purchase : public ButtonWithObj{
