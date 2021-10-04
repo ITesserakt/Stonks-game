@@ -18,7 +18,7 @@ public:
         }
     }
 
-    bool isActive() const { return isHidden; }
+    bool isActive() const { return !isHidden; }
 
 protected:
     bool isHidden = false;

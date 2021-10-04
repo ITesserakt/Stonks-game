@@ -4,10 +4,6 @@
 #include "WorldState.h"
 #include "utils.h"
 #include <iostream>
-#include <vector>
-#include <functional>
-
-constexpr auto EXTRA_SLOTS = 2;
 
 void setupCurses() {
     initscr();
@@ -136,11 +132,10 @@ void setupSettings(WorldState &state, canvases &scenes) {
 
     auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [=](WorldState &s, Button &x) {
         Config::refresh();
-        s.getCurrentScene().changeActiveWidget(Direction::DOWN);
-        s.getCurrentScene().changeActiveWidget(Direction::DOWN);
         restartMessage->hide(false);
         yes->hide(false);
         no->hide(false);
+        s.getCurrentScene().changeActiveWidget(Direction::DOWN, 2);
         x.hide();
         butStMn->hide();
     });
@@ -150,13 +145,12 @@ void setupSettings(WorldState &state, canvases &scenes) {
     no->hide();
 
     no->applyAction([=](WorldState &s, auto &x) {
+        butRt->hide(false);
+        butStMn->hide(false);
+        s.getCurrentScene().changeActiveWidget(Direction::UP, 2);
         restartMessage->hide();
         yes->hide();
         x.hide();
-        butRt->hide(false);
-        butStMn->hide(false);
-        s.getCurrentScene().changeActiveWidget(Direction::UP);
-        s.getCurrentScene().changeActiveWidget(Direction::UP);
     });
 
     butStMn->applyAction([=](WorldState &s, auto &w) {

@@ -21,7 +21,7 @@ public:
 
     void show() override;
 
-    void changeActiveWidget(Direction direct);
+    void changeActiveWidget(Direction direct, unsigned int length = 1);
     auto getActiveWidget() const { return activeWidget; }
 
     void bind(std::shared_ptr<Widget> widget) override;
