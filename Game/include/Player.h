@@ -7,8 +7,8 @@ class Player : public Gamer {
 private:
     unsigned inventorySize;
 public:
-    explicit Player(unsigned maxSlots = Configuration::getInstance()->getSettingByName("inventorySize")) : inventorySize(maxSlots) {
-        money = static_cast<double>(Configuration::getInstance()->getSettingByName("initialMoney"));
+    explicit Player(unsigned maxSlots = Config::inventorySize) : inventorySize(maxSlots) {
+        money = static_cast<double>(Config::initialMoney);
         availableSlots = maxSlots;
     }
     virtual ~Player() = default;

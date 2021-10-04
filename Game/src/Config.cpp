@@ -3,7 +3,7 @@
 
 const std::string configPath = "../share/config.txt";
 
-std::shared_ptr<Configuration> Configuration::sharedConfig = nullptr;
+Config *Config::sharedConfig = nullptr;
 
 void generateConfig() {
     std::ofstream configFile(configPath, std::fstream::out);
@@ -15,7 +15,7 @@ void generateConfig() {
                   "debug 0";
 }
 
-void readConfig(std::map<std::string, int>& settings, std::ifstream& configFile) {
+void readConfig(std::map<std::string, int> &settings, std::ifstream &configFile) {
     int value;
     std::string param;
     while (configFile >> param >> value) {
@@ -23,7 +23,7 @@ void readConfig(std::map<std::string, int>& settings, std::ifstream& configFile)
     }
 }
 
-Configuration::Configuration() {
+Config::Config() {
     std::ifstream configFile(configPath);
     if (!configFile.good()) {
         generateConfig();
@@ -32,14 +32,14 @@ Configuration::Configuration() {
     readConfig(settings, configFile);
 }
 
-std::shared_ptr<Configuration> Configuration::getInstance() {
+const Config &Config::getInstance() {
     if (sharedConfig == nullptr) {
-        sharedConfig = std::shared_ptr<Configuration>(new Configuration);
+        sharedConfig = new Config();
     }
-    return sharedConfig;
+    return *sharedConfig;
 }
 
-auto Configuration::getSettingByName(const std::string &name) -> decltype(settings.cbegin()->second){
+auto Config::getSettingByName(const std::string &name) const -> decltype(settings.cbegin()->second) {
     auto it = settings.find(name);
     if (it == settings.end()) {
         generateConfig();
@@ -48,8 +48,17 @@ auto Configuration::getSettingByName(const std::string &name) -> decltype(settin
     return it->second;
 }
 
-void Configuration::refresh() {
+void Config::refresh() {
     generateConfig();
-    std::ifstream configFile(configPath);
-    readConfig(settings, configFile);
+    sharedConfig = new Config();
 }
+
+#define CONFIG_PROPERTY(x) const int Config::x = getInstance().getSettingByName(#x)
+
+CONFIG_PROPERTY(inventorySize);
+CONFIG_PROPERTY(initialMoney);
+CONFIG_PROPERTY(winCondition);
+CONFIG_PROPERTY(worldSize);
+CONFIG_PROPERTY(botsAmount);
+
+const bool Config::debug = bool(getInstance().getSettingByName("debug"));

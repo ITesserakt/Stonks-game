@@ -4,18 +4,25 @@
 #include <map>
 #include <string>
 
-class Configuration {
+class Config {
 private:
-    static std::shared_ptr<Configuration> sharedConfig;
-    Configuration();
+    static Config* sharedConfig;
+    Config();
 
     std::map<std::string, int> settings;
 
 public:
-    Configuration(Configuration& other) = delete;
-    void operator =(const Configuration& ) = delete;
+    Config(const Config& other) = delete;
+    void operator =(const Config& ) = delete;
 
-    static std::shared_ptr<Configuration> getInstance();
-    auto getSettingByName(const std::string& name) -> decltype(settings.cbegin()->second);
-    void refresh();
+    static const Config& getInstance();
+    [[nodiscard]] auto getSettingByName(const std::string& name) const -> decltype(settings.cbegin()->second);
+    static void refresh();
+
+    static const int inventorySize;
+    static const int initialMoney;
+    static const int winCondition;
+    static const int worldSize;
+    static const bool debug;
+    static const int botsAmount;
 };

@@ -10,12 +10,10 @@
 #include <thread>
 
 int main(int argc, char **argv) {
-    auto config = Configuration::getInstance();
-
     bool debugFlag = false;
     if (argc >= 2)
         debugFlag = (std::string("-d") == std::string(argv[1]));
-    debugFlag |= config->getSettingByName("debug");
+    debugFlag |= Config::debug;
     setupCurses();
     checkWindowSize();
 
@@ -25,8 +23,7 @@ int main(int argc, char **argv) {
     auto inventory = std::make_shared<Canvas>("Inventory", Left);
     auto guide = std::make_shared<Canvas>("Guide", Left);
     canvases scenes = {mainMenu, gameField, inventory, guide, settings};
-    WorldState state(*scenes[SceneNames::MainMenu],
-                     config->getSettingByName("botsAmount"), debugFlag);
+    WorldState state(*scenes[SceneNames::MainMenu], Config::botsAmount, debugFlag);
 
     setupMainMenu(state, scenes);
     setupGameField(state, *gameField);
@@ -42,8 +39,7 @@ int main(int argc, char **argv) {
             clear();
             if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
                 paintGameFieldFrame(state, scenes, debugFlag);
-            }
-            else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
+            } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
                 paintInventoryFrame(state, scenes);
             }
             state.getCurrentScene().show();

@@ -1,5 +1,6 @@
 #include "FramePainter.h"
 #include "widgets/MessageBox.h"
+#include <iomanip>
 
 void paintGameFieldFrame(WorldState &state, canvases &scenes, const bool &debugFlag) {
     auto slots = state.getWorld().getSlots();
@@ -21,7 +22,7 @@ void paintGameFieldFrame(WorldState &state, canvases &scenes, const bool &debugF
     std::ostringstream os;
     os << "Balance: $" << std::setprecision(4) << state.getPlayer().getBalance();
     scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
-    if (state.getPlayer().getBalance() > Configuration::getInstance()->getSettingByName("winCondition")) {
+    if (state.getPlayer().getBalance() > Config::winCondition) {
         scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
         state.shutdown();
     }

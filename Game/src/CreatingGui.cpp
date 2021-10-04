@@ -123,8 +123,7 @@ void setupSettings(WorldState &state, canvases &scenes) {
     label->turnOn(COLOR_YELLOW);
     scenes[SceneNames::Settings]->bind(label);
     auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [&](WorldState& state, Button &x){
-        Configuration::getInstance()->refresh();
-        quitGame();
+        Config::refresh();
     });
     scenes[SceneNames::Settings]->bind(butRt);
     auto butStMn = std::make_shared<Button>("back", 1, state, [&](WorldState& state, Button &x){
