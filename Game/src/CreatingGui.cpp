@@ -5,6 +5,7 @@
 #include "utils.h"
 #include <iostream>
 #include <vector>
+#include <functional>
 
 constexpr auto EXTRA_SLOTS = 2;
 
@@ -21,6 +22,10 @@ void checkWindowSize() {
         endwin();
         throw std::runtime_error("Your terminal should be bigger or equal to 80x24 size\n");
     }
+}
+
+void createCanvas(const std::string &name, const Align &al, canvases &scenes) {
+    scenes.push_back(std::make_shared<Canvas>(name, al));
 }
 
 void setupMainMenu(WorldState &state, canvases &scenes) {
@@ -45,13 +50,13 @@ void setupMainMenu(WorldState &state, canvases &scenes) {
     scenes[SceneNames::MainMenu]->bind(butQ);
 }
 
-void setupGameField(WorldState &state, Canvas &gameField) {
+void setupGameField(WorldState &state, canvases &scenes) {
     auto label2 = std::make_shared<Label>("stocks", "Game field\n");
     label2->turnOn(COLOR_YELLOW);
-    gameField.bind(label2);
+    scenes[SceneNames::GameField]->bind(label2);
 
     auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
-    gameField.bind(balance);
+    scenes[SceneNames::GameField]->bind(balance);
 
     for (unsigned long i = 0; i < state.getWorld().getSlots().size(); i++) {
         auto purch = std::make_shared<Purchase>(i, state, [&](WorldState &s, Purchase &x) {
@@ -63,17 +68,17 @@ void setupGameField(WorldState &state, Canvas &gameField) {
                 x.setName("");
             }
         });
-        gameField.bind(purch);
+        scenes[SceneNames::GameField]->bind(purch);
     }
 
     auto winMessage = std::make_shared<MessageBox>("Win Message", "You have win!");
     winMessage->hide(true);
-    gameField.bind(winMessage);
+    scenes[SceneNames::GameField]->bind(winMessage);
 }
 
-void setupInventory(WorldState &state, Canvas &inventory) {
+void setupInventory(WorldState &state, canvases &scenes) {
     auto label = std::make_shared<Label>("inventory", "Inventory\n");
-    inventory.bind(label);
+    scenes[SceneNames::Inventory]->bind(label);
     label->turnOn(COLOR_YELLOW);
 
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
@@ -87,14 +92,14 @@ void setupInventory(WorldState &state, Canvas &inventory) {
                 }
             }
         });
-        inventory.bind(sale);
+        scenes[SceneNames::Inventory]->bind(sale);
     }
 }
 
-void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu) {
+void setupGuide(WorldState &state, canvases &scenes) {
     auto label = std::make_shared<Label>("guide", "Guide\n");
     label->turnOn(COLOR_YELLOW);
-    guide.bind(label);
+    scenes[SceneNames::Guide]->bind(label);
 
     std::string guideText =
             "STONKS GAME is a exchange trading simulator. In this game you\n"
@@ -109,13 +114,13 @@ void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu) {
             "KEY 2      - switch to stock exchange\n"
             "KEY 3      - switch to your inventory\n";
     auto guideForPlayer = std::make_shared<Label>("guide", guideText);
-    guide.bind(guideForPlayer);
+    scenes[SceneNames::Guide]->bind(guideForPlayer);
 
     // button for travelling from guide to main Menu
     auto butGdMn = std::make_shared<Button>("back", 0, state, [&](WorldState& state, Button &x) {
-        state.changeCurrentScene(mainMenu);
+        state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
     });
-    guide.bind(butGdMn);
+    scenes[SceneNames::Guide]->bind(butGdMn);
 }
 
 void setupSettings(WorldState &state, canvases &scenes) {

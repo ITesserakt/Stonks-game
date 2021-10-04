@@ -14,7 +14,7 @@ void paintGameFieldFrame(WorldState &state, canvases &scenes, const bool &debugF
         auto &item = state.getWorld().viewItem(slot);
         std::stringstream ss;
         if (debugFlag) { ss << item << ", profitness: " << state.getWorld().getProfitness(slot); }
-        else { ss << item.fullName() << (item.timesSold > 0 ? "*" : ""); }
+        else { ss << item.fullName() << (item.timesSold > 0 ? " *" : ""); }
         purch->setItemId(slot);
         purch->setName(ss.str());
         purch->setCost(item.cost);

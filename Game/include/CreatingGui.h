@@ -18,12 +18,14 @@ void setupCurses();
 
 void checkWindowSize();
 
+void createCanvas(const std::string& name, const Align& al, canvases& scenes);
+
 void setupMainMenu(WorldState &state, canvases &scenes);
 
-void setupGameField(WorldState& state, Canvas& gameField);
+void setupGameField(WorldState& state, canvases &scenes);
 
-void setupInventory(WorldState& state, Canvas& inventory);
+void setupInventory(WorldState &state, canvases &scenes);
 
-void setupGuide(WorldState &state, Canvas &guide, Canvas& mainMenu);
+void setupGuide(WorldState &state, canvases &scenes);
 
 void setupSettings(WorldState& state, canvases &scenes);

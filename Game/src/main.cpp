@@ -17,18 +17,18 @@ int main(int argc, char **argv) {
     setupCurses();
     checkWindowSize();
 
-    auto mainMenu = std::make_shared<Canvas>("MainMenu", Centered);
-    auto settings = std::make_shared<Canvas>("Settings", Centered);
-    auto gameField = std::make_shared<Canvas>("GameField", Left);
-    auto inventory = std::make_shared<Canvas>("Inventory", Left);
-    auto guide = std::make_shared<Canvas>("Guide", Left);
-    canvases scenes = {mainMenu, gameField, inventory, guide, settings};
+    canvases scenes;
+    createCanvas("MainMenu", Centered, scenes);
+    createCanvas("GameField", Left, scenes);
+    createCanvas("Inventory", Left, scenes);
+    createCanvas("Guide", Left, scenes);
+    createCanvas("Settings", Centered, scenes);
     WorldState state(*scenes[SceneNames::MainMenu], Config::botsAmount, debugFlag);
 
     setupMainMenu(state, scenes);
-    setupGameField(state, *gameField);
-    setupInventory(state, *inventory);
-    setupGuide(state, *guide, *mainMenu);
+    setupGameField(state, scenes);
+    setupInventory(state, scenes);
+    setupGuide(state, scenes);
     setupSettings(state, scenes);
 
     auto handler = EventHandler(scenes, state);

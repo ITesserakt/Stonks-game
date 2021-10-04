@@ -3,6 +3,7 @@
 //
 
 #include <AI.h>
+#include "Config.h"
 #include <range/v3/all.hpp>
 #include <thread>
 #include <chrono>
@@ -36,7 +37,7 @@ void AI::startTrading() {
         std::random_device seed;
         std::mt19937 randie(seed());
         unsigned int sleepTime;
-        if (debugFlag) { sleepTime = 10 + randie() % 90; }
+        if (debugFlag) { sleepTime = Config::debugSpeedGame + randie() % 90; }
         else { sleepTime = 700 + randie() % 10000; }
         while (true) {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));

@@ -25,4 +25,5 @@ public:
     static const int worldSize;
     static const bool debug;
     static const int botsAmount;
+    static const int debugSpeedGame;
 };

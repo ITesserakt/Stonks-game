@@ -12,7 +12,8 @@ void generateConfig() {
                   "botsAmount 3\n"
                   "inventorySize 7\n"
                   "worldSize 18\n"
-                  "debug 0";
+                  "debug 0\n"
+                  "debugSpeedGame 10";
 }
 
 void readConfig(std::map<std::string, int> &settings, std::ifstream &configFile) {
@@ -60,5 +61,6 @@ CONFIG_PROPERTY(initialMoney);
 CONFIG_PROPERTY(winCondition);
 CONFIG_PROPERTY(worldSize);
 CONFIG_PROPERTY(botsAmount);
+CONFIG_PROPERTY(debugSpeedGame);
 
 const bool Config::debug = bool(getInstance().getSettingByName("debug"));
