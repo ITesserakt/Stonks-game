@@ -1,6 +1,7 @@
 #include "widgets/Button.h"
 #include "utils.h"
 #include <cstdlib>
+#include <utility>
 
 void Button::show() {
     if (isHidden) return;
@@ -23,3 +24,23 @@ void Button::show() {
 
     return Widget::show();
 }
+
+UISize Button::getSize() {
+    if (isHidden)
+        return {0, 0};
+    size = {getWidth(name), getHeight(name)};
+    return size;
+}
+
+Button::Button(std::string name, int index, WorldState &state, std::function<void(WorldState &, Button &)> f) :
+        Widget(std::move(name)),
+        ColorWidget(name),
+        HoverableWidget(index, state, [f](WorldState &s, HoverableWidget &w) {
+            f(s, *w.as<Button>());
+        }) {
+    isBlowing = false;
+    size = {getWidth(name), getHeight(name)};
+}
+
+Button::Button(std::string name, int index, WorldState &state) :
+        Button(std::move(name), index, state, [](auto&, auto&){}) {}

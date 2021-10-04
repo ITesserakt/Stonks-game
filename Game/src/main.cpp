@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
             clear();
             if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
                 paintGameFieldFrame(state, scenes, debugFlag);
-            } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory].get()) {
+            } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory]) {
                 paintInventoryFrame(state, scenes);
             }
             state.getCurrentScene().show();
