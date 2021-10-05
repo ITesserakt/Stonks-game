@@ -13,18 +13,18 @@ int main() {
     checkWindowSize();
 
     canvases scenes;
-    createCanvas("MainMenu", Centered, scenes);
-    createCanvas("GameField", Left, scenes);
-    createCanvas("Inventory", Left, scenes);
-    createCanvas("Guide", Left, scenes);
-    createCanvas("Settings", Centered, scenes);
-    WorldState state(*scenes[SceneNames::MainMenu], Config::botsAmount, Config::debug);
-
-    setupMainMenu(state, scenes);
-    setupGameField(state, scenes);
-    setupInventory(state, scenes);
-    setupGuide(state, scenes);
-    setupSettings(state, scenes);
+    WorldState state(Config::botsAmount, Config::debug);
+    createCanvas("MainMenu", Centered, scenes,
+                 state,setupMainMenu);
+    createCanvas("GameField", Left, scenes,
+                 state,setupGameField);
+    createCanvas("Inventory", Left, scenes,
+                 state,setupInventory);
+    createCanvas("Guide", Left, scenes,
+                 state,setupGuide);
+    createCanvas("Settings", Centered, scenes,
+                 state,setupSettings);
+    state.changeCurrentScene(*scenes[SceneNames::MainMenu].get());
 
     auto handler = EventHandler(scenes, state);
 

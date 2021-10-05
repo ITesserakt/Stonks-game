@@ -20,8 +20,11 @@ void checkWindowSize() {
     }
 }
 
-void createCanvas(const std::string &name, const Align &al, canvases &scenes) {
+void createCanvas(const std::string &name, const Align &al, canvases &scenes,
+                  WorldState &state,
+                  std::function<void(WorldState &, canvases &)> setupCanvas) {
     scenes.push_back(std::make_shared<Canvas>(name, al));
+    setupCanvas(state, scenes);
 }
 
 void setupMainMenu(WorldState &state, canvases &scenes) {
