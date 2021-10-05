@@ -7,8 +7,11 @@
 class Debug {
     const std::string pathToLog = "../share/log.txt";
     static bool isLogCleared;
-public:
     Debug();
+public:
+    Debug(const Debug&) = delete;
+    Debug& operator=(const Debug&) = delete;
+    static Debug logger;
     template <typename T>
     friend Debug& operator <<(Debug& a, T b);
 };

@@ -3,6 +3,7 @@
 #include <iomanip>
 
 bool Debug::isLogCleared = false;
+Debug Debug::logger = Debug();
 
 Debug::Debug() {
     if (!isLogCleared) {
