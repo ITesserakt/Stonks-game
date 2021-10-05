@@ -3,20 +3,35 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <nlohmann/json.hpp>
 
 class Config {
 private:
-    static Config* sharedConfig;
+    static Config *sharedConfig;
+
     Config();
 
-    std::map<std::string, int> settings;
+    static void generateConfig();
+
+    std::map<std::string, std::string> settings;
 
 public:
-    Config(const Config& other) = delete;
-    void operator =(const Config& ) = delete;
+    Config(const Config &other) = delete;
 
-    static const Config& getInstance();
-    [[nodiscard]] auto getSettingByName(const std::string& name) const -> decltype(settings.cbegin()->second);
+    void operator=(const Config &) = delete;
+
+    static const Config &getInstance();
+
+    template<typename T>
+    [[nodiscard]] T getSettingByName(const std::string &name) const {
+        auto it = settings.find(name);
+        if (it == settings.end()) {
+            generateConfig();
+            throw std::runtime_error("ERROR in config. Config file was reset\n");
+        }
+        return nlohmann::json::parse(it->second).get<T>();
+    }
+
     static void refresh();
 
     static const int inventorySize;

@@ -1,0 +1,11 @@
+{
+    "Settings": {
+        "initialMoney": 200,
+        "winCondition": 10000,
+        "botsAmount": 3,
+        "inventorySize": 5,
+        "worldSize": 18,
+        "debug": false,
+        "debugSpeedGame": 10
+    }
+}
