@@ -127,7 +127,8 @@ void setupSettings(WorldState &state, canvases &scenes) {
     label->turnOn(COLOR_YELLOW);
 
     auto restartMessage = std::make_shared<MessageBox>("configRestart",
-                                                       "Do you want to restart game to apply config changes?");
+                                                       "Do you want to restart game\n"
+                                                       "to apply config changes?");
 
     auto yes = std::make_shared<Button>("yes", 2, state, [=](auto &s, auto &x) { quitGame(); });
     auto no = std::make_shared<Button>("no", 3, state);

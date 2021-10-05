@@ -6,7 +6,7 @@
 
 void paintLine(std::stringstream& ss, const std::string& text) {
     ss << '+';
-    for (int i = 0; i < text.size(); i++) {
+    for (int i = 0; i < getWidth(text); i++) {
         ss << '-';
     }
     ss << '+';
@@ -21,7 +21,9 @@ MessageBox::MessageBox(std::string name, std::string text, specialPosition spec)
 : Widget(std::move(name)), spec(spec) {
     std::stringstream ss;
     paintLine(ss, text); ss << '\n';
-    paintInner(ss, text); ss << '\n';
+    for (int i = 0; i < getHeight(text); i++) {
+        paintInner(ss, splitBySentence(text, i)); ss << '\n';
+    }
     paintLine(ss, text);
     messageText = ss.str();
 }
