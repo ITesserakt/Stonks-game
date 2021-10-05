@@ -10,22 +10,18 @@
 class Button : public virtual HoverableWidget {
 private:
 public:
-    Button(std::string name, int index, WorldState &state,
-           std::function<void(WorldState &, Button &)> f) :
-            Widget(std::move(name)),
-            ColorWidget(name),
-            HoverableWidget(index, state,
-                            [f](WorldState &s, HoverableWidget &w) {
-                                f(s, *w.as<Button>());
-                            }) {
-        isBlowing = false;
-        size = {getWidth(name), getHeight(name)};
+    Button(std::string name, int index, WorldState &state, std::function<void(WorldState &, Button &)> f);
+
+    Button(std::string name, int index, WorldState &state);
+
+    template<typename F>
+    void applyAction(F func) {
+        todo = [func](WorldState &s, HoverableWidget &w) {
+            func(s, *w.as<Button>());
+        };
     }
 
     void show() override;
 
-    UISize getSize() override {
-        size = {getWidth(name), getHeight(name)};
-        return size;
-    };
+    UISize getSize() override;
 };

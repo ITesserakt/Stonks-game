@@ -28,4 +28,4 @@ void setupInventory(WorldState &state, canvases &scenes);
 
 void setupGuide(WorldState &state, canvases &scenes);
 
-void setupSettings(WorldState& state, canvases &scenes);
+void setupSettings(WorldState& s, canvases &scenes);

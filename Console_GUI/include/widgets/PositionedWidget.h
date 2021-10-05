@@ -11,12 +11,14 @@ public:
         position.y = y;
     }
 
-    virtual void hide(bool hide) {
+    virtual void hide(bool hide = true) {
         this->isHidden = hide;
         for (auto child: getChildrenWithType<PositionedWidget>()) {
             child->hide(isHidden);
         }
     }
+
+    bool isActive() const { return !isHidden; }
 
 protected:
     bool isHidden = false;

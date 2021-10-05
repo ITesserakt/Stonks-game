@@ -4,10 +4,6 @@
 #include "WorldState.h"
 #include "utils.h"
 #include <iostream>
-#include <vector>
-#include <functional>
-
-constexpr auto EXTRA_SLOTS = 2;
 
 void setupCurses() {
     initscr();
@@ -34,7 +30,7 @@ void setupMainMenu(WorldState &state, canvases &scenes) {
     auto butPl = std::make_shared<Button>("play", 0, state, [&](WorldState &state, Button &x) {
         state.changeCurrentScene(*scenes[SceneNames::GameField].get());
     });
-    auto butSt = std::make_shared<Button>("settings", 1, state, [&](WorldState& state, Button &x){
+    auto butSt = std::make_shared<Button>("settings", 1, state, [&](WorldState &state, Button &x) {
         state.changeCurrentScene(*scenes[SceneNames::Settings].get());
     });
     auto butGd = std::make_shared<Button>("guide", 2, state, [&](auto &_, auto &x) {
@@ -117,7 +113,7 @@ void setupGuide(WorldState &state, canvases &scenes) {
     scenes[SceneNames::Guide]->bind(guideForPlayer);
 
     // button for travelling from guide to main Menu
-    auto butGdMn = std::make_shared<Button>("back", 0, state, [&](WorldState& state, Button &x) {
+    auto butGdMn = std::make_shared<Button>("back", 0, state, [&](WorldState &state, Button &x) {
         state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
     });
     scenes[SceneNames::Guide]->bind(butGdMn);
@@ -126,14 +122,49 @@ void setupGuide(WorldState &state, canvases &scenes) {
 void setupSettings(WorldState &state, canvases &scenes) {
     auto label = std::make_shared<Label>("guide", "Settings\n");
     label->turnOn(COLOR_YELLOW);
-    scenes[SceneNames::Settings]->bind(label);
-    auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [&](WorldState& state, Button &x){
+
+    auto restartMessage = std::make_shared<MessageBox>("configRestart",
+                                                       "Do you want to restart game to apply config changes?");
+
+    auto yes = std::make_shared<Button>("yes", 2, state, [=](auto &s, auto &x) { quitGame(); });
+    auto no = std::make_shared<Button>("no", 3, state);
+    auto butStMn = std::make_shared<Button>("back", 1, state);
+
+    auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [=](WorldState &s, Button &x) {
         Config::refresh();
+        restartMessage->hide(false);
+        yes->hide(false);
+        no->hide(false);
+        s.getCurrentScene().changeActiveWidget(Direction::DOWN, 2);
+        x.hide();
+        butStMn->hide();
     });
+
+    restartMessage->hide();
+    yes->hide();
+    no->hide();
+
+    no->applyAction([=](WorldState &s, auto &x) {
+        butRt->hide(false);
+        butStMn->hide(false);
+        s.getCurrentScene().changeActiveWidget(Direction::UP, 2);
+        restartMessage->hide();
+        yes->hide();
+        x.hide();
+    });
+
+    butStMn->applyAction([=](WorldState &s, auto &w) {
+       restartMessage->hide();
+       yes->hide();
+       no->hide();
+       s.changeCurrentScene(*scenes[SceneNames::MainMenu]);
+    });
+
+    scenes[SceneNames::Settings]->bind(label);
+    scenes[SceneNames::Settings]->bind(restartMessage);
+    scenes[SceneNames::Settings]->bind(yes);
+    scenes[SceneNames::Settings]->bind(no);
     scenes[SceneNames::Settings]->bind(butRt);
-    auto butStMn = std::make_shared<Button>("back", 1, state, [&](WorldState& state, Button &x){
-        state.changeCurrentScene(*scenes[SceneNames::MainMenu].get());
-    });
     scenes[SceneNames::Settings]->bind(butStMn);
 }
 
