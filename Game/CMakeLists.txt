@@ -3,7 +3,22 @@ file(GLOB_RECURSE TEST_FILES test/*.cpp)
 
 enable_testing()
 
-add_executable(Game_tests ${HEADER_FILES} ${TEST_FILES})
+add_executable(Game_tests ${HEADER_FILES} ${TEST_FILES}
+        src/Config.cpp
+        src/CreatingGui.cpp
+        src/ObjectFactory.cpp
+        src/AI.cpp
+        src/Debug.cpp
+        src/EventHandler.cpp
+        src/EventProducer.cpp
+        src/FramePainter.cpp
+        src/GameObject.cpp
+        src/Gamer.cpp
+        src/Player.cpp
+        src/World.cpp
+        src/GameWidgets/ButtonWithObj.cpp
+        src/GameWidgets/Purchase.cpp
+        src/GameWidgets/Sale.cpp)
 
 target_include_directories(Game_tests PRIVATE include)
-target_link_libraries(Game_tests PRIVATE Console_GUI gtest_main nlohmann_json::nlohmann_json ncurses gmock)
+target_link_libraries(Game_tests PRIVATE Console_GUI gtest_main nlohmann_json::nlohmann_json gmock)

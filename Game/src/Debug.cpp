@@ -1,5 +1,6 @@
 #include "Debug.h"
 #include <sstream>
+#include <iomanip>
 
 bool Debug::isLogCleared = false;
 
