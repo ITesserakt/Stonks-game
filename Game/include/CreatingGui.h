@@ -18,7 +18,9 @@ void setupCurses();
 
 void checkWindowSize();
 
-void createCanvas(const std::string& name, const Align& al, canvases& scenes);
+void createCanvas(const std::string &name, const Align &al, canvases &scenes,
+                  WorldState &state,
+                  std::function<void(WorldState &, canvases &)> setupCanvas);
 
 void setupMainMenu(WorldState &state, canvases &scenes);
 

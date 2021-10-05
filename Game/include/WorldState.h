@@ -16,11 +16,11 @@ private:
     Canvas* currentScene;
 public:
     WorldState(const WorldState &) = delete;
-
     WorldState &operator=(const WorldState &) = delete;
 
-    explicit WorldState(Canvas& currentScene, unsigned int maxBots, bool debug = false):
-            bots(maxBots), currentScene(&currentScene) {
+    explicit WorldState(unsigned int maxBots, bool debug = false,
+                        Canvas *currentScene = nullptr) :
+            bots(maxBots), currentScene(currentScene) {
         player = std::make_shared<Player>();
         world.addGamer(player);
         for (unsigned int index = 0; index < maxBots; index++) {
