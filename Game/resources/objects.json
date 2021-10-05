@@ -1,33 +1,24 @@
 {
   "Objects" : [{
     "name" : "car",
-    "descriptions": [{
-      "value" : "red",
-      "multiplier" : 1.05
-    }, {
-      "value": "shiny",
-      "multiplier": 2
-    }, {
-      "value" : "dirty",
-      "multiplier": 0.75
-    }],
+    "descriptions": {
+      "red": 1.05,
+      "shiny": 2,
+      "dirty": 0.75
+    },
     "cost": 10000
   }, {
     "name": "dress",
-    "descriptions": [{
-      "value": "gucci",
-      "multiplier": 15
-    }],
+    "descriptions": {
+      "gucci": 15
+    },
     "cost": 10
   }, {
     "name": "book",
-    "descriptions": [{
-      "value": "old",
-      "multiplier": 1.4
-    }, {
-      "value": "rare",
-      "multiplier": 10
-    }],
+    "descriptions": {
+      "old": 1.4,
+      "rare": 10
+    },
     "cost": 20
   }]
 }

@@ -13,10 +13,9 @@ TEST(game_logic, config_parsing) {
     auto json = R"({
     "Objects" : [{
         "name" : "car",
-        "descriptions": [{
-            "value" : "red",
-            "multiplier" : 1.05
-        }],
+        "descriptions": {
+            "red": 1.05
+        },
         "cost": 10000.0
     }]
 })";
@@ -35,20 +34,15 @@ TEST(game_logic, objects_generating) {
     auto json = R"({
     "Objects" : [{
         "name" : "car",
-        "descriptions": [{
-            "value" : "red",
-            "multiplier" : 1.05
-        }, {
-            "value": "shiny",
-            "multiplier": 2
-        }, {
-            "value" : "dirty",
-            "multiplier": 0.75
-        }],
+        "descriptions": {
+            "red": 1.05,
+            "shiny": 2,
+            "dirty": 0.75
+        },
         "cost": 10000
     }, {
         "name": "laba, tipovik",
-        "descriptions": [],
+        "descriptions": {},
         "cost": 1000000
     }]
 })"_json;
@@ -62,15 +56,15 @@ TEST(game_logic, objects_cost) {
     auto json = R"({
     "Objects" : [{
         "name" : "car",
-        "descriptions": [],
+        "descriptions": {},
         "cost": 10000.0
     }, {
         "name": "dress",
-        "descriptions": [],
+        "descriptions": {},
         "cost": 10
     }, {
         "name": "laptop",
-        "descriptions": [],
+        "descriptions": {},
         "cost": 700
     }]
 })";
@@ -84,29 +78,23 @@ TEST(game_logic, profitness) {
     auto json = R"({
         "Objects" : [{
             "name" : "car",
-            "descriptions": [{
-                "value" : "red",
-                "multiplier" : 1.05
-            }, {
-                "value": "shiny",
-                        "multiplier": 2
-            }, {
-                "value" : "dirty",
-                        "multiplier": 0.75
-            }],
+            "descriptions": {
+                "red": 1.05,
+                "shiny": 2,
+                "dirty": 0.75
+            },
             "cost": 10000
         }, {
             "name": "dress",
-            "descriptions": [{
-                "value": "gucci",
-                "multiplier": 15
-            }],
+            "descriptions": {
+                "gucci": 15
+            },
             "cost": 10
         }]
 })"_json;
     auto f = ObjectFactory(json, 9);
     auto w = World(std::move(f), 2);
-    std::vector<double> expected = {4.5499999, 2.0249999, 0, -0.548677, 0};
+    std::vector<double> expected = {0.275, 0.0106249, -60129542131.400002, 0, 268435455.81874999};
 
     for (int x: {0, 1, 2, 3, 4}) {
         auto next = w.factory.generateNext();
@@ -119,7 +107,7 @@ TEST(game_logic, profitness) {
 }
 
 TEST(game_logic, non_existing_gameobject) {
-    auto w = World(2);
+    auto w = World(ObjectFactory::empty(), 2);
     ASSERT_THROW({
                      auto unused = w.getProfitness(1);
                  }, std::runtime_error);
@@ -135,23 +123,17 @@ TEST(game_logic, trade_properties) {
     auto w = World(ObjectFactory(R"({
         "Objects" : [{
             "name" : "car",
-            "descriptions": [{
-                "value" : "red",
-                "multiplier" : 1.05
-            }, {
-                "value": "shiny",
-                        "multiplier": 2
-            }, {
-                "value" : "dirty",
-                        "multiplier": 0.75
-            }],
+            "descriptions": {
+                "red": 1.05,
+                "shiny": 2,
+                "dirty": 0.75
+            },
             "cost": 10000
         }, {
             "name": "dress",
-            "descriptions": [{
-                "value": "gucci",
-                "multiplier": 15
-            }],
+            "descriptions": {
+                "gucci": 15
+            },
             "cost": 10
         }]
 })"_json), 2);

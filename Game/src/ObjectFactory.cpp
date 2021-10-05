@@ -43,10 +43,8 @@ ObjectFactory::ObjectFactory(const nlohmann::json &config,
         const auto &cost = object["cost"].get<GameObject::Cost>();
         const auto &descs = object["descriptions"];
         data[name] = ObjectPrototype{{}, cost};
-        for (const auto &desc: descs) {
-            const auto &d = desc["value"].get<GameObject::Description>();
-            const auto &c = desc["multiplier"].get<GameObject::Cost>();
-            data[name].descriptions[d] = c;
+        for (const auto &[d, c]: descs.items()) {
+            data[name].descriptions[d] = c.get<GameObject::Cost>();
         }
     }
 }
