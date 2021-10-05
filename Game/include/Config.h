@@ -13,7 +13,7 @@ private:
 
     static void generateConfig();
 
-    std::map<std::string, std::string> settings;
+    std::map<std::string, nlohmann::json> settings;
 
 public:
     Config(const Config &other) = delete;
@@ -29,7 +29,7 @@ public:
             generateConfig();
             throw std::runtime_error("ERROR in config. Config file was reset\n");
         }
-        return nlohmann::json::parse(it->second).get<T>();
+        return it->second.get<T>();
     }
 
     static void refresh();

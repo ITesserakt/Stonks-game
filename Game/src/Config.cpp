@@ -21,9 +21,9 @@ void Config::generateConfig() {
 })";
 }
 
-void readConfig(std::map<std::string, std::string> &settings, const nlohmann::json &json) {
+void readConfig(std::map<std::string, nlohmann::json> &settings, const nlohmann::json &json) {
     for (const auto&[k, v]: json.items()) {
-        settings.emplace(k, v.dump());
+        settings.emplace(k, v);
     }
 }
 
