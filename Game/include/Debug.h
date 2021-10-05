@@ -1,14 +1,25 @@
 #pragma once
 
+#include <fstream>
+#include <string>
+#include <thread>
+
 class Debug {
-    const string pathToLog = "../share/log.txt";
+    const std::string pathToLog = "../share/log.txt";
+    static bool isLogCleared;
 public:
+    Debug();
     template <typename T>
     friend Debug& operator <<(Debug& a, T b);
 };
 
+std::string currentTime();
+
 template <typename T>
 Debug& operator <<(Debug& a, T b) {
-    fstream(a.pathToLog, fstream::app) << b;
+    std::ofstream(a.pathToLog, std::fstream::app) << "ThreadId: "
+    << std::this_thread::get_id() << ' ' << currentTime()
+    << ' ' << b << std::endl;
     return a;
 }
+
