@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.6)
 project(Stonks-Game CXX)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -16,7 +16,7 @@ add_subdirectory(Game)
 target_include_directories(main PRIVATE Console_GUI/include)
 target_include_directories(main PRIVATE Game/include)
 
-target_link_libraries(main PRIVATE Console_GUI nlohmann_json::nlohmann_json ncurses)
+target_link_libraries(main PRIVATE Console_GUI jsoncons ncurses)
 
 install(FILES ${RESOURCES}
         TYPE DATA)

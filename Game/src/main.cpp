@@ -24,7 +24,7 @@ int main() {
                  state,setupGuide);
     createCanvas("Settings", Centered, scenes,
                  state,setupSettings);
-    state.changeCurrentScene(*scenes[SceneNames::MainMenu].get());
+    state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
 
     auto handler = EventHandler(scenes, state);
 

@@ -1,6 +1,3 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
-
 #include <iostream>
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
@@ -8,6 +5,8 @@
 #include <ObjectFactory.h>
 #include <World.h>
 #include <Player.h>
+
+using namespace jsoncons::literals;
 
 TEST(game_logic, config_parsing) {
     auto json = R"({
@@ -19,7 +18,7 @@ TEST(game_logic, config_parsing) {
         "cost": 10000.0
     }]
 })";
-    auto f = ObjectFactory(nlohmann::json::parse(json), 3);
+    auto f = ObjectFactory(jsoncons::json::parse(json), 3);
     ASSERT_EQ(f.generateNext(), (GameObject{"car", {}, 0, 10000}));
 }
 

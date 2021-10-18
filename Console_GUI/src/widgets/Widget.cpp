@@ -15,7 +15,7 @@ std::weak_ptr<Widget> Widget::getParent() const { return parent; }
 
 const std::vector<std::shared_ptr<Widget>> &Widget::getChildren() const { return children; }
 
-std::shared_ptr<Canvas> Widget::getCanvas() const { return canvas; }
+std::weak_ptr<Canvas> Widget::getCanvas() const { return canvas; }
 
 void Widget::bind(std::shared_ptr<Widget> widget) {
     if (this == widget.get()) {

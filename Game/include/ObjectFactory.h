@@ -5,7 +5,7 @@
 #include <map>
 #include <random>
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <jsoncons/basic_json.hpp>
 #include "GameObject.h"
 
 class ObjectFactory {
@@ -25,7 +25,7 @@ public:
     GameObject generateNext();
     [[nodiscard]] GameObject::Cost getCostForKind(const GameObject::Name& kind) const;
 
-    explicit ObjectFactory(const nlohmann::json &config, unsigned int randomSeed = engine());
+    explicit ObjectFactory(const jsoncons::json &config, unsigned int randomSeed = engine());
 
     static ObjectFactory fromFile(const std::string &filename);
 

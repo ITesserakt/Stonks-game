@@ -21,4 +21,4 @@ add_executable(Game_tests ${HEADER_FILES} ${TEST_FILES}
         src/GameWidgets/Sale.cpp)
 
 target_include_directories(Game_tests PRIVATE include)
-target_link_libraries(Game_tests PRIVATE Console_GUI gtest_main nlohmann_json::nlohmann_json gmock)
+target_link_libraries(Game_tests PRIVATE Console_GUI gtest_main jsoncons gmock)

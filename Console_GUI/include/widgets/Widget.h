@@ -39,7 +39,7 @@ protected:
 
     std::string name;
     std::weak_ptr<Widget> parent;
-    std::shared_ptr<Canvas> canvas;
+    std::weak_ptr<Canvas> canvas;
     std::vector<std::shared_ptr<Widget>> children;
 
 public:
@@ -104,7 +104,7 @@ public:
 
     const std::vector<std::shared_ptr<Widget>> &getChildren() const;
 
-    std::shared_ptr<Canvas> getCanvas() const;
+    std::weak_ptr<Canvas> getCanvas() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Widget &widget);
 

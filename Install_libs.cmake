@@ -3,8 +3,8 @@
 include(FetchContent)
 
 FetchContent_Declare(json
-        GIT_REPOSITORY https://github.com/nlohmann/json
-        GIT_TAG 626e7d61e44dee32887126c8f437dd077dec09cf)
+        GIT_REPOSITORY https://github.com/danielaparker/jsoncons
+        GIT_TAG f85537d49b5f6f907f5e05d097350596676c2a26)
 
 FetchContent_Declare(googletest
         GIT_REPOSITORY https://github.com/google/googletest.git

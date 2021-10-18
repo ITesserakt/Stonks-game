@@ -49,7 +49,7 @@ void AI::startTrading() {
             }
             if (getSlots().size() != 0 && world.couldPutInto() && !tradeType) {
                 auto predicted = predictToSell();
-                auto costMult = (1 + (double) (-10 + (int)randie() % 20) / 100);
+                auto costMult = (1 + (double) (-10 + (int)randie() % 40) / 100);
                 auto newCost = viewItem(predicted).cost * costMult;
                 world.putItem(sellItem(predicted, newCost));
             }

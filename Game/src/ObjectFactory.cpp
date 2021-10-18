@@ -34,17 +34,17 @@ GameObject ObjectFactory::generateNext() {
     return {name, descriptions, lastId++, cost};
 }
 
-ObjectFactory::ObjectFactory(const nlohmann::json &config,
+ObjectFactory::ObjectFactory(const jsoncons::json &config,
                              unsigned int randomSeed) : random(randomSeed) {
     auto objects = config["Objects"];
 
-    for (const auto &object: objects) {
-        const auto &name = object["name"].get<GameObject::Name>();
-        const auto &cost = object["cost"].get<GameObject::Cost>();
+    for (const auto &object: objects.array_range()) {
+        const auto &name = object["name"].as<GameObject::Name>();
+        const auto &cost = object["cost"].as<GameObject::Cost>();
         const auto &descs = object["descriptions"];
         data[name] = ObjectPrototype{{}, cost};
-        for (const auto &[d, c]: descs.items()) {
-            data[name].descriptions[d] = c.get<GameObject::Cost>();
+        for (const auto &member: descs.object_range()) {
+            data[name].descriptions[member.key()] = member.value().as<GameObject::Cost>();
         }
     }
 }
@@ -58,13 +58,13 @@ ObjectFactory ObjectFactory::fromFile(const std::string &filename) {
     std::ifstream file(filename);
     if (!file.is_open())
         throw std::runtime_error("Cannot open specified file");
-    return ObjectFactory(nlohmann::json::parse(file));
+    return ObjectFactory(jsoncons::json::parse(file));
 }
 
 ObjectFactory ObjectFactory::fromText(const std::string &text) {
-    return ObjectFactory(nlohmann::json::parse(text.begin(), text.end()));
+    return ObjectFactory(jsoncons::json::parse(text.begin(), text.end()));
 }
 
 ObjectFactory ObjectFactory::empty() {
-    return ObjectFactory(R"({"Objects":[]})"_json);
+    return ObjectFactory::fromText(R"({"Objects":[]})");
 }

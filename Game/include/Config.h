@@ -3,7 +3,7 @@
 #include <memory>
 #include <map>
 #include <string>
-#include <nlohmann/json.hpp>
+#include <jsoncons/basic_json.hpp>
 
 class Config {
 private:
@@ -13,7 +13,7 @@ private:
 
     static void generateConfig();
 
-    std::map<std::string, nlohmann::json> settings;
+    std::map<std::string, jsoncons::json> settings;
 
 public:
     Config(const Config &other) = delete;
@@ -29,7 +29,7 @@ public:
             generateConfig();
             throw std::runtime_error("ERROR in config. Config file was reset\n");
         }
-        return it->second.get<T>();
+        return it->second.as<T>();
     }
 
     static void refresh();

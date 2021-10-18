@@ -1,6 +1,5 @@
 #include "Config.h"
 #include <fstream>
-#include <nlohmann/json.hpp>
 
 constexpr auto configPath = "../share/config.json";
 
@@ -21,9 +20,9 @@ void Config::generateConfig() {
 })";
 }
 
-void readConfig(std::map<std::string, nlohmann::json> &settings, const nlohmann::json &json) {
-    for (const auto&[k, v]: json.items()) {
-        settings.emplace(k, v);
+void readConfig(std::map<std::string, jsoncons::json> &settings, const jsoncons::json &json) {
+    for (const auto& next: json.object_range()) {
+        settings.emplace(next.key(), next.value());
     }
 }
 
@@ -33,9 +32,9 @@ Config::Config() {
         generateConfig();
         configFile.open(configPath);
     }
-    nlohmann::json config;
+    jsoncons::json config;
     try {
-        config = nlohmann::json::parse(configFile);
+        config = jsoncons::json::parse(configFile);
     } catch (...) {
         generateConfig();
         throw std::runtime_error("ERROR in config. Config file was reset");

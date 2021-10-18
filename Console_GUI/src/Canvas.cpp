@@ -89,7 +89,7 @@ void Canvas::changeActiveWidget(Direction direct, unsigned int length) {
 }
 
 void Canvas::bind(std::shared_ptr<Widget> widget) {
-    canvas = shared_from_this()->as<Canvas>();
+    canvas = weak_from_this().lock()->as<Canvas>();
     Widget::bind(widget);
     if (widget->is<HoverableWidget>() &&
         widget->as<HoverableWidget>()->getTabIndex() == 0)
