@@ -49,11 +49,11 @@ int main() {
 
         handler.startLoop();
         renderThread.join();
-        state.joinAllAI();
+        state.cancelAllAI();
     } catch (const std::runtime_error &ex) {
-        std::cout << ex.what() << std::endl;
+        Debug::logger << ex.what();
     } catch (...) {
-        std::cout << "Unknown error occurred" << std::endl;
+        Debug::logger << "Unknown error occurred";
     }
     console_gui::dispose<Frontend>();
 }

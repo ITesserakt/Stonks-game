@@ -4,6 +4,16 @@
 #include <map>
 #include <string>
 #include <jsoncons/basic_json.hpp>
+#include <jsoncons/json_traits_macros.hpp>
+
+struct DifficultyPreset {
+    std::string name;
+    double initialMoney;
+    int winCondition;
+    int inventorySize;
+};
+
+JSONCONS_ALL_MEMBER_TRAITS(DifficultyPreset, name, initialMoney, winCondition, inventorySize);
 
 class Config {
 private:
@@ -34,11 +44,10 @@ public:
 
     static void refresh();
 
-    static const int inventorySize;
-    static const int initialMoney;
-    static const int winCondition;
     static const int worldSize;
     static const bool debug;
     static const int botsAmount;
     static const int debugSpeedGame;
+    static const std::vector<DifficultyPreset> presets;
+    static DifficultyPreset activePreset;
 };

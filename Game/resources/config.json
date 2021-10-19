@@ -1,11 +1,24 @@
 {
     "Settings": {
-        "initialMoney": 200,
-        "winCondition": 10000,
         "botsAmount": 3,
-        "inventorySize": 5,
         "worldSize": 18,
         "debug": false,
-        "debugSpeedGame": 10
+        "debugSpeedGame": 10,
+        "presets": [{
+            "name": "Easy",
+            "initialMoney": 1000,
+            "winCondition": 10000,
+            "inventorySize": 5
+        }, {
+            "name": "Normal",
+            "initialMoney": 200,
+            "winCondition": 10000,
+            "inventorySize": 3
+        }, {
+            "name": "Hard",
+            "initialMoney": 200,
+            "winCondition": 50000,
+            "inventorySize": 1
+        }]
     }
 }

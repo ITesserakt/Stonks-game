@@ -31,7 +31,7 @@ double AI::getProfitness(GameObject::Id itemId) {
 }
 
 std::thread AI::startTrading(const bool& running) {
-    return std::thread([&] {
+    auto thread = std::thread([&] {
         std::random_device seed;
         std::mt19937 randie(seed());
         unsigned int sleepTime;
@@ -53,4 +53,6 @@ std::thread AI::startTrading(const bool& running) {
             }
         }
     });
+    thread.detach();
+    return thread;
 }

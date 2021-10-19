@@ -22,7 +22,7 @@ void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugF
     std::ostringstream os;
     os << "Balance: $" << std::setprecision(4) << state.getPlayer().getBalance();
     scenes[SceneNames::GameField]->getChildWithName("Money Amount")->as<Label>()->changeText(os.str());
-    if (state.getPlayer().getBalance() > Config::winCondition) {
+    if (state.getPlayer().getBalance() > Config::activePreset.winCondition) {
         scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
         state.shutdown();
     }

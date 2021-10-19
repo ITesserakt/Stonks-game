@@ -5,10 +5,10 @@
 
 class Player : public Gamer {
 private:
-    unsigned inventorySize;
+    unsigned int inventorySize;
 public:
-    explicit Player(unsigned maxSlots = Config::inventorySize) : inventorySize(maxSlots) {
-        money = static_cast<double>(Config::initialMoney);
+    explicit Player(unsigned maxSlots = Config::activePreset.inventorySize) : inventorySize(maxSlots) {
+        money = Config::activePreset.initialMoney;
         availableSlots = maxSlots;
     }
     virtual ~Player() = default;

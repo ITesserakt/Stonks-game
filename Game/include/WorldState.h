@@ -49,8 +49,8 @@ public:
 
     AI &getRandomBot() { return *bots[random() % bots.size()]; }
 
-    void joinAllAI() {
+    void cancelAllAI() {
         for (auto &thread: botThreads)
-            thread.join();
+            thread.std::thread::~thread();
     }
 };

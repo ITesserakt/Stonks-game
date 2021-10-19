@@ -1,5 +1,6 @@
-#include "Config.h"
 #include <fstream>
+#include "Config.h"
+#include "Debug.h"
 
 constexpr auto configPath = "../share/config.json";
 
@@ -9,13 +10,16 @@ void Config::generateConfig() {
     std::ofstream configFile(configPath, std::fstream::out);
     configFile << R"({
     "Settings": {
-        "initialMoney": 200,
-        "winCondition": 10000,
         "botsAmount": 3,
-        "inventorySize": 5,
         "worldSize": 18,
         "debug": false,
-        "debugSpeedGame": 10
+        "debugSpeedGame": 10,
+        "presets": [{
+            "name": "Normal",
+            "initialMoney": 200,
+            "winCondition": 10000,
+            "inventorySize": 3
+        }]
     }
 })";
 }
@@ -35,7 +39,8 @@ Config::Config() {
     jsoncons::json config;
     try {
         config = jsoncons::json::parse(configFile);
-    } catch (...) {
+    } catch (const std::runtime_error& ex) {
+        Debug::logger << ex.what();
         generateConfig();
         throw std::runtime_error("ERROR in config. Config file was reset");
     }
@@ -56,10 +61,10 @@ void Config::refresh() {
 
 #define CONFIG_PROPERTY(t, x) const t Config::x = getInstance().getSettingByName<t>(#x)
 
-CONFIG_PROPERTY(int, inventorySize);
-CONFIG_PROPERTY(int, initialMoney);
-CONFIG_PROPERTY(int, winCondition);
 CONFIG_PROPERTY(int, worldSize);
 CONFIG_PROPERTY(int, botsAmount);
 CONFIG_PROPERTY(int, debugSpeedGame);
 CONFIG_PROPERTY(bool, debug);
+CONFIG_PROPERTY(std::vector<DifficultyPreset>, presets);
+
+DifficultyPreset Config::activePreset = presets[0];
