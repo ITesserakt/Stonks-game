@@ -4,11 +4,12 @@
 #include "WorldState.h"
 #include "Config.h"
 #include "widgets/MessageBox.h"
-#include <unistd.h>
 #include <thread>
 #include "GUI.h"
+#include "Debug.h"
 
 using Frontend = console_gui::NCurses;
+using namespace std::chrono_literals;
 
 int main() {
     try {
@@ -32,7 +33,7 @@ int main() {
 
         std::thread renderThread([&]() {
             while (state.running()) {
-                usleep(16666);
+                auto stamp = std::chrono::system_clock::now();
                 clear();
                 if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
                     paintGameFieldFrame(state, scenes, Config::debug);
@@ -41,6 +42,8 @@ int main() {
                 }
                 state.getCurrentScene().show();
                 refresh();
+                auto passed = std::chrono::system_clock::now() - stamp;
+                std::this_thread::sleep_for(16ms - passed);
             }
         });
 
