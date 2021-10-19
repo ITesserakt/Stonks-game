@@ -8,7 +8,7 @@
 #include <thread>
 #include "GUI.h"
 
-using Frontend = console_gui::Terminal;
+using Frontend = console_gui::NCurses;
 
 int main() {
     try {

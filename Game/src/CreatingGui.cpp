@@ -6,7 +6,7 @@
 
 void createCanvas(const std::string &name, const Align &al, Canvases &scenes,
                   WorldState &state,
-                  std::function<void(WorldState &, Canvases &)> setupCanvas) {
+                  const std::function<void(WorldState &, Canvases &)>& setupCanvas) {
     scenes.push_back(std::make_shared<Canvas>(name, al));
     setupCanvas(state, scenes);
 }
@@ -24,7 +24,7 @@ void setupMainMenu(WorldState &state, Canvases &scenes) {
         state.changeCurrentScene(*scenes[SceneNames::Guide].get());
     });
     auto butQ = std::make_shared<Button>("quit", 3, state, [&](WorldState &s, auto &x) {
-        quitGame();
+        state.shutdown();
     });
     scenes[SceneNames::MainMenu]->bind(label1);
     scenes[SceneNames::MainMenu]->bind(butPl);
@@ -114,7 +114,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
                                                        "Do you want to restart game\n"
                                                        "to apply config changes?");
 
-    auto yes = std::make_shared<Button>("yes", 2, state, [=](auto &s, auto &x) { quitGame(); });
+    auto yes = std::make_shared<Button>("yes", 2, state, [=](auto &s, auto &x) { s.shutdown(); });
     auto no = std::make_shared<Button>("no", 3, state);
     auto butStMn = std::make_shared<Button>("back", 1, state);
 

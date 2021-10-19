@@ -21,7 +21,6 @@
 unsigned int getHeight(std::string str);
 unsigned int getWidth(std::string str);
 std::string splitBySentence(std::string str, int number);
-void quitGame();
 
 int generateId();
 

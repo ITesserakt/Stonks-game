@@ -52,11 +52,3 @@ std::string splitBySentence(std::string str, int number) {
     }
     return res;
 }
-
-void quitGame() {
-    clear();
-    endwin();
-    std::cout << "See you later ;)" << std::endl;
-    exit(0);
-}
-

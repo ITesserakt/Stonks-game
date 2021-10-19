@@ -5,7 +5,7 @@
         "botsAmount": 3,
         "inventorySize": 5,
         "worldSize": 18,
-        "debug": true,
+        "debug": false,
         "debugSpeedGame": 10
     }
 }

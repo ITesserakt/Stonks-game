@@ -16,7 +16,7 @@ enum SceneNames {
 
 void createCanvas(const std::string &name, const Align &al, Canvases &scenes,
                   WorldState &state,
-                  std::function<void(WorldState &, Canvases &)> setupCanvas);
+                  const std::function<void(WorldState &, Canvases &)>& setupCanvas);
 
 void setupMainMenu(WorldState &state, Canvases &scenes);
 
