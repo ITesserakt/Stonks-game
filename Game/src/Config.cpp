@@ -4,8 +4,6 @@
 
 constexpr auto configPath = "../share/config.json";
 
-Config *Config::sharedConfig = nullptr;
-
 void Config::generateConfig() {
     std::ofstream configFile(configPath, std::fstream::out);
     configFile << R"({
@@ -48,15 +46,8 @@ Config::Config() {
 }
 
 const Config &Config::getInstance() {
-    if (sharedConfig == nullptr) {
-        sharedConfig = new Config();
-    }
-    return *sharedConfig;
-}
-
-void Config::refresh() {
-    generateConfig();
-    sharedConfig = new Config();
+    static Config instance;
+    return instance;
 }
 
 #define CONFIG_PROPERTY(t, x) const t Config::x = getInstance().getSettingByName<t>(#x)

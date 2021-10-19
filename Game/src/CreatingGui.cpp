@@ -119,7 +119,6 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     auto butStMn = std::make_shared<Button>("back", 1, state);
 
     auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [=](WorldState &s, Button &x) {
-        Config::refresh();
         restartMessage->hide(false);
         yes->hide(false);
         no->hide(false);

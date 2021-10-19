@@ -17,8 +17,6 @@ JSONCONS_ALL_MEMBER_TRAITS(DifficultyPreset, name, initialMoney, winCondition, i
 
 class Config {
 private:
-    static Config *sharedConfig;
-
     Config();
 
     static void generateConfig();
@@ -41,8 +39,6 @@ public:
         }
         return it->second.as<T>();
     }
-
-    static void refresh();
 
     static const int worldSize;
     static const bool debug;
