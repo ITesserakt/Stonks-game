@@ -3,10 +3,12 @@
 #include "widgets/MessageBox.h"
 #include "WorldState.h"
 #include <iostream>
+#include "widgets/Group.h"
+#include "Debug.h"
 
 void createCanvas(const std::string &name, const Align &al, Canvases &scenes,
                   WorldState &state,
-                  const std::function<void(WorldState &, Canvases &)>& setupCanvas) {
+                  const std::function<void(WorldState &, Canvases &)> &setupCanvas) {
     scenes.push_back(std::make_shared<Canvas>(name, al));
     setupCanvas(state, scenes);
 }
@@ -114,9 +116,25 @@ void setupSettings(WorldState &state, Canvases &scenes) {
                                                        "Do you want to restart game\n"
                                                        "to apply config changes?");
 
-    auto yes = std::make_shared<Button>("yes", 2, state, [=](auto &s, auto &x) { s.shutdown(); });
-    auto no = std::make_shared<Button>("no", 3, state);
-    auto butStMn = std::make_shared<Button>("back", 1, state);
+    auto yes = std::make_shared<Button>("yes", 3, state, [=](auto &s, auto &x) { s.shutdown(); });
+    auto no = std::make_shared<Button>("no", 4, state);
+    auto butStMn = std::make_shared<Button>("back", 2, state);
+    std::vector<std::shared_ptr<Label>> levelNames;
+    auto levels = std::make_shared<Button>("difficulties", 1, state,
+                                           [isLevelsExpanded = false](WorldState &s, auto &x) mutable {
+                                               isLevelsExpanded = !isLevelsExpanded;
+                                               for (int i = 0; i < Config::presets.size(); i++) {
+                                                   auto level = s.getCurrentScene().getChildWithName(
+                                                           "level" + std::to_string(i));
+                                                   level->as<PositionedWidget>()->hide(isLevelsExpanded);
+                                               }
+                                           });
+
+    for (const auto&[i, level]: Config::presets | ranges::views::enumerate) {
+        auto levelLabel = std::make_shared<Label>("level" + std::to_string(i), level.name);
+        levelLabel->hide();
+        levelNames.push_back(levelLabel);
+    }
 
     auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [=](WorldState &s, Button &x) {
         restartMessage->hide(false);
@@ -141,10 +159,10 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     });
 
     butStMn->applyAction([=](WorldState &s, auto &w) {
-       restartMessage->hide();
-       yes->hide();
-       no->hide();
-       s.changeCurrentScene(*scenes[SceneNames::MainMenu]);
+        restartMessage->hide();
+        yes->hide();
+        no->hide();
+        s.changeCurrentScene(*scenes[SceneNames::MainMenu]);
     });
 
     scenes[SceneNames::Settings]->bind(label);
@@ -152,6 +170,9 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     scenes[SceneNames::Settings]->bind(yes);
     scenes[SceneNames::Settings]->bind(no);
     scenes[SceneNames::Settings]->bind(butRt);
+    scenes[SceneNames::Settings]->bind(levels);
+    for (const auto &item: levelNames)
+        scenes[SceneNames::Settings]->bind(item);
     scenes[SceneNames::Settings]->bind(butStMn);
 }
 
