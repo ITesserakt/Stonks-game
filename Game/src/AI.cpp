@@ -30,16 +30,14 @@ double AI::getProfitness(GameObject::Id itemId) {
     return (availableSlots + 0.1) / sellByKind / (item.timesSold + 1) * item.cost;
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "EndlessLoop"
-void AI::startTrading() {
-    std::thread([&] {
+std::thread AI::startTrading(const bool& running) {
+    return std::thread([&] {
         std::random_device seed;
         std::mt19937 randie(seed());
         unsigned int sleepTime;
         if (debugFlag) { sleepTime = Config::debugSpeedGame + randie() % 90; }
         else { sleepTime = 700 + randie() % 10000; }
-        while (true) {
+        while (running) {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
             auto tradeType = random() % 2;
             if (world.getSlots().size() != 0 && couldBuy() && tradeType) {
@@ -54,7 +52,5 @@ void AI::startTrading() {
                 world.putItem(sellItem(predicted, newCost));
             }
         }
-    }).detach();
+    });
 }
-#pragma clang diagnostic pop
-

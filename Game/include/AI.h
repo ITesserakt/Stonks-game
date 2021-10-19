@@ -1,5 +1,6 @@
 #pragma once
 
+#include <thread>
 #include "Gamer.h"
 #include "World.h"
 
@@ -19,5 +20,5 @@ public:
 
     double getProfitness(GameObject::Id itemId);
 
-    void startTrading();
+    std::thread startTrading(const bool& running);
 };

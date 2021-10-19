@@ -8,39 +8,49 @@
 #include <thread>
 #include "GUI.h"
 
+using Frontend = console_gui::Terminal;
+
 int main() {
-    console_gui::initGUI<console_gui::Terminal>();
+    try {
+        console_gui::init<Frontend>();
 
-    Canvases scenes;
-    WorldState state(Config::botsAmount, Config::debug);
-    createCanvas("MainMenu", Centered, scenes,
-                 state,setupMainMenu);
-    createCanvas("GameField", Left, scenes,
-                 state,setupGameField);
-    createCanvas("Inventory", Left, scenes,
-                 state,setupInventory);
-    createCanvas("Guide", Left, scenes,
-                 state,setupGuide);
-    createCanvas("Settings", Centered, scenes,
-                 state,setupSettings);
-    state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
+        Canvases scenes;
+        WorldState state(Config::botsAmount, Config::debug);
+        createCanvas("MainMenu", Centered, scenes,
+                     state, setupMainMenu);
+        createCanvas("GameField", Left, scenes,
+                     state, setupGameField);
+        createCanvas("Inventory", Left, scenes,
+                     state, setupInventory);
+        createCanvas("Guide", Left, scenes,
+                     state, setupGuide);
+        createCanvas("Settings", Centered, scenes,
+                     state, setupSettings);
+        state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
 
-    auto handler = EventHandler(scenes, state);
+        auto handler = EventHandler(scenes, state);
 
-    std::thread([&]() {
-        while (state.running()) {
-            usleep(16666);
-            clear();
-            if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
-                paintGameFieldFrame(state, scenes, Config::debug);
-            } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory]) {
-                paintInventoryFrame(state, scenes);
+        std::thread renderThread([&]() {
+            while (state.running()) {
+                usleep(16666);
+                clear();
+                if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
+                    paintGameFieldFrame(state, scenes, Config::debug);
+                } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory]) {
+                    paintInventoryFrame(state, scenes);
+                }
+                state.getCurrentScene().show();
+                refresh();
             }
-            state.getCurrentScene().show();
-            refresh();
-        }
-    }).detach();
+        });
 
-    handler.startLoop();
-    endwin();
+        handler.startLoop();
+        renderThread.join();
+        state.joinAllAI();
+    } catch (const std::runtime_error &ex) {
+        std::cout << ex.what() << std::endl;
+    } catch (...) {
+        std::cout << "Unknown error occurred" << std::endl;
+    }
+    console_gui::dispose<Frontend>();
 }
