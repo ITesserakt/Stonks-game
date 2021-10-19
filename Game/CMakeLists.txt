@@ -3,14 +3,13 @@ file(GLOB_RECURSE TEST_FILES test/*.cpp)
 
 enable_testing()
 
-add_executable(Game_tests ${HEADER_FILES} ${TEST_FILES}
+add_executable(Game_tests ${TEST_FILES}
         src/Config.cpp
         src/CreatingGui.cpp
         src/ObjectFactory.cpp
         src/AI.cpp
         src/Debug.cpp
         src/EventHandler.cpp
-        src/EventProducer.cpp
         src/FramePainter.cpp
         src/GameObject.cpp
         src/Gamer.cpp

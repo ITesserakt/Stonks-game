@@ -2,32 +2,16 @@
 #include "GameWidgets/Purchase.h"
 #include "widgets/MessageBox.h"
 #include "WorldState.h"
-#include "utils.h"
 #include <iostream>
 
-void setupCurses() {
-    initscr();
-    start_color();
-    noecho();                       // Removes characters when typed
-    curs_set(0);                    // Removes cursor
-    keypad(stdscr, true);
-}
-
-void checkWindowSize() {
-    if (getmaxx(stdscr) < 80 || getmaxy(stdscr) < 24) {
-        endwin();
-        throw std::runtime_error("Your terminal should be bigger or equal to 80x24 size\n");
-    }
-}
-
-void createCanvas(const std::string &name, const Align &al, canvases &scenes,
+void createCanvas(const std::string &name, const Align &al, Canvases &scenes,
                   WorldState &state,
-                  std::function<void(WorldState &, canvases &)> setupCanvas) {
+                  std::function<void(WorldState &, Canvases &)> setupCanvas) {
     scenes.push_back(std::make_shared<Canvas>(name, al));
     setupCanvas(state, scenes);
 }
 
-void setupMainMenu(WorldState &state, canvases &scenes) {
+void setupMainMenu(WorldState &state, Canvases &scenes) {
     auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
     label1->turnOn(COLOR_YELLOW);
     auto butPl = std::make_shared<Button>("play", 0, state, [&](WorldState &state, Button &x) {
@@ -49,7 +33,7 @@ void setupMainMenu(WorldState &state, canvases &scenes) {
     scenes[SceneNames::MainMenu]->bind(butQ);
 }
 
-void setupGameField(WorldState &state, canvases &scenes) {
+void setupGameField(WorldState &state, Canvases &scenes) {
     auto label2 = std::make_shared<Label>("stocks", "Game field\n");
     label2->turnOn(COLOR_YELLOW);
     scenes[SceneNames::GameField]->bind(label2);
@@ -75,7 +59,7 @@ void setupGameField(WorldState &state, canvases &scenes) {
     scenes[SceneNames::GameField]->bind(winMessage);
 }
 
-void setupInventory(WorldState &state, canvases &scenes) {
+void setupInventory(WorldState &state, Canvases &scenes) {
     auto label = std::make_shared<Label>("inventory", "Inventory\n");
     scenes[SceneNames::Inventory]->bind(label);
     label->turnOn(COLOR_YELLOW);
@@ -95,7 +79,7 @@ void setupInventory(WorldState &state, canvases &scenes) {
     }
 }
 
-void setupGuide(WorldState &state, canvases &scenes) {
+void setupGuide(WorldState &state, Canvases &scenes) {
     auto label = std::make_shared<Label>("guide", "Guide\n");
     label->turnOn(COLOR_YELLOW);
     scenes[SceneNames::Guide]->bind(label);
@@ -122,7 +106,7 @@ void setupGuide(WorldState &state, canvases &scenes) {
     scenes[SceneNames::Guide]->bind(butGdMn);
 }
 
-void setupSettings(WorldState &state, canvases &scenes) {
+void setupSettings(WorldState &state, Canvases &scenes) {
     auto label = std::make_shared<Label>("guide", "Settings\n");
     label->turnOn(COLOR_YELLOW);
 

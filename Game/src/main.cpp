@@ -4,15 +4,14 @@
 #include "WorldState.h"
 #include "Config.h"
 #include "widgets/MessageBox.h"
-#include <ncurses.h>
 #include <unistd.h>
 #include <thread>
+#include "GUI.h"
 
 int main() {
-    setupCurses();
-    checkWindowSize();
+    console_gui::initGUI<console_gui::Terminal>();
 
-    canvases scenes;
+    Canvases scenes;
     WorldState state(Config::botsAmount, Config::debug);
     createCanvas("MainMenu", Centered, scenes,
                  state,setupMainMenu);

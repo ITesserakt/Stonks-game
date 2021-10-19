@@ -7,9 +7,9 @@ add_library(Console_GUI ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(Console_GUI
 		PUBLIC    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 		INTERFACE $<INSTALL_INTERFACE:include>)
-target_link_libraries(Console_GUI ncurses)
+target_link_libraries(Console_GUI PRIVATE cpp-terminal ncurses)
 
 enable_testing()
-add_executable(GUI_test ${TEST_FILES} ${SOURCE_FILES} ${HEADER_FILES})
-target_include_directories(GUI_test  PRIVATE include)
-target_link_libraries(GUI_test gtest_main ncurses)
+add_executable(GUI_test ${TEST_FILES})
+target_include_directories(GUI_test PRIVATE include)
+target_link_libraries(GUI_test PRIVATE Console_GUI gtest_main)

@@ -8,26 +8,22 @@
 #include "Canvas.h"
 #include "World.h"
 
-#define FAST_TRAVEL_MENUS 3
-using canvases = std::vector<std::shared_ptr<Canvas>>;
+using Canvases = std::vector<std::shared_ptr<Canvas>>;
+
 enum SceneNames {
     MainMenu = 0, GameField, Inventory, Guide, Settings
 };
 
-void setupCurses();
-
-void checkWindowSize();
-
-void createCanvas(const std::string &name, const Align &al, canvases &scenes,
+void createCanvas(const std::string &name, const Align &al, Canvases &scenes,
                   WorldState &state,
-                  std::function<void(WorldState &, canvases &)> setupCanvas);
+                  std::function<void(WorldState &, Canvases &)> setupCanvas);
 
-void setupMainMenu(WorldState &state, canvases &scenes);
+void setupMainMenu(WorldState &state, Canvases &scenes);
 
-void setupGameField(WorldState& state, canvases &scenes);
+void setupGameField(WorldState& state, Canvases &scenes);
 
-void setupInventory(WorldState &state, canvases &scenes);
+void setupInventory(WorldState &state, Canvases &scenes);
 
-void setupGuide(WorldState &state, canvases &scenes);
+void setupGuide(WorldState &state, Canvases &scenes);
 
-void setupSettings(WorldState& s, canvases &scenes);
+void setupSettings(WorldState& s, Canvases &scenes);

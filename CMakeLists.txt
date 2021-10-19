@@ -16,7 +16,7 @@ add_subdirectory(Game)
 target_include_directories(main PRIVATE Console_GUI/include)
 target_include_directories(main PRIVATE Game/include)
 
-target_link_libraries(main PRIVATE Console_GUI jsoncons ncurses)
+target_link_libraries(main PRIVATE Console_GUI jsoncons)
 
 install(FILES ${RESOURCES}
         TYPE DATA)

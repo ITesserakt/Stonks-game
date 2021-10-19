@@ -2,7 +2,7 @@
 #include "widgets/MessageBox.h"
 #include <iomanip>
 
-void paintGameFieldFrame(WorldState &state, canvases &scenes, const bool &debugFlag) {
+void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugFlag) {
     auto slots = state.getWorld().getSlots();
     auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
     for (const auto &purch: purches) {
@@ -28,7 +28,7 @@ void paintGameFieldFrame(WorldState &state, canvases &scenes, const bool &debugF
     }
 }
 
-void paintInventoryFrame(WorldState &state, canvases &scenes) {
+void paintInventoryFrame(WorldState &state, Canvases &scenes) {
     auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
     auto items = state.getPlayer().getSlots();
     for (const auto &sale: sales) {
