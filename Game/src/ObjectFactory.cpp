@@ -1,7 +1,7 @@
 #include "ObjectFactory.h"
 #include <range/v3/all.hpp>
 
-std::random_device ObjectFactory::engine = std::random_device();
+std::random_device ObjectFactory::engine = {};
 
 /*
  * Holy, that's so unoptimized!
@@ -19,10 +19,9 @@ GameObject ObjectFactory::generateNext() {
                         ranges::to<std::vector<std::string>> |
                         ranges::actions::shuffle(random);
     auto descCount = random() %
-                     (kind.descriptions.empty() ? 1 : kind.descriptions.size() +
-                                                      1);
-    descriptions = std::vector(descriptions.begin(),
-                               descriptions.begin() + descCount);
+                     (kind.descriptions.empty() ? 1 : kind.descriptions.size() + 1);
+    descriptions = std::vector<GameObject::Description>(descriptions.begin(),
+                                                        descriptions.begin() + descCount);
 
     auto cost = kind.basicCost * ranges::accumulate(descriptions, 1.0,
                                                     [&](const auto &acc,
@@ -38,12 +37,12 @@ ObjectFactory::ObjectFactory(const jsoncons::json &config,
                              unsigned int randomSeed) : random(randomSeed) {
     auto objects = config["Objects"];
 
-    for (const auto &object: objects.array_range()) {
+    for (const auto &object : objects.array_range()) {
         const auto &name = object["name"].as<GameObject::Name>();
         const auto &cost = object["cost"].as<GameObject::Cost>();
         const auto &descs = object["descriptions"];
         data[name] = ObjectPrototype{{}, cost};
-        for (const auto &member: descs.object_range()) {
+        for (const auto &member : descs.object_range()) {
             data[name].descriptions[member.key()] = member.value().as<GameObject::Cost>();
         }
     }

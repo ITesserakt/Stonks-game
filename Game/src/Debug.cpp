@@ -1,9 +1,9 @@
 #include "Debug.h"
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 
 bool Debug::isLogCleared = false;
-Debug Debug::logger = Debug();
+Debug Debug::logger = {};
 
 Debug::Debug() {
     if (!isLogCleared) {

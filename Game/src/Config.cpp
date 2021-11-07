@@ -52,7 +52,7 @@ const Config &Config::getInstance() {
 
 #define CONFIG_PROPERTY(t, x) const t Config::x = getInstance().getSettingByName<t>(#x)
 
-CONFIG_PROPERTY(int, worldSize);
+CONFIG_PROPERTY(unsigned int, worldSize);
 CONFIG_PROPERTY(int, botsAmount);
 CONFIG_PROPERTY(int, debugSpeedGame);
 CONFIG_PROPERTY(bool, debug);

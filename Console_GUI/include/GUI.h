@@ -19,8 +19,8 @@ namespace console_gui {
 
     template<typename T>
     void init() {
-        static_assert(std::is_same_v<T, void> && !std::is_same_v<T, void>,
-                      "Expected types from console_gui namespace"); // impossible
+        static_assert(std::is_same<T, void>::value && !std::is_same<T, void>::value,
+                      "Expected types from console_gui namespace");// impossible
     }
 
     template<>
@@ -31,8 +31,8 @@ namespace console_gui {
 
     template<typename T>
     void dispose() {
-        static_assert(std::is_same_v<T, void> && !std::is_same_v<T, void>,
-                      "Expected types from console_gui namespace"); // impossible
+        static_assert(std::is_same<T, void>::value && !std::is_same<T, void>::value,
+                      "Expected types from console_gui namespace");// impossible
     }
 
     template<>
