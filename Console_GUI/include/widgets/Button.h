@@ -16,9 +16,7 @@ public:
 
     template<typename F>
     void applyAction(F func) {
-        todo = [func](WorldState &s, HoverableWidget &w) {
-            func(s, *w.as<Button>());
-        };
+        todo = Command::forward(std::move(*todo.release()), func);
     }
 
     void show() override;
