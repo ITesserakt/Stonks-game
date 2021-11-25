@@ -40,7 +40,7 @@ public:
         return it->second.as<T>();
     }
 
-    static const int worldSize;
+    static const unsigned int worldSize;
     static const bool debug;
     static const int botsAmount;
     static const int debugSpeedGame;

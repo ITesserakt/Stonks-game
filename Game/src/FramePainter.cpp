@@ -5,16 +5,21 @@
 void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugFlag) {
     auto slots = state.getWorld().getSlots();
     auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
-    for (const auto &purch: purches) {
+    for (const auto &purch : purches) {
         purch->setName("");
         purch->setItemId(-1);
         purch->setCost(0);
     }
-    for (auto[slot, purch]: ranges::views::zip(slots, purches)) {
+    for (auto context : ranges::views::zip(slots, purches)) {
+        auto slot = context.first;
+        auto purch = context.second;
         auto &item = state.getWorld().viewItem(slot);
         std::stringstream ss;
-        if (debugFlag) { ss << item << ", profitness: " << state.getWorld().getProfitness(slot); }
-        else { ss << item.fullName() << (item.timesSold > 0 ? " *" : ""); }
+        if (debugFlag) {
+            ss << item << ", profitness: " << state.getWorld().getProfitness(slot);
+        } else {
+            ss << item.fullName() << (item.timesSold > 0 ? " *" : "");
+        }
         purch->setItemId(slot);
         purch->setName(ss.str());
         purch->setCost(item.cost);
@@ -31,11 +36,13 @@ void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugF
 void paintInventoryFrame(WorldState &state, Canvases &scenes) {
     auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
     auto items = state.getPlayer().getSlots();
-    for (const auto &sale: sales) {
+    for (const auto &sale : sales) {
         sale->setName("");
         sale->setItemId(-1);
     }
-    for (auto[itemId, sale]: ranges::views::zip(items, sales)) {
+    for (auto context : ranges::views::zip(items, sales)) {
+        auto itemId = context.first;
+        auto sale = context.second;
         sale->setItemId(itemId);
         std::stringstream ss;
         auto item = state.getPlayer().viewItem(itemId);
