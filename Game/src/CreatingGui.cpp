@@ -130,7 +130,9 @@ void setupSettings(WorldState &state, Canvases &scenes) {
                                                }
                                            });
 
-    for (const auto&[i, level]: Config::presets | ranges::views::enumerate) {
+    for (const auto& item: Config::presets | ranges::views::enumerate) {
+        auto i = item.first;
+        auto& level = item.second;
         auto levelLabel = std::make_shared<Label>("level" + std::to_string(i), level.name);
         levelLabel->hide();
         levelNames.push_back(levelLabel);
@@ -140,6 +142,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
         restartMessage->hide(false);
         yes->hide(false);
         no->hide(false);
+        levels->hide(true);
         s.getCurrentScene().changeActiveWidget(Direction::DOWN, 2);
         x.hide();
         butStMn->hide();
@@ -152,6 +155,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     no->applyAction([=](WorldState &s, auto &x) {
         butRt->hide(false);
         butStMn->hide(false);
+        levels->hide(false);
         s.getCurrentScene().changeActiveWidget(Direction::UP, 2);
         restartMessage->hide();
         yes->hide();

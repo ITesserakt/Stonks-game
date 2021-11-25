@@ -8,7 +8,7 @@
 #include "GUI.h"
 #include "Debug.h"
 
-using Frontend = console_gui::Terminal;
+using Frontend = console_gui::__detail::NCursesFrontend;
 using namespace std::chrono_literals;
 
 int main() {
