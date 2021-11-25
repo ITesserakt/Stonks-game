@@ -15,7 +15,8 @@ FetchContent_Declare(ranges-v3
         GIT_TAG 4989f3e9ff2efee1852942bb9328ef121369ba02)
 
 FetchContent_Declare(terminal
-        GIT_REPOSITORY https://github.com/jupyter-xeus/cpp-terminal)
+        GIT_REPOSITORY https://github.com/jupyter-xeus/cpp-terminal
+        GIT_TAG 863e5e5eccab006a7dd7987924f834638cd0ddd0)
 
 FetchContent_MakeAvailable(googletest json ranges-v3 terminal)
 
