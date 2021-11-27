@@ -8,9 +8,11 @@ UISize Graphic::getSize() {
 
 void Graphic::printColumn(std::string colSymbol, int colPos, int value, int max) {
     int colSize = round((size.height - 3) * static_cast<double>(value)/max);
+    attron(COLOR_PAIR(widgetId));
     for (int i = 1; i <= colSize; i++) {
         mvprintw(position.y + size.height - 1 - i,position.x + colPos, colSymbol.c_str());
     }
+    attroff(COLOR_PAIR(widgetId));
 }
 
 void Graphic::updateData() {

@@ -87,6 +87,7 @@ void setupInventory(WorldState &state, Canvases &scenes) {
         std::mt19937 rng(dev());
         std::uniform_int_distribution<int> distribution(1, 5);
         return distribution(rng);
+        // TODO: return round(state::statistics->getVAlue);
     });
     scenes[SceneNames::Inventory]->bind(TestGraphic);
 }

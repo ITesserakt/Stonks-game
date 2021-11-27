@@ -30,6 +30,7 @@ public:
         OXname = OX;
         start = std::chrono::system_clock::now();
         amountOfColumns = (sizeOfGraph.width - 3) / 2;
+        init_pair(widgetId, COLOR_GREEN, COLOR_BLACK);
     }
 
     UISize getSize() override;
