@@ -4,6 +4,7 @@
 
 struct console_gui::__detail::NCursesFrontend : public Frontend {
     void init() override {
+        setlocale(LC_CTYPE, "UTF-8");
         initscr();
         start_color();
         noecho();                       // Removes characters when typed

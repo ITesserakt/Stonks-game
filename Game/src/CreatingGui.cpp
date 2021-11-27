@@ -1,8 +1,10 @@
 #include "CreatingGui.h"
 #include "GameWidgets/Purchase.h"
 #include "widgets/MessageBox.h"
+#include "widgets/Graphic.h"
 #include "WorldState.h"
 #include <iostream>
+#include <random>
 #include "widgets/Group.h"
 #include "Debug.h"
 
@@ -79,6 +81,14 @@ void setupInventory(WorldState &state, Canvases &scenes) {
         });
         scenes[SceneNames::Inventory]->bind(sale);
     }
+    auto TestGraphic = std::make_shared<Graphic>("Test", "y", "x",
+                                                 UISize{20, 10}, [&]() -> int{
+        std::random_device dev;
+        std::mt19937 rng(dev());
+        std::uniform_int_distribution<int> distribution(1, 5);
+        return distribution(rng);
+    });
+    scenes[SceneNames::Inventory]->bind(TestGraphic);
 }
 
 void setupGuide(WorldState &state, Canvases &scenes) {
