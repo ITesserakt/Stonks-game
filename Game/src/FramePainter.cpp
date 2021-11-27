@@ -40,8 +40,8 @@ void paintInventoryFrame(WorldState &state, Canvases &scenes) {
     //        sale->setItemId(-1);
     //    }
     //    for (auto context : ranges::views::zip(items, sales)) {
-        auto itemId = context.first;
-        auto sale = context.second;
+    //        auto itemId = context.first;
+    //        auto sale = context.second;
     //        sale->setItemId(itemId);
     //        std::stringstream ss;
     //        auto item = state.getPlayer().viewItem(itemId);

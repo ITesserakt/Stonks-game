@@ -1,14 +1,16 @@
 #include <ncurses.h>
 #include <cpp-terminal/window.hpp>
+#include <locale>
+
 #include "GUI.h"
 
 struct console_gui::__detail::NCursesFrontend : public Frontend {
     void init() override {
-        setlocale(LC_CTYPE, "UTF-8");
+        std::locale::global(std::locale(""));
         initscr();
         start_color();
-        noecho();                       // Removes characters when typed
-        curs_set(0);                    // Removes cursor
+        noecho();   // Removes characters when typed
+        curs_set(0);// Removes cursor
         keypad(stdscr, true);
 
         if (getmaxx(stdscr) < 80 || getmaxy(stdscr) < 24) {

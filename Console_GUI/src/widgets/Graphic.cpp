@@ -7,10 +7,10 @@ UISize Graphic::getSize() {
 }
 
 void Graphic::printColumn(std::string colSymbol, int colPos, int value, int max) {
-    int colSize = round((size.height - 3) * static_cast<double>(value)/max);
+    int colSize = round((size.height - 3) * static_cast<double>(value) / max);
     attron(COLOR_PAIR(widgetId));
     for (int i = 1; i <= colSize; i++) {
-        mvprintw(position.y + size.height - 1 - i,position.x + colPos, colSymbol.c_str());
+        mvprintw(position.y + size.height - 1 - i, position.x + colPos, colSymbol.c_str());
     }
     attroff(COLOR_PAIR(widgetId));
 }
@@ -27,6 +27,7 @@ void Graphic::updateData() {
 }
 
 void Graphic::show() {
+    using namespace std::string_literals;
     updateData();
     int max = *std::max_element(values.begin(), values.end());
 
@@ -37,7 +38,7 @@ void Graphic::show() {
     std::string symbolForPrinting;
     for (int i = 0; i < size.height; i++) {
         if (i == 0)
-            symbolForPrinting = OYname;
+            symbolForPrinting = ordinance;
         else if (i == 1)
             symbolForPrinting = "↑";
         else if (i == 2)
@@ -46,19 +47,19 @@ void Graphic::show() {
             symbolForPrinting = "└";
         else
             symbolForPrinting = "│";
-        mvprintw(position.y + i, position.x, symbolForPrinting.c_str());
+        mvprintw(position.y + i, position.x, "%s", symbolForPrinting.c_str());
     }
     // printing OX line
     for (int i = 0; i < size.width; i++) {
         if (i == 0)
             symbolForPrinting = "└";
         else if (i == size.width - 1)
-            symbolForPrinting = OXname;
+            symbolForPrinting = abscissa;
         else if (i == size.width - 2)
             symbolForPrinting = ">";
         else
             symbolForPrinting = "─";
-        mvprintw(position.y + size.height - 1, position.x + i, symbolForPrinting.c_str());
+        mvprintw(position.y + size.height - 1, position.x + i, "%s", symbolForPrinting.c_str());
     }
 
     // printing Columns
@@ -66,11 +67,10 @@ void Graphic::show() {
     if (values.empty())
         return;
     auto itr = values.begin();
-    for (int i = 2; i < size.width; i+=2) {
+    for (int i = 2; i < size.width; i += 2) {
         printColumn(symbolForPrinting, i, *itr, max);
         itr++;
         if (itr == values.end())
             break;
     }
-
 }

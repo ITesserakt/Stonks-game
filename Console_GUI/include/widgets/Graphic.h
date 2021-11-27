@@ -1,15 +1,18 @@
 #pragma once
 
-#include <list>
 #include <chrono>
-#include "widgets/PositionedWidget.h"
+#include <list>
+#include <functional>
+#include <utility>
+
 #include "widgets/ColorWidget.h"
+#include "widgets/PositionedWidget.h"
 
 class Graphic : public virtual PositionedWidget, public virtual ColorWidget {
 private:
-    std::string OYname;
-    std::string OXname;
-    int amountOfColumns;
+    std::string ordinance;
+    std::string abscissa;
+    unsigned int amountOfColumns;
     std::list<int> values;
     std::function<int()> getNewValue;
 
@@ -18,16 +21,16 @@ private:
 
     void printColumn(std::string colSymbol, int colPos, int value, int max);
     void updateData();
-public:
 
-    Graphic(std::string name, std::string OY, std::string OX,
+public:
+    Graphic(const std::string &name, std::string OY, std::string OX,
             UISize sizeOfGraph, std::function<int()> getValue)
-            : Widget(name),
-              ColorWidget(name) {
-        getNewValue = getValue;
+        : ordinance(std::move(OY)),
+          abscissa(std::move(OX)),
+          Widget(name),
+          ColorWidget(name) {
+        getNewValue = std::move(getValue);
         size = sizeOfGraph;
-        OYname = OY;
-        OXname = OX;
         start = std::chrono::system_clock::now();
         amountOfColumns = (sizeOfGraph.width - 3) / 2;
         init_pair(widgetId, COLOR_GREEN, COLOR_BLACK);

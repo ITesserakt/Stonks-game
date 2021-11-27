@@ -51,7 +51,7 @@ int main() {
         handler.startLoop();
         renderThread.join();
         state.cancelAllAI();
-    } catch (const std::runtime_error &ex) {
+    } catch (const std::exception &ex) {
         Debug::logger << ex.what();
     } catch (...) {
         Debug::logger << "Unknown error occurred";
