@@ -4,7 +4,6 @@
 
 #include "EventHandler.h"
 #include "utils.h"
-#include "GameWidgets/Sale.h"
 
 void EventHandler::startLoop() {
     Event event;
@@ -24,12 +23,10 @@ void EventHandler::startLoop() {
                         state.getCurrentScene().getActiveWidget()->click();
                         break;
                     case KEY_RIGHT:
-                        if (state.getCurrentScene().getActiveWidget()->is<Sale>())
-                            state.getCurrentScene().getActiveWidget()->as<Sale>()->appendNewPrice(10);
+                        //FIXME
                         break;
                     case KEY_LEFT:
-                        if (state.getCurrentScene().getActiveWidget()->is<Sale>())
-                            state.getCurrentScene().getActiveWidget()->as<Sale>()->appendNewPrice(-10);
+                        //FIXME
                         break;
                 }
                 break;

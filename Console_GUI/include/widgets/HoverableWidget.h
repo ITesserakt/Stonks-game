@@ -3,8 +3,9 @@
 #include <utility>
 
 #include "ColorWidget.h"
-#include "Command.h"
 #include "PositionedWidget.h"
+
+class Command;
 
 class HoverableWidget : public virtual PositionedWidget, public virtual ColorWidget {
 protected:
@@ -12,35 +13,28 @@ protected:
     int tabIndex;
 
 public:
-    explicit HoverableWidget(int index, WorldState &state, std::function<void(WorldState &, HoverableWidget &)> f)
-        : todo(Command::fromFunction(state, shared_from_this()->as<HoverableWidget>(), f)), tabIndex(index) {}
-
     template <typename C>
     explicit HoverableWidget(int index, C &&cmd)
         : tabIndex(index),
-          todo(std::make_unique<std::remove_reference_t<C>>(std::forward<C>(cmd))) {}
+          todo(std::make_unique<C>(std::forward<C>(cmd))) {}
+
+    template <typename C>
+    void applyAction(C &&command) {
+        todo = std::make_unique<C>(std::forward<C>(command));
+    }
 
     // We are on button
-    void onHoverStart() {
-        turnOn(COLOR_GREEN);
-
-        for (auto x : getChildrenRecursively<ColorWidget>())
-            x->turnOn(COLOR_GREEN);
-    }
+    void onHoverStart();
 
     // We go out of button
-    void onHoverEnd() {
-        turnOff();
+    void onHoverEnd();
 
-        for (auto x : getChildrenRecursively<ColorWidget>())
-            x->turnOff();
-    }
+    void click();
 
-    void click() {
-        todo->act();
-    }
+    void setName(std::string newName);
 
-    void setName(std::string newName) { name = std::move(newName); }
+    int getTabIndex() const;
 
-    int getTabIndex() const { return tabIndex; }
+    template <typename C>
+    bool hasCommand() { return dynamic_cast<C *>(todo.get()); }
 };

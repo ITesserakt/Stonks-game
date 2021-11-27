@@ -5,7 +5,6 @@
 #include <numeric>
 #include <sstream>
 #include <string>
-#include <range/v3/all.hpp>
 
 // ncurses and lib 'meta' both defines 'meta' entity
 #define meta meta_ncurses

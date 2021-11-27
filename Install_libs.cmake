@@ -22,4 +22,4 @@ FetchContent_MakeAvailable(googletest json ranges-v3 terminal)
 # Phew, dark magic ended!
 
 find_library(Curses NAMES ncurses curses pdcurses REQUIRED)
-link_libraries(range-v3 pthread)
+link_libraries(pthread)

@@ -1,22 +1,21 @@
 #pragma once
 
-#include "HoverableWidget.h"
-#include "utils.h"
 #include <ncurses.h>
 #include <string>
 #include <utility>
+
 #include "ColorWidget.h"
+#include "HoverableWidget.h"
+#include "utils.h"
 
 class Button : public virtual HoverableWidget {
 private:
 public:
-    Button(std::string name, int index, WorldState &state, std::function<void(WorldState &, Button &)> f);
+    Button(std::string name, int index);
 
-    Button(std::string name, int index, WorldState &state);
-
-    template<typename F>
-    void applyAction(F func) {
-        todo = Command::forward(std::move(*todo.release()), func);
+    template <typename C>
+    Button(std::string name, int index, C &&command) : Button(name, index) {
+        applyAction(std::forward<C>(command));
     }
 
     void show() override;

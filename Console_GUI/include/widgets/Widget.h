@@ -1,12 +1,13 @@
 #pragma once
 
-#include "utils.h"
-#include <utility>
 #include <map>
-#include <stack>
-#include <vector>
-#include <string>
 #include <memory>
+#include <stack>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "utils.h"
 
 class Canvas;
 
@@ -14,17 +15,17 @@ class Widget : public std::enable_shared_from_this<Widget> {
 private:
     std::map<Widget *, bool> visitMap;
 
-    template<typename F>
+    template <typename F>
     void dfs(F action) {
-        for (auto &v: visitMap | ranges::views::values) {
-            v = false;
+        for (auto &v : visitMap) {
+            v.second = false;
         }
         std::stack<Widget *> dfs;
         dfs.push(this);
         while (!dfs.empty()) {
             auto next = dfs.top();
             dfs.pop();
-            for (auto child: next->children) {
+            for (auto child : next->children) {
                 if (!visitMap[child.get()]) {
                     action(child);
                     dfs.push(child.get());
@@ -56,31 +57,33 @@ public:
     explicit Widget(std::string name);
 
     virtual void show() {
-        for (auto child: children)
+        for (auto child : children)
             child->show();
     }
 
     virtual void bind(std::shared_ptr<Widget> widget);
 
-    template<typename T>
+    template <typename T>
     bool is() { return dynamic_cast<T *>(this); }
 
-    template<typename T>
+    template <typename T>
     std::shared_ptr<T> as() {
         if (!is<T>())
             throw std::runtime_error("Bad cast");
         return std::dynamic_pointer_cast<T>(shared_from_this());
     }
 
-    template<typename T>
+    template <typename T>
     auto getChildrenWithType() {
-        return children |
-               ranges::views::filter(&Widget::is<T>) |
-               ranges::views::transform(&Widget::as<T>);
+        std::vector<std::shared_ptr<T>> found;
+        for (auto &child : children)
+            if (child->template is<T>())
+                found.push_back(child->template as<T>());
+        return found;
     }
 
     auto getChildWithName(const std::string &name) {
-        auto result = ranges::find_if(children, [&](auto a) {
+        auto result = std::find_if(children.begin(), children.end(), [&](auto a) {
             return a->name == name;
         });
         if (result != children.end())
@@ -88,7 +91,7 @@ public:
         throw std::runtime_error("Could not find child");
     }
 
-    template<typename T>
+    template <typename T>
     auto getChildrenRecursively() {
         std::vector<std::shared_ptr<T>> result;
         dfs([&result](auto x) {

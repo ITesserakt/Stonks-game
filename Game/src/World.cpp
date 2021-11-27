@@ -1,4 +1,6 @@
-#include <World.h>
+#include <range/v3/all.hpp>
+
+#include "World.h"
 
 double World::getProfitness(const GameObject::Id &itemId) const {
     auto item = viewItem(itemId);

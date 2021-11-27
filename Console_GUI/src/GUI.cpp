@@ -1,5 +1,5 @@
 #include <ncurses.h>
-#include <cpp-terminal/terminal.h>
+#include <cpp-terminal/window.hpp>
 #include "GUI.h"
 
 struct console_gui::__detail::NCursesFrontend : public Frontend {
@@ -23,24 +23,25 @@ struct console_gui::__detail::NCursesFrontend : public Frontend {
 
 class console_gui::__detail::TerminalFrontend : public Frontend {
 private:
-    Term::Terminal terminal = Term::Terminal(true, false);
+    Term::Terminal terminal = Term::Terminal(true, true, false);
+
 public:
     void init() override {
         int rows, cols;
-        if (!Term::Terminal::is_stdin_a_tty() || !Term::Terminal::is_stdout_a_tty() ||
-            !terminal.get_term_size(rows, cols)) {
+        if (!Term::is_stdin_a_tty() || !Term::is_stdout_a_tty() ||
+            !Term::get_term_size(rows, cols)) {
             throw std::runtime_error("I/O did not bind to terminal");
         }
-        terminal.save_screen();
+        Term::save_screen();
 
         if (cols < 80 || rows < 24) {
-            terminal.restore_screen();
+            Term::restore_screen();
             throw std::runtime_error("Your terminal should be bigger or equal to 80x24 size");
         }
     }
 
     void dispose() override {
-        terminal.restore_screen();
+        Term::restore_screen();
     }
 };
 

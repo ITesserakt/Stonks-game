@@ -2,6 +2,8 @@
 // Created by tesserakt on 23.09.2021.
 //
 
+#include <range/v3/all.hpp>
+
 #include "GameObject.h"
 #include "utils.h"
 

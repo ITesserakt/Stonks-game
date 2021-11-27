@@ -14,10 +14,7 @@ add_executable(Game_tests ${TEST_FILES}
         src/GameObject.cpp
         src/Gamer.cpp
         src/Player.cpp
-        src/World.cpp
-        src/GameWidgets/ButtonWithObj.cpp
-        src/GameWidgets/Purchase.cpp
-        src/GameWidgets/Sale.cpp)
+        src/World.cpp)
 
 target_include_directories(Game_tests PRIVATE include)
 target_link_libraries(Game_tests PRIVATE Console_GUI gtest_main jsoncons gmock)

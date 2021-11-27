@@ -1,33 +1,19 @@
 #include "CreatingGui.h"
-#include "GameWidgets/Purchase.h"
-#include "widgets/MessageBox.h"
-#include "WorldState.h"
-#include <iostream>
-#include "widgets/Group.h"
 #include "Debug.h"
-
-void createCanvas(const std::string &name, const Align &al, Canvases &scenes,
-                  WorldState &state,
-                  const std::function<void(WorldState &, Canvases &)> &setupCanvas) {
-    scenes.push_back(std::make_shared<Canvas>(name, al));
-    setupCanvas(state, scenes);
-}
+#include "WorldState.h"
+#include "commands/SceneChangeCommand.h"
+#include "commands/ShutdownCommand.h"
+#include "widgets/Group.h"
+#include "widgets/MessageBox.h"
 
 void setupMainMenu(WorldState &state, Canvases &scenes) {
     auto label1 = std::make_shared<Label>("game name", "STONKS GAME\n");
+    auto butPl = std::make_shared<Button>("play", 0, SceneChangeCommand(state, scenes[SceneNames::GameField]));
+    auto butSt = std::make_shared<Button>("settings", 1, SceneChangeCommand(state, scenes[SceneNames::Settings]));
+    auto butGd = std::make_shared<Button>("guide", 2, SceneChangeCommand(state, scenes[SceneNames::Guide]));
+    auto butQ = std::make_shared<Button>("quit", 3, ShutdownCommand(state));
+
     label1->turnOn(COLOR_YELLOW);
-    auto butPl = std::make_shared<Button>("play", 0, state, [&](WorldState &state, Button &x) {
-        state.changeCurrentScene(*scenes[SceneNames::GameField].get());
-    });
-    auto butSt = std::make_shared<Button>("settings", 1, state, [&](WorldState &state, Button &x) {
-        state.changeCurrentScene(*scenes[SceneNames::Settings].get());
-    });
-    auto butGd = std::make_shared<Button>("guide", 2, state, [&](auto &_, auto &x) {
-        state.changeCurrentScene(*scenes[SceneNames::Guide].get());
-    });
-    auto butQ = std::make_shared<Button>("quit", 3, state, [&](WorldState &s, auto &x) {
-        state.shutdown();
-    });
     scenes[SceneNames::MainMenu]->bind(label1);
     scenes[SceneNames::MainMenu]->bind(butPl);
     scenes[SceneNames::MainMenu]->bind(butSt);
@@ -37,27 +23,20 @@ void setupMainMenu(WorldState &state, Canvases &scenes) {
 
 void setupGameField(WorldState &state, Canvases &scenes) {
     auto label2 = std::make_shared<Label>("stocks", "Game field\n");
+    auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
+
     label2->turnOn(COLOR_YELLOW);
     scenes[SceneNames::GameField]->bind(label2);
-
-    auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
     scenes[SceneNames::GameField]->bind(balance);
 
     for (unsigned long i = 0; i < state.getWorld().getSlots().size(); i++) {
-        auto purch = std::make_shared<Purchase>(i, state, [&](WorldState &s, Purchase &x) {
-            if (x.getItemId() != static_cast<unsigned int>(-1)
-                && s.getPlayer().couldBuy()
-                && s.getPlayer().getBalance() > s.getWorld().viewItem(x.getItemId()).cost) {
-                s.getPlayer().buyItem(s.getWorld().takeItem(x.getItemId()));
-                x.setCost(0);
-                x.setName("");
-            }
-        });
+        auto purch = std::make_shared<Button>("aboba", i, Command::noop());
         scenes[SceneNames::GameField]->bind(purch);
     }
 
     auto winMessage = std::make_shared<MessageBox>("Win Message", "You have win!");
     winMessage->hide(true);
+
     scenes[SceneNames::GameField]->bind(winMessage);
 }
 
@@ -67,16 +46,7 @@ void setupInventory(WorldState &state, Canvases &scenes) {
     label->turnOn(COLOR_YELLOW);
 
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
-        auto sale = std::make_shared<Sale>(i, state, [&](WorldState &s, Sale &x) {
-            if (x.getItemId() != static_cast<unsigned int>(-1) && s.getWorld().couldPutInto()) {
-                s.getWorld().putItem(s.getPlayer().sellItem(x.getItemId(), x.getPrice()));
-                for (auto sale: s.getCurrentScene().getChildrenRecursively<Sale>()) {
-                    sale->setItemId(-1);
-                    sale->setName("");
-                    sale->updatePrice(100);
-                }
-            }
-        });
+        auto sale = std::make_shared<Button>("aboba", i, Command::noop());
         scenes[SceneNames::Inventory]->bind(sale);
     }
 }
@@ -102,9 +72,7 @@ void setupGuide(WorldState &state, Canvases &scenes) {
     scenes[SceneNames::Guide]->bind(guideForPlayer);
 
     // button for travelling from guide to main Menu
-    auto butGdMn = std::make_shared<Button>("back", 0, state, [&](WorldState &state, Button &x) {
-        state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
-    });
+    auto butGdMn = std::make_shared<Button>("back", 0, SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
     scenes[SceneNames::Guide]->bind(butGdMn);
 }
 
@@ -116,54 +84,33 @@ void setupSettings(WorldState &state, Canvases &scenes) {
                                                        "Do you want to restart game\n"
                                                        "to apply config changes?");
 
-    auto yes = std::make_shared<Button>("yes", 3, state, [=](auto &s, auto &x) { s.shutdown(); });
-    auto no = std::make_shared<Button>("no", 4, state);
-    auto butStMn = std::make_shared<Button>("back", 2, state);
+    auto yes = std::make_shared<Button>("yes", 3, ShutdownCommand(state));
+    auto no = std::make_shared<Button>("no", 4);
+    auto butStMn = std::make_shared<Button>("back", 2, SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
     std::vector<std::shared_ptr<Label>> levelNames;
-    auto levels = std::make_shared<Button>("difficulties", 1, state,
-                                           [isLevelsExpanded = false](WorldState &s, auto &x) mutable {
-                                               isLevelsExpanded = !isLevelsExpanded;
-                                               for (int i = 0; i < Config::presets.size(); i++) {
-                                                   auto level = s.getCurrentScene().getChildWithName(
-                                                           "level" + std::to_string(i));
-                                                   level->as<PositionedWidget>()->hide(isLevelsExpanded);
-                                               }
-                                           });
+    auto levels = std::make_shared<Button>(
+            "difficulties", 1,
+            StateCommand::fromFunction(state, [isLevelsExpanded = false](WorldState &s) mutable {
+                isLevelsExpanded = !isLevelsExpanded;
+                for (int i = 0; i < Config::presets.size(); i++) {
+                    auto level = s.getCurrentScene().getChildWithName("level" + std::to_string(i));
+                    level->as<PositionedWidget>()->hide(isLevelsExpanded);
+                }
+            }));
 
-    for (const auto&[i, level]: Config::presets | ranges::views::enumerate) {
+    int i = 0;
+    for (const auto &level : Config::presets) {
         auto levelLabel = std::make_shared<Label>("level" + std::to_string(i), level.name);
         levelLabel->hide();
         levelNames.push_back(levelLabel);
+        i++;
     }
 
-    auto butRt = std::make_shared<Button>("reset\nconfig", 0, state, [=](WorldState &s, Button &x) {
-        restartMessage->hide(false);
-        yes->hide(false);
-        no->hide(false);
-        s.getCurrentScene().changeActiveWidget(Direction::DOWN, 2);
-        x.hide();
-        butStMn->hide();
-    });
+    auto butRt = std::make_shared<Button>("reset\nconfig", 0, Command::noop());
 
     restartMessage->hide();
     yes->hide();
     no->hide();
-
-    no->applyAction([=](WorldState &s, auto &x) {
-        butRt->hide(false);
-        butStMn->hide(false);
-        s.getCurrentScene().changeActiveWidget(Direction::UP, 2);
-        restartMessage->hide();
-        yes->hide();
-        x.hide();
-    });
-
-    butStMn->applyAction([=](WorldState &s, auto &w) {
-        restartMessage->hide();
-        yes->hide();
-        no->hide();
-        s.changeCurrentScene(*scenes[SceneNames::MainMenu]);
-    });
 
     scenes[SceneNames::Settings]->bind(label);
     scenes[SceneNames::Settings]->bind(restartMessage);
@@ -171,8 +118,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     scenes[SceneNames::Settings]->bind(no);
     scenes[SceneNames::Settings]->bind(butRt);
     scenes[SceneNames::Settings]->bind(levels);
-    for (const auto &item: levelNames)
+    for (const auto &item : levelNames)
         scenes[SceneNames::Settings]->bind(item);
     scenes[SceneNames::Settings]->bind(butStMn);
 }
-

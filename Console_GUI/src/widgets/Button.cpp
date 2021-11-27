@@ -2,6 +2,7 @@
 #include "utils.h"
 #include <cstdlib>
 #include <utility>
+#include "Command.h"
 
 void Button::show() {
     if (isHidden) return;
@@ -32,15 +33,9 @@ UISize Button::getSize() {
     return size;
 }
 
-Button::Button(std::string name, int index, WorldState &state, std::function<void(WorldState &, Button &)> f) :
-        Widget(std::move(name)),
-        ColorWidget(name),
-        HoverableWidget(index, state, [f](WorldState &s, HoverableWidget &w) {
-            f(s, *w.as<Button>());
-        }) {
+Button::Button(std::string name, int index) : Widget(std::move(name)),
+                                              ColorWidget(name),
+                                              HoverableWidget(index, Command::noop()) {
     isBlowing = false;
     size = {getWidth(name), getHeight(name)};
 }
-
-Button::Button(std::string name, int index, WorldState &state) :
-        Button(std::move(name), index, state, [](auto&, auto&){}) {}

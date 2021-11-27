@@ -7,49 +7,75 @@
 #include <memory>
 #include <utility>
 
-class HoverableWidget;
-class WorldState;
+#include "widgets/HoverableWidget.h"
 
 class Command {
-protected:
-    WorldState &state;
-    std::shared_ptr<HoverableWidget> sender;
-
 public:
-    Command(WorldState &state, std::shared_ptr<HoverableWidget> sender) : sender(std::move(sender)), state(state) {}
-
     virtual void act() = 0;
 
-    ~Command() = default;
+    virtual ~Command() = default;
 
-    template <typename F>
-    static auto fromFunction(WorldState &state, std::shared_ptr<HoverableWidget> sender, F fn) {
-        struct FnCommand : Command {
-            F f;
-
-            explicit FnCommand(F f) : f(f), Command(state, sender) {}
-
-            void act() override {
-                return f(this->state, *this->sender);
-            }
+    static auto noop() {
+        struct NoOpCommand : Command {
+            void act() override {}
         };
 
-        return std::make_unique<FnCommand>(fn);
+        return NoOpCommand();
     }
 
     template <typename F>
-    static auto forward(Command &&old, F newFn) {
-        struct DecoratingCommand : Command {
+    static auto fromFunction(F &&fn) {
+        struct FnCommand : Command {
             F f;
 
-            explicit DecoratingCommand(Command &&inner, F f)
-                : f(f), Command(std::move(inner)) {}
+            explicit FnCommand(F &&f) : f(std::forward<F>(f)) {}
 
             void act() override {
-                return f(this->state, *this->sender);
+                return f();
             }
         };
 
-        return std::make_unique<DecoratingCommand>(std::move(old), newFn);
+        return FnCommand(std::forward<F>(fn));
+    }
+};
+
+class WidgetCommand : public Command {
+protected:
+    HoverableWidget &sender;
+
+public:
+    explicit WidgetCommand(HoverableWidget &sender) : sender(sender) {}
+
+    template <typename T, typename F>
+    auto forward(F &&newFn) && {
+        struct DecoratingCommand : WidgetCommand {
+            F f;
+
+            explicit DecoratingCommand(WidgetCommand &&inner, F &&f)
+                : f(std::forward<F>(f)), WidgetCommand(inner) {}
+
+            void act() override {
+                return f(*this->sender.template as<T>());
+            }
+        };
+
+        return DecoratingCommand(std::move(*this), std::forward<F>(newFn));
+    }
+
+    template <typename T = HoverableWidget, typename F>
+    static auto fromFunction(T &sender, F &&fn) {
+        struct FnCommand : WidgetCommand {
+            F f;
+            T &refinedSender;
+
+            explicit FnCommand(T &sender_, F &&f)
+                : f(std::forward<F>(f)), refinedSender(sender_), WidgetCommand(sender_) {}
+
+            void act() override {
+                return f(this->refinedSender);
+            }
+        };
+
+        return FnCommand(sender, std::forward<F>(fn));
     }
 };

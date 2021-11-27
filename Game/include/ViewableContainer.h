@@ -3,7 +3,6 @@
 #include <map>
 #include <memory>
 #include <exception>
-#include <range/v3/all.hpp>
 
 template<typename T, typename ID>
 class ViewableContainer {
@@ -25,7 +24,10 @@ public:
     }
 
     [[nodiscard]] auto getSlots() const {
-        return container | ranges::views::keys;
+        std::vector<ID> result;
+        for (const auto &item : container)
+            result.push_back(item.first);
+        return result;
     }
 
     // We get element that cannot be modified
