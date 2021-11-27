@@ -35,11 +35,13 @@ void paintInventoryFrame(WorldState &state, Canvases &scenes) {
     //FIXME
     //    auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
     //    auto items = state.getPlayer().getSlots();
-    //    for (const auto &sale: sales) {
+    //    for (const auto &sale : sales) {
     //        sale->setName("");
     //        sale->setItemId(-1);
     //    }
-    //    for (auto[itemId, sale]: ranges::views::zip(items, sales)) {
+    //    for (auto context : ranges::views::zip(items, sales)) {
+        auto itemId = context.first;
+        auto sale = context.second;
     //        sale->setItemId(itemId);
     //        std::stringstream ss;
     //        auto item = state.getPlayer().viewItem(itemId);

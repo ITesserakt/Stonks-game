@@ -92,7 +92,7 @@ TEST(game_logic, profitness) {
         }]
 })"_json;
     auto f = ObjectFactory(json, 9);
-    auto w = World(std::move(f), 2);
+    World w{std::move(f), 2};
     std::vector<double> expected = {0.275, 0.0106249, -60129542131.400002, 0, 268435455.81874999};
 
     for (int x: {0, 1, 2, 3, 4}) {
@@ -106,7 +106,7 @@ TEST(game_logic, profitness) {
 }
 
 TEST(game_logic, non_existing_gameobject) {
-    auto w = World(ObjectFactory::empty(), 2);
+    World w{ObjectFactory::empty(), 2};
     ASSERT_THROW({
                      auto unused = w.getProfitness(1);
                  }, std::runtime_error);
@@ -119,7 +119,7 @@ TEST(game_logic, non_existing_gameobject) {
 }
 
 TEST(game_logic, trade_properties) {
-    auto w = World(ObjectFactory(R"({
+    World w{ObjectFactory(R"({
         "Objects" : [{
             "name" : "car",
             "descriptions": {
@@ -135,7 +135,8 @@ TEST(game_logic, trade_properties) {
             },
             "cost": 10
         }]
-})"_json), 2);
+})"_json),
+            2};
     w.fillUp();
     auto p = std::make_shared<Player>();
     w.addGamer(p);

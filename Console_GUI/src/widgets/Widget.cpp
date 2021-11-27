@@ -22,7 +22,8 @@ void Widget::bind(std::shared_ptr<Widget> widget) {
         throw std::runtime_error("Cannot add itself as a child");
     }
 
-    widget->parent = weak_from_this();
+    //widget->parent = weak_from_this();
+    widget->parent = std::weak_ptr<Widget>(shared_from_this());
     widget->canvas = canvas;
     children.push_back(widget);
     visitMap[widget.get()] = false;
