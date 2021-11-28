@@ -15,8 +15,6 @@ std::weak_ptr<Widget> Widget::getParent() const { return parent; }
 
 const std::vector<std::shared_ptr<Widget>> &Widget::getChildren() const { return children; }
 
-std::weak_ptr<Canvas> Widget::getCanvas() const { return canvas; }
-
 void Widget::bind(std::shared_ptr<Widget> widget) {
     if (this == widget.get()) {
         throw std::runtime_error("Cannot add itself as a child");
@@ -24,7 +22,6 @@ void Widget::bind(std::shared_ptr<Widget> widget) {
 
     //widget->parent = weak_from_this();
     widget->parent = std::weak_ptr<Widget>(shared_from_this());
-    widget->canvas = canvas;
     children.push_back(widget);
     visitMap[widget.get()] = false;
 }

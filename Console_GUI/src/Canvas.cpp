@@ -11,7 +11,8 @@ void Canvas::show() {
             child->show();
             y += child->getSize().height;
         }
-    } else if (align == Centered) {
+    }
+    else if (align == Centered) {
         auto gr = std::make_shared<Group>("summering");
         int xMax = this->getSize().width;
         int yMax = this->getSize().height;
@@ -28,7 +29,8 @@ void Canvas::show() {
             child->show();
             yInd += child->getSize().height;
         }
-    } else if (align == Right) {
+    }
+    else if (align == Right) {
         x = getSize().width;
         for (auto child: getChildrenWithType<PositionedWidget>()) {
             child->changePos(x - child->getSize().width, y);
@@ -89,7 +91,6 @@ void Canvas::changeActiveWidget(Direction direct, unsigned int length) {
 }
 
 void Canvas::bind(std::shared_ptr<Widget> widget) {
-    canvas = std::weak_ptr<Widget>(shared_from_this()).lock()->as<Canvas>();
     Widget::bind(widget);
     if (widget->is<HoverableWidget>() &&
         widget->as<HoverableWidget>()->getTabIndex() == 0)

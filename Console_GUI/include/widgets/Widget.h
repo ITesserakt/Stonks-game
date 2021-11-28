@@ -9,8 +9,6 @@
 
 #include "utils.h"
 
-class Canvas;
-
 class Widget : public std::enable_shared_from_this<Widget> {
 private:
     std::map<Widget *, bool> visitMap;
@@ -40,7 +38,6 @@ protected:
 
     std::string name;
     std::weak_ptr<Widget> parent;
-    std::weak_ptr<Canvas> canvas;
     std::vector<std::shared_ptr<Widget>> children;
 
 public:
@@ -106,8 +103,6 @@ public:
     std::weak_ptr<Widget> getParent() const;
 
     const std::vector<std::shared_ptr<Widget>> &getChildren() const;
-
-    std::weak_ptr<Canvas> getCanvas() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Widget &widget);
 
