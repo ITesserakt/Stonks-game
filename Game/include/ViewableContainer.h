@@ -31,10 +31,17 @@ public:
     }
 
     // We get element that cannot be modified
-    virtual const T& viewItem(ID itemID) const {
+    virtual const T &viewItem(ID itemID) const {
         auto it = container.find(itemID);
         if (it == container.end() || it->second == nullptr)
             throw std::runtime_error("Could not view item");
         return *it->second.get();
+    }
+
+    bool hasItem(ID itemId) const {
+        auto it = container.find(itemId);
+        if (it == container.end() || it->second == nullptr)
+            return false;
+        return true;
     }
 };

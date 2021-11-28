@@ -1,12 +1,14 @@
-#include <iostream>
 #include <random>
 
 #include "CreatingGui.h"
-#include "Debug.h"
-#include "widgets/Graphic.h"
 #include "WorldState.h"
+#include "commands/PurchaseCommand.h"
+#include "commands/SaleCommand.h"
 #include "commands/SceneChangeCommand.h"
 #include "commands/ShutdownCommand.h"
+#include "game_widgets/Purchase.h"
+#include "game_widgets/Sale.h"
+#include "widgets/Graphic.h"
 #include "widgets/Group.h"
 #include "widgets/MessageBox.h"
 
@@ -33,8 +35,9 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     scenes[SceneNames::GameField]->bind(label2);
     scenes[SceneNames::GameField]->bind(balance);
 
-    for (unsigned long i = 0; i < state.getWorld().getSlots().size(); i++) {
-        auto purch = std::make_shared<Button>("aboba", i, Command::noop());
+    for (int i = 0; i < state.getWorld().getSlots().size(); i++) {
+        auto purch = std::make_shared<Purchase>(i, Command::noop());
+        purch->applyAction(PurchaseCommand(*purch, state));
         scenes[SceneNames::GameField]->bind(purch);
     }
 
@@ -50,17 +53,18 @@ void setupInventory(WorldState &state, Canvases &scenes) {
     label->turnOn(COLOR_YELLOW);
 
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
-        auto sale = std::make_shared<Button>("aboba", i, Command::noop());
+        auto sale = std::make_shared<Sale>(i, Command::noop());
+        sale->applyAction(SaleCommand(*sale, state));
         scenes[SceneNames::Inventory]->bind(sale);
     }
     auto TestGraphic = std::make_shared<Graphic>("Test", "y", "x",
-                                                 UISize{20, 10}, [&]() -> int{
-        std::random_device dev;
-        std::mt19937 rng(dev());
-        std::uniform_int_distribution<int> distribution(1, 5);
-        return distribution(rng);
-        // TODO: return round(state::statistics->getVAlue);
-    });
+                                                 UISize{20, 10}, [&]() -> int {
+                                                     std::random_device dev;
+                                                     std::mt19937 rng(dev());
+                                                     std::uniform_int_distribution<int> distribution(1, 5);
+                                                     return distribution(rng);
+                                                     // TODO: return round(state::statistics->getVAlue);
+                                                 });
     scenes[SceneNames::Inventory]->bind(TestGraphic);
 }
 

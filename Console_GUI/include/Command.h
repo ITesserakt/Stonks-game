@@ -39,43 +39,16 @@ public:
     }
 };
 
-class WidgetCommand : public Command {
+template <typename T>
+class WidgetCommand : public virtual Command {
 protected:
-    HoverableWidget &sender;
+    T &sender;
 
 public:
-    explicit WidgetCommand(HoverableWidget &sender) : sender(sender) {}
+    explicit WidgetCommand(T &sender) : sender(sender) {}
+};
 
-    template <typename T, typename F>
-    auto forward(F &&newFn) && {
-        struct DecoratingCommand : WidgetCommand {
-            F f;
-
-            explicit DecoratingCommand(WidgetCommand &&inner, F &&f)
-                : f(std::forward<F>(f)), WidgetCommand(inner) {}
-
-            void act() override {
-                return f(*this->sender.template as<T>());
-            }
-        };
-
-        return DecoratingCommand(std::move(*this), std::forward<F>(newFn));
-    }
-
-    template <typename T = HoverableWidget, typename F>
-    static auto fromFunction(T &sender, F &&fn) {
-        struct FnCommand : WidgetCommand {
-            F f;
-            T &refinedSender;
-
-            explicit FnCommand(T &sender_, F &&f)
-                : f(std::forward<F>(f)), refinedSender(sender_), WidgetCommand(sender_) {}
-
-            void act() override {
-                return f(this->refinedSender);
-            }
-        };
-
-        return FnCommand(sender, std::forward<F>(fn));
-    }
+template <typename T>
+struct UpdateCommand : public virtual WidgetCommand<T> {
+    virtual void update() = 0;
 };

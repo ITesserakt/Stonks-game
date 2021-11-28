@@ -1,7 +1,7 @@
 #pragma once
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <numeric>
 #include <sstream>
 #include <string>
@@ -25,7 +25,7 @@ int generateId();
 
 // Size of widget
 // width == x; height == y
-template<typename T>
+template <typename T>
 struct Size {
     T width, height;
 };
@@ -35,7 +35,7 @@ using ISize = Size<int>;
 using FSize = Size<float>;
 
 // Simple point that has x and y
-template<typename T>
+template <typename T>
 struct Point {
     T x, y;
 
@@ -64,7 +64,7 @@ using IPoint = Point<int>;
 using FPoint = Point<float>;
 using UIPoint = Point<unsigned int>;
 
-template<typename T>
+template <typename T>
 struct Vector {
     const Point<T> x, y;
 
@@ -83,7 +83,7 @@ struct Vector {
     }
 };
 
-template<typename T>
+template <typename T>
 struct Rect {
     const Point<T> a, b;
 
@@ -103,5 +103,7 @@ using FRect = Rect<float>;
 using UIRect = Rect<unsigned int>;
 
 enum Align {
-    Left, Right, Centered
+    Left,
+    Right,
+    Centered
 };

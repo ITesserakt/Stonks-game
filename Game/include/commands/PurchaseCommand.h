@@ -6,8 +6,25 @@
 
 #include "GameObjectCommand.h"
 #include "StateCommand.h"
+#include "game_widgets/Purchase.h"
 
-struct PurchaseCommand : virtual GameObjectCommand, virtual StateCommand {
-    PurchaseCommand(const GameObject &object, WorldState &state) : GameObjectCommand(object), StateCommand(state) {}
-    explicit PurchaseCommand(WorldState &state) : StateCommand(state) {}
+struct PurchaseCommand : virtual GameObjectCommand, virtual StateCommand, virtual UpdateCommand<Purchase> {
+    explicit PurchaseCommand(Purchase &sender, WorldState &state) : StateCommand(state), WidgetCommand(sender) {}
+
+    void act() override {
+        if (!object.has_value()) return;
+        auto item = object.value();
+        if (state.getPlayer().couldBuy() && state.getPlayer().getBalance() > state.getWorld().viewItem(item.id).cost) {
+            state.getPlayer().buyItem(state.getWorld().takeItem(item.id));
+            object.reset();
+            sender.clearItem();
+        }
+    }
+
+    void update() override {
+        if (sender.object.has_value())
+            object.emplace(*sender.object);
+        else
+            object.reset();
+    }
 };

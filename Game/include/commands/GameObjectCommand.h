@@ -4,17 +4,14 @@
 
 #pragma once
 
-#include <optional>
-
+#include "optional.hpp"
 #include "Command.h"
 #include "GameObject.h"
 
 class GameObjectCommand : public virtual Command {
 protected:
-    std::optional<GameObject> object;
+    std::experimental::optional<GameObject> object;
 
 public:
     GameObjectCommand() = default;
-
-    explicit GameObjectCommand(GameObject object) : object(object) {}
 };
