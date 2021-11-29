@@ -9,9 +9,6 @@
 
 #include "widgets/HoverableWidget.h"
 
-template <typename Self>
-struct CloneCommand;
-
 class Command {
 public:
     virtual void act() = 0;
