@@ -16,7 +16,7 @@ public:
 
     template <typename F>
     static auto fromFunction(WorldState &state, F &&fn) {
-        struct FnCommand : StateCommand {
+        struct FnCommand : virtual StateCommand, virtual CloneCommand<FnCommand> {
             F f;
 
             FnCommand(WorldState &State, F &&f) : StateCommand(State), f(f) {}

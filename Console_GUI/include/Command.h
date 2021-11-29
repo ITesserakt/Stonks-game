@@ -9,6 +9,9 @@
 
 #include "widgets/HoverableWidget.h"
 
+template <typename Self>
+struct CloneCommand;
+
 class Command {
 public:
     virtual void act() = 0;
@@ -24,31 +27,66 @@ public:
     }
 
     template <typename F>
-    static auto fromFunction(F &&fn) {
-        struct FnCommand : Command {
-            F f;
+    static auto fromFunction(F &&fn);
+};
 
-            explicit FnCommand(F &&f) : f(std::forward<F>(f)) {}
+template <typename Self>
+struct CloneCommand : virtual Command {
+    virtual Self clone() const;
 
-            void act() override {
-                return f();
-            }
-        };
-
-        return FnCommand(std::forward<F>(fn));
-    }
+    template <typename C>
+    auto then(CloneCommand<C> &&cmd) &&;
 };
 
 template <typename T>
 class WidgetCommand : public virtual Command {
 protected:
-    T &sender;
+    std::shared_ptr<T> sender;
 
 public:
-    explicit WidgetCommand(T &sender) : sender(sender) {}
+    explicit WidgetCommand(std::shared_ptr<T> sender) : sender(sender) {}
 };
 
 template <typename T>
 struct UpdateCommand : public virtual WidgetCommand<T> {
     virtual void update() = 0;
 };
+
+template <typename F>
+auto Command::fromFunction(F &&fn) {
+    struct FnCommand : Command {
+        F f;
+
+        explicit FnCommand(F &&f) : f(std::forward<F>(f)) {}
+
+        void act() override {
+            return f();
+        }
+    };
+
+    return FnCommand(std::forward<F>(fn));
+}
+
+template <typename Self>
+template <typename C>
+auto CloneCommand<Self>::then(CloneCommand<C> &&cmd) && {
+    struct ChainCommand : CloneCommand<ChainCommand> {
+        Self a;
+        C b;
+
+        ChainCommand(CloneCommand<Self> &&a, CloneCommand<C> &&b)
+            : a(a.clone()), b(b.clone()) {}
+
+        void act() override {
+            a.act();
+            b.act();
+        }
+    };
+
+    return ChainCommand(std::move(*this), std::forward<CloneCommand<C>>(cmd));
+}
+
+template <typename Self>
+Self CloneCommand<Self>::clone() const {
+    return Self{*dynamic_cast<const Self *>(this)};
+}

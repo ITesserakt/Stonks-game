@@ -6,7 +6,7 @@
 
 #include "StateCommand.h"
 
-struct ShutdownCommand : public StateCommand {
+struct ShutdownCommand : public virtual StateCommand, public virtual CloneCommand<ShutdownCommand> {
     explicit ShutdownCommand(WorldState &State) : StateCommand(State) {}
 
     void act() override {

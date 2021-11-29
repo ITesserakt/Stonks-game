@@ -8,7 +8,7 @@
 
 #include "StateCommand.h"
 
-class SceneChangeCommand : public virtual StateCommand {
+class SceneChangeCommand : public virtual StateCommand, public virtual CloneCommand<SceneChangeCommand> {
 private:
     std::shared_ptr<Canvas> to;
 

@@ -2,6 +2,7 @@
 
 #include "CreatingGui.h"
 #include "WorldState.h"
+#include "commands/HideCommand.h"
 #include "commands/PurchaseCommand.h"
 #include "commands/SaleCommand.h"
 #include "commands/SceneChangeCommand.h"
@@ -37,7 +38,7 @@ void setupGameField(WorldState &state, Canvases &scenes) {
 
     for (int i = 0; i < state.getWorld().getSlots().size(); i++) {
         auto purch = std::make_shared<Purchase>(i, Command::noop());
-        purch->applyAction(PurchaseCommand(*purch, state));
+        purch->applyAction(PurchaseCommand(purch, state));
         scenes[SceneNames::GameField]->bind(purch);
     }
 
@@ -54,7 +55,7 @@ void setupInventory(WorldState &state, Canvases &scenes) {
 
     for (unsigned long i = 0; i < state.getPlayer().getInventorySize(); i++) {
         auto sale = std::make_shared<Sale>(i, Command::noop());
-        sale->applyAction(SaleCommand(*sale, state));
+        sale->applyAction(SaleCommand(sale, state));
         scenes[SceneNames::Inventory]->bind(sale);
     }
     auto TestGraphic = std::make_shared<Graphic>("Test", "y", "x",
@@ -123,11 +124,36 @@ void setupSettings(WorldState &state, Canvases &scenes) {
         i++;
     }
 
-    auto butRt = std::make_shared<Button>("reset\nconfig", 0, Command::noop());
+    auto butRt = std::make_shared<Button>("reset\nconfig", 0);
 
     restartMessage->hide();
     yes->hide();
     no->hide();
+
+    butRt->applyAction(
+            HideCommand<MessageBox>(restartMessage, false)
+                    .then(HideCommand<Button>(yes, false))
+                    .then(HideCommand<Button>(no, false))
+                    .then(HideCommand<Button>(levels))
+                    .then(HideCommand<Button>(butRt))
+                    .then(HideCommand<Button>(butStMn)));
+
+    no->applyAction(
+            HideCommand<Button>(butRt, false)
+                    .then(HideCommand<Button>(butStMn, false))
+                    .then(HideCommand<Button>(levels, false))
+                    .then(HideCommand<MessageBox>(restartMessage))
+                    .then(HideCommand<Button>(yes))
+                    .then(HideCommand<Button>(no))
+                    .then(StateCommand::fromFunction(state, [](WorldState &state) {
+                        state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
+                    })));
+
+    butStMn->applyAction(
+            HideCommand<MessageBox>(restartMessage)
+                    .then(HideCommand<Button>(yes))
+                    .then(HideCommand<Button>(no))
+                    .then(SceneChangeCommand(state, scenes[SceneNames::MainMenu])));
 
     scenes[SceneNames::Settings]->bind(label);
     scenes[SceneNames::Settings]->bind(restartMessage);
