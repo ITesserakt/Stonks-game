@@ -130,30 +130,27 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     yes->hide();
     no->hide();
 
-    butRt->applyAction(
-            HideCommand<MessageBox>(restartMessage, false)
-                    .then(HideCommand<Button>(yes, false))
-                    .then(HideCommand<Button>(no, false))
-                    .then(HideCommand<Button>(levels))
-                    .then(HideCommand<Button>(butRt))
-                    .then(HideCommand<Button>(butStMn)));
+    butRt->applyAction(HideCommand(restartMessage, false)
+                               .then(HideCommand(yes, false))
+                               .then(HideCommand(no, false))
+                               .then(HideCommand(levels))
+                               .then(HideCommand(butRt))
+                               .then(HideCommand(butStMn)));
 
-    no->applyAction(
-            HideCommand<Button>(butRt, false)
-                    .then(HideCommand<Button>(butStMn, false))
-                    .then(HideCommand<Button>(levels, false))
-                    .then(HideCommand<MessageBox>(restartMessage))
-                    .then(HideCommand<Button>(yes))
-                    .then(HideCommand<Button>(no))
-                    .then(StateCommand::fromFunction(state, [](WorldState &state) {
-                        state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
-                    })));
+    no->applyAction(HideCommand(butRt, false)
+                            .then(HideCommand(butStMn, false))
+                            .then(HideCommand(levels, false))
+                            .then(HideCommand(restartMessage))
+                            .then(HideCommand(yes))
+                            .then(HideCommand(no))
+                            .then(StateCommand::fromFunction(state, [](WorldState &state) {
+                                state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
+                            })));
 
-    butStMn->applyAction(
-            HideCommand<MessageBox>(restartMessage)
-                    .then(HideCommand<Button>(yes))
-                    .then(HideCommand<Button>(no))
-                    .then(SceneChangeCommand(state, scenes[SceneNames::MainMenu])));
+    butStMn->applyAction(HideCommand(restartMessage)
+                                 .then(HideCommand(yes))
+                                 .then(HideCommand(no))
+                                 .then(SceneChangeCommand(state, scenes[SceneNames::MainMenu])));
 
     scenes[SceneNames::Settings]->bind(label);
     scenes[SceneNames::Settings]->bind(restartMessage);

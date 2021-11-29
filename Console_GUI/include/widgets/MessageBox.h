@@ -2,14 +2,16 @@
 
 #include "widgets/PositionedWidget.h"
 
-enum specialPosition {Center, Special};
+enum SpecialPosition { Center,
+                       Special };
 
 class MessageBox : virtual public PositionedWidget {
 private:
     std::string messageText;
-    specialPosition spec;
+    SpecialPosition spec;
+
 public:
-    MessageBox(std::string name, std::string text, specialPosition = Center);
+    MessageBox(std::string name, std::string text, SpecialPosition = Center);
 
     void show() override;
 

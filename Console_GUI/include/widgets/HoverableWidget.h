@@ -4,10 +4,9 @@
 
 #include "ColorWidget.h"
 #include "PositionedWidget.h"
+#include "Command.h"
 
-class Command;
-
-class HoverableWidget : public virtual PositionedWidget, public virtual ColorWidget {
+class HoverableWidget : public PositionedWidget, public virtual ColorWidget {
 protected:
     std::unique_ptr<Command> todo;
     int tabIndex;
@@ -34,7 +33,4 @@ public:
     void setName(std::string newName);
 
     int getTabIndex() const;
-
-    template <typename C>
-    bool hasCommand() { return dynamic_cast<C *>(todo.get()); }
 };

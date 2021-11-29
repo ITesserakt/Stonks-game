@@ -6,6 +6,7 @@
 
 #include <functional>
 
+#include "widgets/HoverableWidget.h"
 #include "Command.h"
 #include "GameObject.h"
 #include "optional.hpp"

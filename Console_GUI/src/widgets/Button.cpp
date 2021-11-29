@@ -1,8 +1,4 @@
 #include "widgets/Button.h"
-#include "utils.h"
-#include <cstdlib>
-#include <utility>
-#include "Command.h"
 
 void Button::show() {
     if (isHidden) return;
@@ -13,8 +9,7 @@ void Button::show() {
         move(position.y, position.x);
         printw("[ %s ]", name.c_str());
         if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
-    }
-    else {
+    } else {
         if (isBlowing) { attron(COLOR_PAIR(widgetId)); }
         for (int i = 0; i < getHeight(name); i++) {
             move(position.y + i, position.x);

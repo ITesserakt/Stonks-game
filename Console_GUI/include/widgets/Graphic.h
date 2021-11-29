@@ -3,12 +3,11 @@
 #include <chrono>
 #include <list>
 #include <functional>
-#include <utility>
 
 #include "widgets/ColorWidget.h"
 #include "widgets/PositionedWidget.h"
 
-class Graphic : public virtual PositionedWidget, public virtual ColorWidget {
+class Graphic : public PositionedWidget, public ColorWidget {
 private:
     std::string ordinance;
     std::string abscissa;

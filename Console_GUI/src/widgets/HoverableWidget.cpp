@@ -3,7 +3,6 @@
 //
 
 #include "widgets/HoverableWidget.h"
-#include "Command.h"
 
 void HoverableWidget::onHoverStart() {
     turnOn(COLOR_GREEN);

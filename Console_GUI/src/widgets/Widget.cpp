@@ -30,7 +30,7 @@ void Widget::bind(std::shared_ptr<Widget> widget) {
 }
 
 Widget::Widget(std::string name)
-        : widgetId(generateId()), name(std::move(name)) {}
+    : widgetId(generateId()), name(std::move(name)) {}
 
 bool Widget::operator==(const Widget &rhs) const {
     return widgetId == rhs.widgetId;
@@ -38,4 +38,18 @@ bool Widget::operator==(const Widget &rhs) const {
 
 bool Widget::operator!=(const Widget &rhs) const {
     return !(rhs == *this);
+}
+
+void Widget::show() {
+    for (auto child : children)
+        child->show();
+}
+
+std::shared_ptr<Widget> Widget::getChildWithName(const std::string &name) {
+    auto result = std::find_if(children.begin(), children.end(), [&](auto a) {
+        return a->name == name;
+    });
+    if (result != children.end())
+        return *result;
+    throw std::runtime_error("Could not find child");
 }
