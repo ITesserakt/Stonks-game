@@ -44,6 +44,25 @@ void Canvas::show() {
             y += child->getSize().height;
         }
     }
+    else if (align == Vsplit) {
+        int xMax = this->getSize().width;
+        int yMax = this->getSize().height;
+        int w = 0;
+        int h = 0;
+        int xInd = xMax / 2; // x Indent
+        int yInd = yMax / 2;
+
+        for (auto child : getChildrenWithType<PositionedWidget>()) {
+            child->changePos(x, y);
+            child->show();
+            x += xInd + 1;
+        }
+
+        // printing center line
+        // TODO make for more childrens than 2
+        for (int i = 0; i < yMax; i++)
+            mvprintw(i, xInd, "|");
+    }
 }
 
 std::shared_ptr<HoverableWidget> findMinAbove(

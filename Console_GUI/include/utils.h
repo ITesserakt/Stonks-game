@@ -105,5 +105,6 @@ using UIRect = Rect<unsigned int>;
 enum Align {
     Left,
     Right,
-    Centered
+    Centered,
+    Vsplit
 };

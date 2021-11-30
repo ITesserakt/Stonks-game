@@ -10,7 +10,7 @@
 using Canvases = std::vector<std::shared_ptr<Canvas>>;
 
 enum SceneNames {
-    MainMenu = 0, GameField, Inventory, Guide, Settings
+    MainMenu = 0, GameField, Inventory, Guide, Settings, Statistics
 };
 
 void setupMainMenu(WorldState &state, Canvases &scenes);
@@ -22,3 +22,5 @@ void setupInventory(WorldState &state, Canvases &scenes);
 void setupGuide(WorldState &state, Canvases &scenes);
 
 void setupSettings(WorldState& s, Canvases &scenes);
+
+void setupStatistics(WorldState &state, Canvases &scenes);

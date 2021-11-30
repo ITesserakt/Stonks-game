@@ -18,13 +18,15 @@ void setupMainMenu(WorldState &state, Canvases &scenes) {
     auto butPl = std::make_shared<Button>("play", 0, SceneChangeCommand(state, scenes[SceneNames::GameField]));
     auto butSt = std::make_shared<Button>("settings", 1, SceneChangeCommand(state, scenes[SceneNames::Settings]));
     auto butGd = std::make_shared<Button>("guide", 2, SceneChangeCommand(state, scenes[SceneNames::Guide]));
-    auto butQ = std::make_shared<Button>("quit", 3, ShutdownCommand(state));
+    auto butStat = std::make_shared<Button>("statistics", 3, SceneChangeCommand(state, scenes[SceneNames::Statistics]));
+    auto butQ = std::make_shared<Button>("quit", 4, ShutdownCommand(state));
 
     label1->turnOn(COLOR_YELLOW);
     scenes[SceneNames::MainMenu]->bind(label1);
     scenes[SceneNames::MainMenu]->bind(butPl);
     scenes[SceneNames::MainMenu]->bind(butSt);
     scenes[SceneNames::MainMenu]->bind(butGd);
+    scenes[SceneNames::MainMenu]->bind(butStat);
     scenes[SceneNames::MainMenu]->bind(butQ);
 }
 
@@ -58,15 +60,6 @@ void setupInventory(WorldState &state, Canvases &scenes) {
         sale->applyAction(SaleCommand(sale, state));
         scenes[SceneNames::Inventory]->bind(sale);
     }
-    auto TestGraphic = std::make_shared<Graphic>("Test", "y", "x",
-                                                 UISize{20, 10}, [&]() -> int {
-                                                     std::random_device dev;
-                                                     std::mt19937 rng(dev());
-                                                     std::uniform_int_distribution<int> distribution(1, 5);
-                                                     return distribution(rng);
-                                                     // TODO: return round(state::statistics->getVAlue);
-                                                 });
-    scenes[SceneNames::Inventory]->bind(TestGraphic);
 }
 
 void setupGuide(WorldState &state, Canvases &scenes) {
@@ -159,4 +152,30 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     butStMn->applyAction(
                     SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
 
+}
+
+void setupStatistics(WorldState &state, Canvases &scenes) {
+    auto leftGroup = std::make_shared<Group>("Management");
+    auto rightGroup = std::make_shared<Group>("Statistics");
+
+    auto label = std::make_shared<Label>("Statistics", "STONKS-TISTICS\n");
+    label->turnOn(COLOR_YELLOW);
+    auto butStMn = std::make_shared<Button>("Back", 0);
+    butStMn->applyAction(SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
+    leftGroup->bind(label);
+    leftGroup->bind(butStMn);
+
+    auto TestGraphic = std::make_shared<Graphic>("Test", "y", "t",
+                                                 UISize{20, 10}, [&]() -> int {
+              std::random_device dev;
+              std::mt19937 rng(dev());
+              std::uniform_int_distribution<int> distribution(1, 5);
+              return distribution(rng);
+              // TODO: return round(state::statistics->getVAlue);
+            });
+    //auto amountOfPurchases = std::make_shared<>()
+    rightGroup->bind(TestGraphic);
+
+    scenes[SceneNames::Statistics]->bind(leftGroup);
+    scenes[SceneNames::Statistics]->bind(rightGroup);
 }

@@ -20,13 +20,15 @@ int main() {
                 std::make_shared<Canvas>("GameField", Left),
                 std::make_shared<Canvas>("Inventory", Left),
                 std::make_shared<Canvas>("Guide", Left),
-                std::make_shared<Canvas>("Settings", Centered)};
+                std::make_shared<Canvas>("Settings", Centered),
+                std::make_shared<Canvas>("Statistics", Vsplit)};
         WorldState state(Config::botsAmount, Config::debug);
         setupMainMenu(state, scenes);
         setupGameField(state, scenes);
         setupInventory(state, scenes);
         setupGuide(state, scenes);
         setupSettings(state, scenes);
+        setupStatistics(state, scenes);
 
         state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
 
