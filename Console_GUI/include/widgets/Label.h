@@ -10,7 +10,7 @@ private:
     std::string text;
 
 public:
-    Label(std::string name, const std::string &text);
+    Label(const std::string &name, const std::string &text);
 
     void show() override;
 

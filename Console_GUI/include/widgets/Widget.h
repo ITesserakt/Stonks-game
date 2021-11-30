@@ -53,10 +53,7 @@ public:
 
     explicit Widget(std::string name);
 
-    virtual void show() {
-        for (auto child : children)
-            child->show();
-    }
+    virtual void show();
 
     virtual void bind(std::shared_ptr<Widget> widget);
 
@@ -79,14 +76,7 @@ public:
         return found;
     }
 
-    auto getChildWithName(const std::string &name) {
-        auto result = std::find_if(children.begin(), children.end(), [&](auto a) {
-            return a->name == name;
-        });
-        if (result != children.end())
-            return *result;
-        throw std::runtime_error("Could not find child");
-    }
+    std::shared_ptr<Widget> getChildWithName(const std::string &name);
 
     template <typename T>
     auto getChildrenRecursively() {

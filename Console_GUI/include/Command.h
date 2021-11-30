@@ -7,8 +7,6 @@
 #include <memory>
 #include <utility>
 
-#include "widgets/HoverableWidget.h"
-
 class Command {
 public:
     virtual void act() = 0;

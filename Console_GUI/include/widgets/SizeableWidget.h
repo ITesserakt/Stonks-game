@@ -2,7 +2,6 @@
 
 #include "widgets/Widget.h"
 
-class SizeableWidget: public virtual Widget {
-public:
+struct SizeableWidget : virtual Widget {
     virtual UISize getSize() = 0;
 };

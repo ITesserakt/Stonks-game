@@ -1,8 +1,9 @@
 #include "widgets/Label.h"
 
-Label::Label(std::string name, const std::string &text) : Widget(name),
-                                                          ColorWidget(name),
-                                                          text(text) {
+Label::Label(const std::string &name, const std::string &text)
+    : Widget(name),
+      ColorWidget(name),
+      text(text) {
     size.width = getWidth(text);
     size.height = getHeight(text);
 }

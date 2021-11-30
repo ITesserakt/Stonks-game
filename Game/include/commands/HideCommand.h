@@ -8,18 +8,19 @@
 
 #include "Command.h"
 
-template <typename W>
-class HideCommand : public virtual WidgetCommand<W>, public virtual CloneCommand<HideCommand<W>> {
+class HideCommand
+    : public virtual WidgetCommand<PositionedWidget>,
+      public virtual CloneCommand<HideCommand> {
 private:
     std::function<bool()> hideFn;
 
 public:
     template <typename F>
-    explicit HideCommand(std::shared_ptr<W> sender, F &&f) : WidgetCommand<W>(sender), hideFn(std::forward<F>(f)) {}
+    explicit HideCommand(const std::shared_ptr<PositionedWidget> &sender, F &&f)
+        : WidgetCommand(sender), hideFn(std::forward<F>(f)) {}
 
-    explicit HideCommand(std::shared_ptr<W> sender, bool hide = true)
-        : WidgetCommand<W>(sender),
-          hideFn([hide] { return hide; }) {}
+    explicit HideCommand(const std::shared_ptr<PositionedWidget> &sender, bool hide = true)
+        : WidgetCommand(sender), hideFn([hide] { return hide; }) {}
 
     void act() override {
         this->sender->hide(hideFn());

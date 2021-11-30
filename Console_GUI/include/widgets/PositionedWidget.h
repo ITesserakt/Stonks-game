@@ -1,24 +1,14 @@
 #pragma once
 
 #include "SizeableWidget.h"
-#include "utils.h"
-#include <ncurses.h>
 
 class PositionedWidget : public virtual SizeableWidget {
 public:
-    void changePos(unsigned int x, unsigned int y) {
-        position.x = x;
-        position.y = y;
-    }
+    void changePos(unsigned int x, unsigned int y);
 
-    virtual void hide(bool hide = true) {
-        this->isHidden = hide;
-        for (auto child: getChildrenWithType<PositionedWidget>()) {
-            child->hide(isHidden);
-        }
-    }
+    virtual void hide(bool hide = true);
 
-    bool isActive() const { return !isHidden; }
+    bool isActive() const;
 
 protected:
     bool isHidden = false;
