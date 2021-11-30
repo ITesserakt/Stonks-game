@@ -104,6 +104,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
 
     auto yes = std::make_shared<Button>("yes", 3, ShutdownCommand(state));
     auto no = std::make_shared<Button>("no", 4);
+
     auto butStMn = std::make_shared<Button>("back", 2, SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
     std::vector<std::shared_ptr<Label>> levelNames;
     auto levels = std::make_shared<Button>(
@@ -125,40 +126,37 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     }
 
     auto butRt = std::make_shared<Button>("reset\nconfig", 0);
+    auto initialGroup = std::make_shared<Group>("Initial");
+    initialGroup->bind(label);
+    initialGroup->bind(butRt);
+    initialGroup->bind(levels);
+    //for (const auto &item : levelNames)
+        //initialGroup->bind(item);
+    initialGroup->bind(butStMn);
+    scenes[SceneNames::Settings]->bind(initialGroup);
 
-    restartMessage->hide();
-    yes->hide();
-    no->hide();
+    auto groupForRestart = std::make_shared<Group>("Restart");
+    groupForRestart->bind(restartMessage);
+    groupForRestart->bind(yes);
+    groupForRestart->bind(no);
+    groupForRestart->hide(true);
+    scenes[SceneNames::Settings]->bind(groupForRestart);
 
-    butRt->applyAction(HideCommand(restartMessage, false)
-                               .then(HideCommand(yes, false))
-                               .then(HideCommand(no, false))
-                               .then(HideCommand(levels))
-                               .then(HideCommand(butRt))
-                               .then(HideCommand(butStMn)));
+    butRt->applyAction(
+            HideCommand(groupForRestart, false)
+                    .then(HideCommand(initialGroup))
+                    .then(StateCommand::fromFunction(state, [](WorldState &state) {         // for shifting
+                        state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);    // cursor
+                    })));
 
-    no->applyAction(HideCommand(butRt, false)
-                            .then(HideCommand(butStMn, false))
-                            .then(HideCommand(levels, false))
-                            .then(HideCommand(restartMessage))
-                            .then(HideCommand(yes))
-                            .then(HideCommand(no))
-                            .then(StateCommand::fromFunction(state, [](WorldState &state) {
-                                state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
-                            })));
+    no->applyAction(
+            HideCommand(initialGroup, false)
+                    .then(HideCommand(groupForRestart))
+                    .then(StateCommand::fromFunction(state, [](WorldState &state) {
+                        state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
+                    })));
 
-    butStMn->applyAction(HideCommand(restartMessage)
-                                 .then(HideCommand(yes))
-                                 .then(HideCommand(no))
-                                 .then(SceneChangeCommand(state, scenes[SceneNames::MainMenu])));
+    butStMn->applyAction(
+                    SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
 
-    scenes[SceneNames::Settings]->bind(label);
-    scenes[SceneNames::Settings]->bind(restartMessage);
-    scenes[SceneNames::Settings]->bind(yes);
-    scenes[SceneNames::Settings]->bind(no);
-    scenes[SceneNames::Settings]->bind(butRt);
-    scenes[SceneNames::Settings]->bind(levels);
-    for (const auto &item : levelNames)
-        scenes[SceneNames::Settings]->bind(item);
-    scenes[SceneNames::Settings]->bind(butStMn);
 }

@@ -4,17 +4,17 @@
 
 #include "widgets/Group.h"
 
+
+Group::Group(std::string name) : Widget(std::move(name)) {}
+
 UISize Group::getSize() {
     unsigned int maxx = 0;
     unsigned int maxy = 0;
 
-    for (auto child : getChildrenWithType<PositionedWidget>()) {
-        if (child->getSize().width > maxx) {
+    for (auto child : getChildrenWithType<SizeableWidget>()) {
+        if (child->getSize().width > maxx)
             maxx = child->getSize().width;
-        }
-        if (child->getSize().height > maxy) {
-            maxy = child->getSize().height;
-        }
+        maxy += child->getSize().height;
     }
 
     return {maxx, maxy};
@@ -22,8 +22,11 @@ UISize Group::getSize() {
 
 void Group::show() {
     if (isHidden) return;
-
-    Widget::show();
+    int x = position.x;
+    int y = position.y;
+    for (auto child: getChildrenWithType<PositionedWidget>()) {
+        child->changePos(x, y);             // DON'T USE move() from ncurses
+        child->show();
+        y += child->getSize().height;
+    }
 }
-
-Group::Group(std::string name) : Widget(std::move(name)) {}

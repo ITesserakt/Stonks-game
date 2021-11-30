@@ -34,7 +34,8 @@ void MessageBox::show() {
         int xMax = getmaxx(stdscr);
         int yMax = getmaxy(stdscr);
         for (int i = 0; i < getHeight(messageText); i++) {
-            move((yMax - size.height) / 2 + i, (xMax - size.width) / 2);
+            //move((yMax - size.height) / 2 + i, (xMax - size.width) / 2);
+            move(position.y + i, position.x);
             printw("%s", splitBySentence(messageText, i).c_str());
         }
     } else if (spec == SpecialPosition::Special) {

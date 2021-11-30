@@ -1,5 +1,5 @@
 #include "Canvas.h"
-#include "widgets/Group.h"
+#include "widgets/SizeableWidget.h"
 
 void Canvas::show() {
     int y = 0;
@@ -13,13 +13,19 @@ void Canvas::show() {
         }
     }
     else if (align == Centered) {
-        auto gr = std::make_shared<Group>("summering");
         int xMax = this->getSize().width;
         int yMax = this->getSize().height;
 
-        for (const auto &child: children) { gr->bind(child); }
-        int w = gr->getSize().width;
-        int h = gr->getSize().height;
+        int w = 0;
+        int h = 0;
+        for (const auto &child: this->getChildrenRecursively<SizeableWidget>()) {
+            if (child->getSize().width > w) {
+                w = child->getSize().width;
+            }
+            if (child->getSize().height > h) {
+                h = child->getSize().height;
+            }
+        }
 
         int xInd = (xMax - w) / 2; // x Indent
         int yInd = (yMax - h) / 2;
