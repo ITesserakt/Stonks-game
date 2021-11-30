@@ -28,9 +28,11 @@ public:
 
     void operator=(const Config &) = delete;
 
+    constexpr static auto path = "../share/config.json";
+
     static const Config &getInstance();
 
-    template<typename T>
+    template <typename T>
     [[nodiscard]] T getSettingByName(const std::string &name) const {
         auto it = settings.find(name);
         if (it == settings.end()) {

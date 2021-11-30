@@ -1,9 +1,9 @@
-#include <random>
 #include <filesystem>
+#include <random>
 
 #include "CreatingGui.h"
-#include "WorldState.h"
 #include "Statistics.h"
+#include "WorldState.h"
 #include "commands/HideCommand.h"
 #include "commands/PurchaseCommand.h"
 #include "commands/SaleCommand.h"
@@ -38,9 +38,9 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     scenes[SceneNames::GameField]->bind(label);
 
     auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
-    balance->setRegularNameChanging(std::chrono::milliseconds(100), [&](){
-              return std::string("Balance: ") + std::to_string(state.getPlayer().getBalance());
-           });
+    balance->setRegularNameChanging(std::chrono::milliseconds(100), [&]() {
+        return std::string("Balance: ") + std::to_string(state.getPlayer().getBalance());
+    });
     scenes[SceneNames::GameField]->bind(balance);
 
     for (int i = 0; i < state.getWorld().getSlots().size(); i++) {
@@ -52,7 +52,6 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     auto winMessage = std::make_shared<MessageBox>("Win Message", "You have win!");
     winMessage->hide(true);
     scenes[SceneNames::GameField]->bind(winMessage);
-
 }
 
 void setupInventory(WorldState &state, Canvases &scenes) {
@@ -100,13 +99,13 @@ void setupSettings(WorldState &state, Canvases &scenes) {
 
     std::vector<std::shared_ptr<Label>> levelNames;
     auto levels = std::make_shared<Button>("difficulties", 1,
-            StateCommand::fromFunction(state, [isLevelsExpanded = false](WorldState &s) mutable {
-                isLevelsExpanded = !isLevelsExpanded;
-                for (int i = 0; i < Config::presets.size(); i++) {
-                    auto level = s.getCurrentScene().getChildWithName("level" + std::to_string(i));
-                    level->as<PositionedWidget>()->hide(isLevelsExpanded);
-                }
-            }));
+                                           StateCommand::fromFunction(state, [isLevelsExpanded = false](WorldState &s) mutable {
+                                               isLevelsExpanded = !isLevelsExpanded;
+                                               for (int i = 0; i < Config::presets.size(); i++) {
+                                                   auto level = s.getCurrentScene().getChildWithName("level" + std::to_string(i));
+                                                   level->as<PositionedWidget>()->hide(isLevelsExpanded);
+                                               }
+                                           }));
 
     int i = 0;
     for (const auto &level : Config::presets) {
@@ -123,17 +122,18 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     initialGroup->bind(butRt);
     initialGroup->bind(levels);
     //for (const auto &item : levelNames)
-        //initialGroup->bind(item);
+    //initialGroup->bind(item);
     initialGroup->bind(butStMn);
     scenes[SceneNames::Settings]->bind(initialGroup);
 
     auto restartMessage = std::make_shared<MessageBox>("configRestart",
                                                        "Do you want to restart game\n"
-                                                       "to apply config changes?", SpecialPosition::Special);
+                                                       "to apply config changes?",
+                                                       SpecialPosition::Special);
 
     auto yes = std::make_shared<Button>("yes", 3);
-    yes->applyAction(StateCommand::fromFunction(state, [](WorldState &s){
-                         std::__fs::filesystem::remove("../share/config.json");
+    yes->applyAction(Command::fromFunction([] {
+                         std::filesystem::remove(Config::path);
                      }).then(ShutdownCommand(state)));
     auto no = std::make_shared<Button>("no", 4);
 
@@ -147,8 +147,8 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     butRt->applyAction(
             HideCommand(groupForRestart, false)
                     .then(HideCommand(initialGroup))
-                    .then(StateCommand::fromFunction(state, [](WorldState &state) {         // for shifting
-                        state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);    // cursor
+                    .then(StateCommand::fromFunction(state, [](WorldState &state) {    // for shifting
+                        state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
                     })));
 
     no->applyAction(
@@ -159,8 +159,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
                     })));
 
     butStMn->applyAction(
-                    SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
-
+            SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
 }
 
 void setupStatistics(WorldState &state, Canvases &scenes) {
@@ -175,18 +174,17 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
 
     auto rightGroup = std::make_shared<Group>("Statistics");
     auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0\n");
-    amountOfPurchases->setRegularNameChanging(std::chrono::seconds {1}, [&]() -> std::string{
-             return std::string("Amount of purchases: ")
-               + std::to_string(Stat::Statistic::getValueByName("buyItem")) + std::string("\n");
+    amountOfPurchases->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
+        return std::string("Amount of purchases: ") + std::to_string(Stat::Statistic::getValueByName("buyItem")) + std::string("\n");
     });
     auto TestGraphic = std::make_shared<Graphic>("Test", "y", "t",
                                                  UISize{30, 10}, [&]() -> int {
-              std::random_device dev;
-              std::mt19937 rng(dev());
-              std::uniform_int_distribution<int> distribution(0, 10);
-              return distribution(rng);
-              // TODO: return round(state::statistics->getVAlue);
-            });
+                                                     std::random_device dev;
+                                                     std::mt19937 rng(dev());
+                                                     std::uniform_int_distribution<int> distribution(0, 10);
+                                                     return distribution(rng);
+                                                     // TODO: return round(state::statistics->getVAlue);
+                                                 });
     rightGroup->bind(amountOfPurchases);
     rightGroup->bind(TestGraphic);
 

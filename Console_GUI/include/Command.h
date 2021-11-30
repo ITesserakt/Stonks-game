@@ -49,7 +49,7 @@ struct UpdateCommand : public virtual WidgetCommand<T> {
 
 template <typename F>
 auto Command::fromFunction(F &&fn) {
-    struct FnCommand : Command {
+    struct FnCommand : CloneCommand<FnCommand> {
         F f;
 
         explicit FnCommand(F &&f) : f(std::forward<F>(f)) {}

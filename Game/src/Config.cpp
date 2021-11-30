@@ -2,10 +2,8 @@
 #include "Config.h"
 #include "Debug.h"
 
-constexpr auto configPath = "../share/config.json";
-
 void Config::generateConfig() {
-    std::ofstream configFile(configPath, std::fstream::out);
+    std::ofstream configFile(path, std::fstream::out);
     configFile << R"({
     "Settings": {
         "botsAmount": 3,
@@ -40,10 +38,10 @@ void readConfig(std::map<std::string, jsoncons::json> &settings, const jsoncons:
 }
 
 Config::Config() {
-    std::ifstream configFile(configPath);
+    std::ifstream configFile(path);
     if (!configFile.good()) {
         generateConfig();
-        configFile.open(configPath);
+        configFile.open(path);
     }
     jsoncons::json config;
     try {
