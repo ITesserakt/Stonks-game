@@ -34,6 +34,7 @@ int main() {
 
         auto handler = EventHandler(scenes, state);
 
+        std::chrono::milliseconds sleepTime {static_cast<int>(1.0 / Config::maxFPS * 1000)};
         std::thread renderThread([&]() {
             while (state.running()) {
                 auto stamp = std::chrono::system_clock::now();
@@ -46,7 +47,7 @@ int main() {
                 state.getCurrentScene().show();
                 refresh();
                 auto passed = std::chrono::system_clock::now() - stamp;
-                std::this_thread::sleep_for(16ms - passed);
+                std::this_thread::sleep_for(sleepTime - passed);
             }
         });
 

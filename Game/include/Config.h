@@ -44,6 +44,7 @@ public:
     static const bool debug;
     static const int botsAmount;
     static const int debugSpeedGame;
+    static const int maxFPS;
     static const std::vector<DifficultyPreset> presets;
     static DifficultyPreset activePreset;
 };
