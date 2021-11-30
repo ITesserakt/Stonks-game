@@ -3,8 +3,10 @@
 //
 
 #include <Gamer.h>
+#include "Statistics.h"
 
 void Gamer::buyItem(std::unique_ptr<GameObject> item) {
+    Stat::counter;
     if (item->timesSold != 0 && item->lastSeller != nullptr)
         item->lastSeller->money += item->cost;
     money -= item->cost;

@@ -3,6 +3,7 @@
 
 #include "CreatingGui.h"
 #include "WorldState.h"
+#include "Statistics.h"
 #include "commands/HideCommand.h"
 #include "commands/PurchaseCommand.h"
 #include "commands/SaleCommand.h"
@@ -175,16 +176,14 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     auto rightGroup = std::make_shared<Group>("Statistics");
     auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0\n");
     amountOfPurchases->setRegularNameChanging(std::chrono::seconds {1}, [&]() -> std::string{
-             std::random_device dev;
-             std::mt19937 rng(dev());
-             std::uniform_int_distribution<int> distribution(1, 5);
-             return std::string("Amount of purchases: ") + std::to_string(distribution(rng)) + std::string("\n");
+             return std::string("Amount of purchases: ")
+               + std::to_string(Stat::Statistic::getValueByName("buyItem")) + std::string("\n");
     });
     auto TestGraphic = std::make_shared<Graphic>("Test", "y", "t",
                                                  UISize{30, 10}, [&]() -> int {
               std::random_device dev;
               std::mt19937 rng(dev());
-              std::uniform_int_distribution<int> distribution(1, 5);
+              std::uniform_int_distribution<int> distribution(0, 10);
               return distribution(rng);
               // TODO: return round(state::statistics->getVAlue);
             });

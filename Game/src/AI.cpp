@@ -23,11 +23,16 @@ GameObject::Id AI::predictToSell() {
 }
 
 double AI::getProfitness(GameObject::Id itemId) {
-    auto item = viewItem(itemId);
-    auto sellByKind = ranges::count_if(container, [&](const auto &a) {
-        return a.second->name == item.name;
-    });
-    return (availableSlots + 0.1) / sellByKind / (item.timesSold + 1) * item.cost;
+    try {
+        auto item = viewItem(itemId);
+        auto sellByKind = ranges::count_if(container, [&](const auto &a) {
+            return a.second->name == item.name;
+        });
+        return (availableSlots + 0.1) / sellByKind / (item.timesSold + 1) * item.cost;
+    } catch (const std::exception &) {
+        return 0;
+    }
+
 }
 
 std::thread AI::startTrading(const bool& running) {
