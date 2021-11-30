@@ -13,11 +13,21 @@ void Config::generateConfig() {
         "debug": false,
         "debugSpeedGame": 10,
         "presets": [{
-            "name": "Normal",
-            "initialMoney": 200,
+            "name": "Easy",
+            "initialMoney": 1000,
             "winCondition": 10000,
-            "inventorySize": 3
-        }]
+            "inventorySize": 5
+        }, {
+             "name": "Normal",
+             "initialMoney": 200,
+             "winCondition": 10000,
+             "inventorySize": 3
+         }, {
+             "name": "Hard",
+             "initialMoney": 200,
+             "winCondition": 50000,
+             "inventorySize": 1
+         }]
     }
 })";
 }

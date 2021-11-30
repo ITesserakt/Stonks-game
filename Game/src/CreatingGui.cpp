@@ -1,4 +1,5 @@
 #include <random>
+#include <filesystem>
 
 #include "CreatingGui.h"
 #include "WorldState.h"
@@ -96,9 +97,12 @@ void setupSettings(WorldState &state, Canvases &scenes) {
 
     auto restartMessage = std::make_shared<MessageBox>("configRestart",
                                                        "Do you want to restart game\n"
-                                                       "to apply config changes?");
+                                                       "to apply config changes?", SpecialPosition::Special);
 
-    auto yes = std::make_shared<Button>("yes", 3, ShutdownCommand(state));
+    auto yes = std::make_shared<Button>("yes", 3);
+    yes->applyAction(StateCommand::fromFunction(state, [](WorldState &s){
+        std::__fs::filesystem::remove("../share/config.json");
+    }).then(ShutdownCommand(state)));
     auto no = std::make_shared<Button>("no", 4);
 
     auto butStMn = std::make_shared<Button>("back", 2, SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
@@ -168,15 +172,15 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     leftGroup->bind(label);
     leftGroup->bind(butStMn);
 
-    auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0");
-    amountOfPurchases->setRegularNameChanging(std::chrono::seconds {5}, [&]() -> std::string{
+    auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0\n");
+    amountOfPurchases->setRegularNameChanging(std::chrono::seconds {1}, [&]() -> std::string{
              std::random_device dev;
              std::mt19937 rng(dev());
              std::uniform_int_distribution<int> distribution(1, 5);
-             return std::string("Amount of purchases: ") + std::to_string(distribution(rng));
+             return std::string("Amount of purchases: ") + std::to_string(distribution(rng)) + std::string("\n");
     });
     auto TestGraphic = std::make_shared<Graphic>("Test", "y", "t",
-                                                 UISize{20, 10}, [&]() -> int {
+                                                 UISize{30, 10}, [&]() -> int {
               std::random_device dev;
               std::mt19937 rng(dev());
               std::uniform_int_distribution<int> distribution(1, 5);

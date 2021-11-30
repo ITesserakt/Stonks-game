@@ -34,13 +34,16 @@ void MessageBox::show() {
         int xMax = getmaxx(stdscr);
         int yMax = getmaxy(stdscr);
         for (int i = 0; i < getHeight(messageText); i++) {
-            //move((yMax - size.height) / 2 + i, (xMax - size.width) / 2);
-            move(position.y + i, position.x);
+            move((yMax - size.height) / 2 + i, (xMax - size.width) / 2);
+            //move(position.y + i, position.x);
             printw("%s", splitBySentence(messageText, i).c_str());
         }
     } else if (spec == SpecialPosition::Special) {
         move(position.y, position.x);
-        //printw("%s", messageText.c_str());
+        for (int i = 0; i < getHeight(messageText); i++) {
+            move(position.y + i, position.x);
+            printw("%s", splitBySentence(messageText, i).c_str());
+        }
     }
 }
 
