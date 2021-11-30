@@ -165,6 +165,13 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     leftGroup->bind(label);
     leftGroup->bind(butStMn);
 
+    auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0");
+    amountOfPurchases->setRegularNameChanging(std::chrono::seconds {5}, [&]() -> std::string{
+             std::random_device dev;
+             std::mt19937 rng(dev());
+             std::uniform_int_distribution<int> distribution(1, 5);
+             return std::string("Amount of purchases: ") + std::to_string(distribution(rng));
+    });
     auto TestGraphic = std::make_shared<Graphic>("Test", "y", "t",
                                                  UISize{20, 10}, [&]() -> int {
               std::random_device dev;
@@ -173,7 +180,7 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
               return distribution(rng);
               // TODO: return round(state::statistics->getVAlue);
             });
-    //auto amountOfPurchases = std::make_shared<>()
+    rightGroup->bind(amountOfPurchases);
     rightGroup->bind(TestGraphic);
 
     scenes[SceneNames::Statistics]->bind(leftGroup);

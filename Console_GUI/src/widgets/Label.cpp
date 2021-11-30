@@ -6,10 +6,16 @@ Label::Label(const std::string &name, const std::string &text)
       text(text) {
     size.width = getWidth(text);
     size.height = getHeight(text);
+    start = std::chrono::system_clock::now();
 }
 
 void Label::show() {
     if (isHidden) return;
+
+    if (std::chrono::system_clock::now() - start > delta && autoUpdateMode) {
+        start = std::chrono::system_clock::now();
+        text = newName();
+    }
 
     move(position.y, position.x);
     if (isBlowing) { init_pair(widgetId, COLOR_BLACK, col); }
@@ -18,4 +24,10 @@ void Label::show() {
     if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
 
     Widget::show();
+}
+
+void Label::setRegularNameChanging(std::chrono::seconds timeDelta, std::function<std::string()> rename) {
+    autoUpdateMode = true;
+    this->delta = timeDelta;
+    this->newName = rename;
 }
