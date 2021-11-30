@@ -24,7 +24,7 @@ public:
 
     void changeText(std::string next) { text = std::move(next); }
 
-    void setRegularNameChanging(std::chrono::seconds delta, std::function<std::string()> rename);
+    void setRegularNameChanging(std::chrono::milliseconds delta, std::function<std::string()> rename);
 
     UISize getSize() override {
         if (isHidden)

@@ -26,7 +26,7 @@ void Label::show() {
     Widget::show();
 }
 
-void Label::setRegularNameChanging(std::chrono::seconds timeDelta, std::function<std::string()> rename) {
+void Label::setRegularNameChanging(std::chrono::milliseconds timeDelta, std::function<std::string()> rename) {
     autoUpdateMode = true;
     this->delta = timeDelta;
     this->newName = rename;

@@ -33,6 +33,9 @@ void setupMainMenu(WorldState &state, Canvases &scenes) {
 void setupGameField(WorldState &state, Canvases &scenes) {
     auto label2 = std::make_shared<Label>("stocks", "Game field\n");
     auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
+    balance->setRegularNameChanging(std::chrono::milliseconds(100), [&](){
+              return std::string("Balance: ") + std::to_string(state.getPlayer().getBalance());
+           });
 
     label2->turnOn(COLOR_YELLOW);
     scenes[SceneNames::GameField]->bind(label2);
