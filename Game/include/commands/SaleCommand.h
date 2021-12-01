@@ -22,7 +22,9 @@ struct SaleCommand
         if (!object.has_value()) return;
         auto item = object.value();
         if (state.getWorld().couldPutInto()) {
-            state.getWorld().putItem(state.getPlayer().sellItem(item.id, sender->currentPrice()));
+            auto sold = state.getPlayer().sellItem(item.id, sender->currentPrice());
+            if (sold == nullptr) return;
+            state.getWorld().putItem(std::move(sold));
             sender->growPrice(-sender->currentPrice());
             object.reset();
             sender->clearItem();

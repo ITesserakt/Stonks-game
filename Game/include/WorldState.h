@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Player.h"
 #include "AI.h"
 #include "Canvas.h"
+#include "Player.h"
 
 class WorldState {
 private:
@@ -15,14 +15,14 @@ private:
     std::mt19937 random = std::mt19937(engine());
 
     Canvas *currentScene;
+
 public:
     WorldState(const WorldState &) = delete;
 
     WorldState &operator=(const WorldState &) = delete;
 
     explicit WorldState(unsigned int maxBots, bool debug = false,
-                        Canvas *currentScene = nullptr) :
-            bots(maxBots), botThreads(maxBots), currentScene(currentScene) {
+                        Canvas *currentScene = nullptr) : bots(maxBots), botThreads(maxBots), currentScene(currentScene) {
         player = std::make_shared<Player>();
         world.addGamer(player);
         for (unsigned int index = 0; index < maxBots; index++) {
@@ -50,7 +50,7 @@ public:
     AI &getRandomBot() { return *bots[random() % bots.size()]; }
 
     void cancelAllAI() {
-        for (auto &thread: botThreads)
+        for (auto &thread : botThreads)
             thread.std::thread::~thread();
     }
 };

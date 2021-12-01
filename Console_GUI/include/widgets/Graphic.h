@@ -12,18 +12,18 @@ private:
     std::string ordinance;
     std::string abscissa;
     unsigned int amountOfColumns;
-    std::list<int> values;
-    std::function<int()> getNewValue;
+    std::list<double> values;
+    std::function<double()> getNewValue;
 
     std::chrono::duration<double> delta{1};
     std::chrono::time_point<std::chrono::system_clock> start;
 
-    void printColumn(std::string colSymbol, int colPos, int value, int max);
+    void printColumn(std::string colSymbol, int colPos, double value, double max);
     void updateData();
 
 public:
     Graphic(const std::string &name, std::string OY, std::string OX,
-            UISize sizeOfGraph, std::function<int()> getValue)
+            UISize sizeOfGraph, std::function<double()> getValue)
         : ordinance(std::move(OY)),
           abscissa(std::move(OX)),
           Widget(name),

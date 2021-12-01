@@ -6,6 +6,8 @@
 #include "widgets/MessageBox.h"
 #include "game_widgets/Sale.h"
 
+using namespace std::chrono_literals;
+
 void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugFlag) {
     auto slots = state.getWorld().getSlots();
     auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
@@ -16,14 +18,15 @@ void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugF
     for (auto next : ranges::views::zip(slots, purches)) {
         auto slot = next.first;
         auto purch = next.second;
-        auto item = state.getWorld().viewItem(slot);
+        auto item = state.getWorld().focusItem(slot);
+        if (!item.has_value()) continue;
         std::stringstream ss;
         if (debugFlag)
-            ss << item << ", profitness: " << state.getWorld().getProfitness(slot);
+            ss << item.value() << ", profitness: " << state.getWorld().getProfitness(slot);
         else
-            ss << item.fullName() << (item.timesSold > 0 ? " *" : "");
+            ss << item->fullName() << (item->timesSold > 0 ? " *" : "");
         purch->setName(ss.str());
-        purch->update(std::move(item));
+        purch->update(std::move(item.value()));
     }
     if (state.getPlayer().getBalance() > Config::activePreset.winCondition) {
         scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
@@ -34,6 +37,9 @@ void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugF
 void paintInventoryFrame(WorldState &state, Canvases &scenes) {
     auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
     auto items = state.getPlayer().getSlots();
+
+    for (auto sale : sales)
+        sale->clearItem();
 
     for (auto context : ranges::views::zip(items, sales)) {
         auto itemId = context.first;

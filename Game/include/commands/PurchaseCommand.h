@@ -22,7 +22,9 @@ struct PurchaseCommand
         if (!object.has_value()) return;
         auto item = object.value();
         if (state.getPlayer().couldBuy() && state.getPlayer().getBalance() > state.getWorld().viewItem(item.id).cost) {
-            state.getPlayer().buyItem(state.getWorld().takeItem(item.id));
+            auto bought = state.getWorld().takeItem(item.id);
+            if (bought == nullptr) return;
+            state.getPlayer().buyItem(std::move(bought));
             object.reset();
             sender->clearItem();
         }

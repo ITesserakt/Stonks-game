@@ -21,9 +21,7 @@ public:
 
     [[nodiscard]] double getProfitness(const GameObject::Id& itemId) const;
 
-    void putItem(std::unique_ptr<GameObject> obj) {
-        container[obj->id] = std::move(obj);
-    }
+    void putItem(std::unique_ptr<GameObject> obj);
 
     void addGamer(std::shared_ptr<Gamer> &&gamer);
 

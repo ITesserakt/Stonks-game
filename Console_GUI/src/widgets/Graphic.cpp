@@ -1,3 +1,5 @@
+#include <iomanip>
+
 #include "widgets/Graphic.h"
 
 UISize Graphic::getSize() {
@@ -6,8 +8,8 @@ UISize Graphic::getSize() {
     return size;
 }
 
-void Graphic::printColumn(std::string colSymbol, int colPos, int value, int max) {
-    int colSize = round((size.height - 3) * static_cast<double>(value) / max);
+void Graphic::printColumn(std::string colSymbol, int colPos, double value, double max) {
+    int colSize = std::round((size.height - 4) * value / max);
     attron(COLOR_PAIR(widgetId));
     for (int i = 1; i <= colSize; i++) {
         mvprintw(position.y + size.height - 1 - i, position.x + colPos, colSymbol.c_str());
@@ -29,26 +31,13 @@ void Graphic::updateData() {
 void Graphic::show() {
     using namespace std::string_literals;
     updateData();
-    int max = *std::max_element(values.begin(), values.end());
+    double max = *std::max_element(values.begin(), values.end());
 
     if (isHidden) return;
 
     move(position.y, position.x);
-    // printing OY line
     std::string symbolForPrinting;
-    for (int i = 0; i < size.height; i++) {
-        if (i == 0)
-            symbolForPrinting = ordinance;
-        else if (i == 1)
-            symbolForPrinting = "↑";
-        else if (i == 2)
-            symbolForPrinting = std::to_string(max);
-        else if (i == size.height - 1)
-            symbolForPrinting = "└";
-        else
-            symbolForPrinting = "│";
-        mvprintw(position.y + i, position.x, "%s", symbolForPrinting.c_str());
-    }
+
     // printing OX line
     for (int i = 0; i < size.width; i++) {
         if (i == 0)
@@ -72,5 +61,22 @@ void Graphic::show() {
         itr++;
         if (itr == values.end())
             break;
+    }
+
+    // printing OY line
+    for (int i = 0; i < size.height; i++) {
+        if (i == 0)
+            symbolForPrinting = ordinance;
+        else if (i == 1)
+            symbolForPrinting = "↑";
+        else if (i == 2) {
+            std::stringstream number;
+            number << std::fixed << std::setprecision(1) << max;
+            symbolForPrinting = number.str();
+        } else if (i == size.height - 1)
+            symbolForPrinting = "└";
+        else
+            symbolForPrinting = "│";
+        mvprintw(position.y + i, position.x, "%s", symbolForPrinting.c_str());
     }
 }

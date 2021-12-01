@@ -10,12 +10,13 @@ void Gamer::buyItem(std::unique_ptr<GameObject> item) {
     if (item->timesSold != 0 && item->lastSeller != nullptr)
         item->lastSeller->money += item->cost;
     money -= item->cost;
-    container[item->id] = std::move(item);
+    populate(item->id, std::move(item));
     availableSlots--;
 }
 
 std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::Cost newCost) {
-    auto item = takeItem(itemId);
+    auto item = askItem(itemId);
+    if (item == nullptr) return item;
     item->lastSeller = shared_from_this();
     item->cost = newCost;
     item->timesSold++;
@@ -24,5 +25,7 @@ std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::C
 }
 
 std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId) {
-    return sellItem(itemId, viewItem(itemId).cost);
+    auto item = focusItem(itemId);
+    if (!item.has_value()) return {};
+    return sellItem(itemId, item->cost);
 }
