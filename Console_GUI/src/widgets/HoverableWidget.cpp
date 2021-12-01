@@ -3,19 +3,22 @@
 //
 
 #include "widgets/HoverableWidget.h"
+#include "widgets/BindableWidget.h"
 
 void HoverableWidget::onHoverStart() {
     turnOn(COLOR_GREEN);
 
-    for (auto x : getChildrenRecursively<ColorWidget>())
-        x->turnOn(COLOR_GREEN);
+    if (is<BindableWidget>())
+        for (auto x : as<BindableWidget>()->getChildrenRecursively<ColorWidget>())
+            x->turnOn(COLOR_GREEN);
 }
 
 void HoverableWidget::onHoverEnd() {
     turnOff();
 
-    for (auto x : getChildrenRecursively<ColorWidget>())
-        x->turnOff();
+    if (is<BindableWidget>())
+        for (auto x : as<BindableWidget>()->getChildrenRecursively<ColorWidget>())
+            x->turnOff();
 }
 
 void HoverableWidget::click() {

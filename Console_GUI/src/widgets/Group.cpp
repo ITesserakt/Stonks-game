@@ -5,7 +5,7 @@
 #include "widgets/Group.h"
 
 
-Group::Group(std::string name) : Widget(std::move(name)) {}
+Group::Group(const std::string &name) : Widget(name) {}
 
 UISize Group::getSize() {
     unsigned int maxx = 0;
@@ -24,8 +24,8 @@ void Group::show() {
     if (isHidden) return;
     int x = position.x;
     int y = position.y;
-    for (auto child: getChildrenWithType<PositionedWidget>()) {
-        child->changePos(x, y);             // DON'T USE move() from ncurses
+    for (auto child : getChildrenWithType<PositionedWidget>()) {
+        child->changePos(x, y);// DON'T USE move() from ncurses
         child->show();
         y += child->getSize().height;
     }

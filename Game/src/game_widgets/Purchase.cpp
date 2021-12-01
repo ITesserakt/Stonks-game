@@ -20,8 +20,6 @@ void Purchase::show() {
         move(position.y + 1, position.x);
         printw("Cost: $%lf", object->cost);
     }
-
-    Widget::show();
 }
 
 void Purchase::update(GameObject &&item) {

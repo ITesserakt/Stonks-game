@@ -19,7 +19,6 @@ void Sale::show() {
     } else {
         printw("%d. %s", tabIndex + 1, name.c_str());
     }
-    Widget::show();
 }
 
 GameObject::Cost Sale::currentPrice() {

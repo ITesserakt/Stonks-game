@@ -17,8 +17,6 @@ void Button::show() {
         }
         if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
     }
-
-    return Widget::show();
 }
 
 UISize Button::getSize() {

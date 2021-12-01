@@ -3,20 +3,23 @@
 //
 
 #include "widgets/ColorWidget.h"
+#include "widgets/BindableWidget.h"
 
 void ColorWidget::turnOn(int color) {
     col = color;
     isBlowing = true;
 
-    for (auto child : getChildrenWithType<ColorWidget>())
-        child->turnOn(color);
+    if (is<BindableWidget>())
+        for (auto child : as<BindableWidget>()->getChildrenWithType<ColorWidget>())
+            child->turnOn(color);
 }
 
 void ColorWidget::turnOff() {
     isBlowing = false;
 
-    for (auto child : getChildrenWithType<ColorWidget>())
-        child->turnOff();
+    if (is<BindableWidget>())
+        for (auto child : as<BindableWidget>()->getChildrenWithType<ColorWidget>())
+            child->turnOff();
 }
 
 ColorWidget::ColorWidget(const std::string &name) : Widget(name) {}

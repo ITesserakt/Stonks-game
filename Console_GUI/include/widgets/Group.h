@@ -1,12 +1,12 @@
 #pragma once
 
 #include "PositionedWidget.h"
+#include "BindableWidget.h"
 
-class Group : public virtual PositionedWidget {
-public:
+struct Group : PositionedWidget, BindableWidget {
     UISize getSize() override;
 
     void show() override;
 
-    explicit Group(std::string name);
+    explicit Group(const std::string &name);
 };

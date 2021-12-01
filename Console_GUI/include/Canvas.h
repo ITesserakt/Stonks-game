@@ -2,22 +2,25 @@
 
 #include <utility>
 
-#include "widgets/SizeableWidget.h"
+#include "widgets/BindableWidget.h"
 #include "widgets/HoverableWidget.h"
+#include "widgets/SizeableWidget.h"
 
 enum Direction {
-    UP = -1, DOWN = 1
+    UP = -1,
+    DOWN = 1
 };
 
 // It places all widgets on right place
-class Canvas : public virtual SizeableWidget {
+class Canvas : public SizeableWidget, public BindableWidget {
 private:
     Align align;
     std::shared_ptr<HoverableWidget> activeWidget;
 
 public:
-    Canvas(std::string name, Align al)
-            : Widget(std::move(name)), align(al) {}
+    Canvas(const std::string &name, Align al)
+        : Widget(name),
+          align(al) {}
 
     void show() override;
 
