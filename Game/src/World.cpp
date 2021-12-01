@@ -5,7 +5,7 @@
 
 double World::getProfitness(const GameObject::Id &itemId) const {
     auto item = focusItem(itemId);
-    if (!item.has_value()) return std::numeric_limits<double>::quiet_NaN();
+    if (!item.has_value()) return std::numeric_limits<double>::min();
 
     unsigned int sellByKind = 0;
     for (const auto &pair : view())

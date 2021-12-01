@@ -3,8 +3,8 @@
 
 #include "FramePainter.h"
 #include "game_widgets/Purchase.h"
-#include "widgets/MessageBox.h"
 #include "game_widgets/Sale.h"
+#include "widgets/MessageBox.h"
 
 using namespace std::chrono_literals;
 

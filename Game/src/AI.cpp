@@ -47,23 +47,26 @@ std::thread AI::startTrading(const bool &running) {
     auto thread = std::thread([this, &running] {
         std::random_device seed;
         std::mt19937 randie(seed());
-        unsigned int sleepTime = debugFlag ? Config::debugSpeedGame + randie() % 90 : 700 + randie() % 10000;
+        std::uniform_int_distribution debugSleep{-Config::debugSpeedGame + 1, 200};
+        std::uniform_int_distribution normalSleep{700, 10000};
+        unsigned int sleepTime = debugFlag ? Config::debugSpeedGame + debugSleep(randie) : normalSleep(randie);
         while (running) {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
             auto tradeType = random() % 2;
             if (!world.getSlots().empty() && couldBuy() && tradeType) {
                 auto predicted = predictToBuy();
-                //                if (getBalance() > world.viewItem(predicted).cost)
+                //                auto itemShadow = world.focusItem(predicted);
+                //                if (itemShadow.has_value() && getBalance() > itemShadow->cost) {
                 auto item = world.takeItem(predicted);
                 if (item == nullptr) continue;
                 buyItem(std::move(item));
             }
             if (!getSlots().empty() && world.couldPutInto() && !tradeType) {
+                std::normal_distribution multiplierDistribution{1.01, 0.1};
                 auto predicted = predictToSell();
-                auto costMult = (1 + (double) (-10 + (int) randie() % 40) / 100);
                 auto predictedItem = focusItem(predicted);
                 if (!predictedItem.has_value()) continue;
-                auto sold = sellItem(predicted, predictedItem->cost * costMult);
+                auto sold = sellItem(predicted, predictedItem->cost * multiplierDistribution(randie));
                 if (sold == nullptr) continue;
                 world.putItem(std::move(sold));
             }
