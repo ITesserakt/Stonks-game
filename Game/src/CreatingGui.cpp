@@ -173,13 +173,19 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     leftGroup->bind(butStMn);
 
     auto rightGroup = std::make_shared<Group>("Statistics");
+    auto Stonksity = std::make_shared<Label>("Stat1", "Stonksity: 0\n");
+    Stonksity->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
+        using namespace Stat;
+        return std::string("Stonksity: ")
+               + std::to_string(state.getPlayer().getBalance() - Config::activePreset.initialMoney) + std::string(" $\n");
+    });
     auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0\n");
     amountOfPurchases->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
       using namespace Stat;
       return std::string("Amount of purchases: ")
                + std::to_string(Statistic::getValueByName("amountOfPurchases")) + std::string("\n");
     });
-    auto amountOfItemsInWorld = std::make_shared<Label>("Stat1", "Amount of items in world: \n");
+    auto amountOfItemsInWorld = std::make_shared<Label>("Stat2", "Amount of items in world: \n");
     amountOfItemsInWorld->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
         using namespace Stat;
         return std::string("Amount of items in world: ")
@@ -192,6 +198,7 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
                                                                 Statistic::getValueByName("buyItem"));
                                                  });
     auto graphicExplain = std::make_shared<Label>("Explaining deltaGrphic", "Global price change");
+    rightGroup->bind(Stonksity);
     rightGroup->bind(amountOfPurchases);
     rightGroup->bind(amountOfItemsInWorld);
     rightGroup->bind(deltaGraphic);
