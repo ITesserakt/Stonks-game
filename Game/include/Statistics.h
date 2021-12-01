@@ -13,15 +13,17 @@ private:
 public:
   static int getValueByName(const char* name);
 
-  Statistic(const char * caller) {
-    if (_callersAndTheirNumber.find(caller) != _callersAndTheirNumber.end()) {
-      _callersAndTheirNumber.at(caller)++;
-    }
-    else {
-      _callersAndTheirNumber.insert(std::pair<std::string, int>(caller, 1));
-    }
+  Statistic(const char * caller, int number = 1) {
+      if (_callersAndTheirNumber.find(caller) != _callersAndTheirNumber.end()) {
+          _callersAndTheirNumber.at(caller)+=number;
+      }
+      else {
+          _callersAndTheirNumber.insert(std::pair<std::string, int>(caller, number));
+      }
   }
 };
 
+// Used for counting amount of function calls
 #define counter Statistic(__FUNCTION__)
+#define sum(value) Statistic(__FUNCTION__, value)
 }

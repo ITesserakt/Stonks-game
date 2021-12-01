@@ -1,6 +1,7 @@
 #include <range/v3/all.hpp>
 
 #include "World.h"
+#include "Statistics.h"
 
 double World::getProfitness(const GameObject::Id &itemId) const {
     auto item = focusItem(itemId);
@@ -21,6 +22,7 @@ World::World(ObjectFactory &&factory, unsigned int maxSlots) : availableSlots(ma
 
 void World::fillUp() {
     while (availableSlots > 0) {
+        Stat::Statistic("amountOfItemsInWorld", 1);
         auto next = factory.generateNext();
         populate(next.id, std::make_unique<GameObject>(next));
         availableSlots--;

@@ -6,7 +6,8 @@
 #include "Statistics.h"
 
 void Gamer::buyItem(std::unique_ptr<GameObject> item) {
-    Stat::counter;
+    Stat::Statistic("amountOfPurchases");
+    Stat::Statistic("amountOfItemsInWorld", -1);
     if (item->timesSold != 0 && item->lastSeller != nullptr)
         item->lastSeller->money += item->cost;
     money -= item->cost;
@@ -15,8 +16,11 @@ void Gamer::buyItem(std::unique_ptr<GameObject> item) {
 }
 
 std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::Cost newCost) {
+    Stat::Statistic("amountOfPurchases");
     auto item = askItem(itemId);
     if (item == nullptr) return item;
+    Stat::Statistic("amountOfItemsInWorld", 1);
+    Stat::sum(newCost);
     item->lastSeller = shared_from_this();
     item->cost = newCost;
     item->timesSold++;

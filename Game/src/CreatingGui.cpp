@@ -175,18 +175,27 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     auto rightGroup = std::make_shared<Group>("Statistics");
     auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0\n");
     amountOfPurchases->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
-        return std::string("Amount of purchases: ") + std::to_string(Stat::Statistic::getValueByName("buyItem")) + std::string("\n");
+      using namespace Stat;
+      return std::string("Amount of purchases: ")
+               + std::to_string(Statistic::getValueByName("amountOfPurchases")) + std::string("\n");
     });
-    auto TestGraphic = std::make_shared<Graphic>("Test", "y", "t",
+    auto amountOfItemsInWorld = std::make_shared<Label>("Stat1", "Amount of items in world: \n");
+    amountOfItemsInWorld->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
+        using namespace Stat;
+        return std::string("Amount of items in world: ")
+               + std::to_string(Statistic::getValueByName("amountOfItemsInWorld")) + std::string("\n");
+    });
+    auto deltaGraphic = std::make_shared<Graphic>("Test", "δ", "t",
                                                  UISize{30, 10}, [&]() -> int {
-                                                     std::random_device dev;
-                                                     std::mt19937 rng(dev());
-                                                     std::uniform_int_distribution<int> distribution(0, 10);
-                                                     return distribution(rng);
-                                                     // TODO: return round(state::statistics->getVAlue);
+                                                     using namespace Stat;
+                                                     return abs(Statistic::getValueByName("sellItem") -
+                                                                Statistic::getValueByName("buyItem"));
                                                  });
+    auto graphicExplain = std::make_shared<Label>("Explaining deltaGrphic", "Global price change");
     rightGroup->bind(amountOfPurchases);
-    rightGroup->bind(TestGraphic);
+    rightGroup->bind(amountOfItemsInWorld);
+    rightGroup->bind(deltaGraphic);
+    rightGroup->bind(graphicExplain);
 
     scenes[SceneNames::Statistics]->bind(leftGroup);
     scenes[SceneNames::Statistics]->bind(rightGroup);
