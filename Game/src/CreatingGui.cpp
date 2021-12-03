@@ -1,5 +1,7 @@
 #include <filesystem>
 #include <random>
+#include <jsoncons_ext/jsonpath/json_query.hpp>  // for changing current difficulty
+#include "Config.h"                              // for changing current difficulty
 
 #include "CreatingGui.h"
 #include "Statistics.h"
@@ -39,7 +41,7 @@ void setupGameField(WorldState &state, Canvases &scenes) {
 
     auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
     balance->setRegularNameChanging(std::chrono::milliseconds(100), [&]() {
-        return std::string("Balance: ") + std::to_string(state.getPlayer().getBalance());
+        return std::string("Balance: ") + std::to_string(state.getPlayer().getBalance()) + std::string(" $");
     });
     scenes[SceneNames::GameField]->bind(balance);
 
@@ -95,34 +97,41 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     auto label = std::make_shared<Label>("guide", "Settings\n");
     label->turnOn(COLOR_YELLOW);
 
-    auto butRt = std::make_shared<Button>("reset\nconfig", 0);
+    int butIndex = 0;
+    auto butRt = std::make_shared<Button>("reset\nconfig", butIndex++);
 
-    std::vector<std::shared_ptr<Label>> levelNames;
-    auto levels = std::make_shared<Button>("difficulties", 1,
-                                           StateCommand::fromFunction(state, [isLevelsExpanded = false](WorldState &s) mutable {
-                                               isLevelsExpanded = !isLevelsExpanded;
-                                               for (int i = 0; i < Config::presets.size(); i++) {
-                                                   auto level = s.getCurrentScene().getChildWithName("level" + std::to_string(i));
-                                                   level->as<PositionedWidget>()->hide(isLevelsExpanded);
-                                               }
+    auto levelNames = std::make_shared<Group>("Difficulties");
+    auto levels = std::make_shared<Button>("difficulties", butIndex++,
+                                           Command::fromFunction([isLevelsExpanded = false, levelNames]() mutable {
+                                             levelNames->hide(isLevelsExpanded);
+                                             isLevelsExpanded = !isLevelsExpanded;
                                            }));
 
-    int i = 0;
-    for (const auto &level : Config::presets) {
-        auto levelLabel = std::make_shared<Label>("level" + std::to_string(i), level.name);
-        levelLabel->hide();
-        levelNames.push_back(levelLabel);
-        i++;
-    }
 
-    auto butStMn = std::make_shared<Button>("back", 2, SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
+    int number = 0;
+    for (const auto &level : Config::presets) {
+        auto levelLabel = std::make_shared<Button>("level " + std::to_string(number), butIndex++);
+        levelLabel->applyAction(Command::fromFunction([num = number](){
+                                    std::ifstream is(Config::path);
+                                    jsoncons::json data = jsoncons::json::parse(is);
+
+                                    jsoncons::jsonpath::json_replace(data, "$.Settings.difficulty", (int)num);
+                                    std::ofstream os(Config::path, std::fstream::out);
+                                    os << jsoncons::pretty_print(data);
+
+        }).then(ShutdownCommand(state)));
+        levelNames->bind(levelLabel);
+        number++;
+    }
+    levelNames->hide(true);
+
+    auto butStMn = std::make_shared<Button>("back", butIndex++, SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
 
     auto initialGroup = std::make_shared<Group>("Initial");
     initialGroup->bind(label);
     initialGroup->bind(butRt);
     initialGroup->bind(levels);
-    //for (const auto &item : levelNames)
-    //initialGroup->bind(item);
+    initialGroup->bind(levelNames);
     initialGroup->bind(butStMn);
     scenes[SceneNames::Settings]->bind(initialGroup);
 
@@ -131,11 +140,11 @@ void setupSettings(WorldState &state, Canvases &scenes) {
                                                        "to apply config changes?",
                                                        SpecialPosition::Special);
 
-    auto yes = std::make_shared<Button>("yes", 3);
+    auto yes = std::make_shared<Button>("yes", butIndex++);
     yes->applyAction(Command::fromFunction([] {
                          std::filesystem::remove(Config::path);
                      }).then(ShutdownCommand(state)));
-    auto no = std::make_shared<Button>("no", 4);
+    auto no = std::make_shared<Button>("no", butIndex++);
 
     auto groupForRestart = std::make_shared<Group>("Restart");
     groupForRestart->bind(restartMessage);

@@ -11,6 +11,7 @@ void Config::generateConfig() {
         "debug": false,
         "debugSpeedGame": 10,
         "maxFPS": 15,
+        "difficulty": 0,
         "presets": [{
             "name": "Easy",
             "initialMoney": 1000,
@@ -66,6 +67,7 @@ CONFIG_PROPERTY(int, botsAmount);
 CONFIG_PROPERTY(int, debugSpeedGame);
 CONFIG_PROPERTY(bool, debug);
 CONFIG_PROPERTY(int, maxFPS);
+CONFIG_PROPERTY(int, difficulty);
 CONFIG_PROPERTY(std::vector<DifficultyPreset>, presets);
 
-DifficultyPreset Config::activePreset = presets[0];
+DifficultyPreset Config::activePreset = presets[difficulty];
