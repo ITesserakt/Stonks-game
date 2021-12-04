@@ -1,10 +1,10 @@
 #pragma once
 
-#include <memory>
-#include <map>
-#include <string>
 #include <jsoncons/basic_json.hpp>
 #include <jsoncons/json_traits_macros.hpp>
+#include <map>
+#include <memory>
+#include <string>
 
 struct DifficultyPreset {
     std::string name;
@@ -13,15 +13,29 @@ struct DifficultyPreset {
     int inventorySize;
 };
 
+struct ConfigData {
+    unsigned int botsAmount = 3;
+    unsigned int worldSize = 18;
+    bool debug = false;
+    unsigned int debugSpeedGame = 10;
+    unsigned int maxFPS = 15;
+    unsigned int difficulty = 0;
+    std::vector<DifficultyPreset> presets = {
+            {"Easy", 1000, 10000, 5},
+            {"Normal", 200, 10000, 3},
+            {"Hard", 200, 50000, 1}};
+
+    [[nodiscard]] const DifficultyPreset &activePreset() const { return presets[difficulty]; }
+};
+
+JSONCONS_ALL_MEMBER_TRAITS(ConfigData, botsAmount, worldSize, debug, debugSpeedGame, maxFPS, difficulty, presets)
 JSONCONS_ALL_MEMBER_TRAITS(DifficultyPreset, name, initialMoney, winCondition, inventorySize);
 
 class Config {
 private:
     Config();
 
-    static void generateConfig();
-
-    std::map<std::string, jsoncons::json> settings;
+    const ConfigData data;
 
 public:
     Config(const Config &other) = delete;
@@ -30,24 +44,7 @@ public:
 
     constexpr static auto path = "../share/config.json";
 
-    static const Config &getInstance();
+    static const ConfigData &current();
 
-    template <typename T>
-    [[nodiscard]] T getSettingByName(const std::string &name) const {
-        auto it = settings.find(name);
-        if (it == settings.end()) {
-            generateConfig();
-            throw std::runtime_error("ERROR in config. Config file was reset\n");
-        }
-        return it->second.as<T>();
-    }
-
-    static const unsigned int worldSize;
-    static const bool debug;
-    static const int botsAmount;
-    static const int debugSpeedGame;
-    static const int maxFPS;
-    static const int difficulty;
-    static const std::vector<DifficultyPreset> presets;
-    static DifficultyPreset activePreset;
+    static void modify(std::function<void(ConfigData &)> &&f = [](ConfigData &) {});
 };

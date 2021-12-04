@@ -47,9 +47,9 @@ std::thread AI::startTrading(const bool &running) {
     auto thread = std::thread([this, &running] {
         std::random_device seed;
         std::mt19937 randie(seed());
-        std::uniform_int_distribution debugSleep{-Config::debugSpeedGame + 1, 200};
+        std::uniform_int_distribution debugSleep{static_cast<int>(-Config::current().debugSpeedGame + 1), 200};
         std::uniform_int_distribution normalSleep{700, 10000};
-        unsigned int sleepTime = debugFlag ? Config::debugSpeedGame + debugSleep(randie) : normalSleep(randie);
+        unsigned int sleepTime = debugFlag ? Config::current().debugSpeedGame + debugSleep(randie) : normalSleep(randie);
         while (running) {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
             auto tradeType = random() % 2;

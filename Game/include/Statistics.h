@@ -13,11 +13,10 @@ private:
 public:
   static int getValueByName(const char* name);
 
-  Statistic(const char * caller, int number = 1) {
+  explicit Statistic(const char *caller, int number = 1) {
       if (_callersAndTheirNumber.find(caller) != _callersAndTheirNumber.end()) {
-          _callersAndTheirNumber.at(caller)+=number;
-      }
-      else {
+          _callersAndTheirNumber.at(caller) += number;
+      } else {
           _callersAndTheirNumber.insert(std::pair<std::string, int>(caller, number));
       }
   }

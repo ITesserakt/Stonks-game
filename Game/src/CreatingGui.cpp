@@ -1,7 +1,7 @@
+#include "Config.h"// for changing current difficulty
 #include <filesystem>
+#include <jsoncons_ext/jsonpath/json_query.hpp>// for changing current difficulty
 #include <random>
-#include <jsoncons_ext/jsonpath/json_query.hpp>  // for changing current difficulty
-#include "Config.h"                              // for changing current difficulty
 
 #include "CreatingGui.h"
 #include "Statistics.h"
@@ -103,23 +103,16 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     auto levelNames = std::make_shared<Group>("Difficulties");
     auto levels = std::make_shared<Button>("difficulties", butIndex++,
                                            Command::fromFunction([isLevelsExpanded = false, levelNames]() mutable {
-                                             levelNames->hide(isLevelsExpanded);
-                                             isLevelsExpanded = !isLevelsExpanded;
+                                               levelNames->hide(isLevelsExpanded);
+                                               isLevelsExpanded = !isLevelsExpanded;
                                            }));
 
-
     int number = 0;
-    for (const auto &level : Config::presets) {
+    for (const auto &level : Config::current().presets) {
         auto levelLabel = std::make_shared<Button>("level " + std::to_string(number), butIndex++);
-        levelLabel->applyAction(Command::fromFunction([num = number](){
-                                    std::ifstream is(Config::path);
-                                    jsoncons::json data = jsoncons::json::parse(is);
-
-                                    jsoncons::jsonpath::json_replace(data, "$.Settings.difficulty", (int)num);
-                                    std::ofstream os(Config::path, std::fstream::out);
-                                    os << jsoncons::pretty_print(data);
-
-        }).then(ShutdownCommand(state)));
+        levelLabel->applyAction(Command::fromFunction([number]() {
+                                    Config::modify([number](ConfigData &data) { data.difficulty = number; });
+                                }).then(ShutdownCommand(state)));
         levelNames->bind(levelLabel);
         number++;
     }
@@ -184,28 +177,25 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     auto rightGroup = std::make_shared<Group>("Statistics");
     auto Stonksity = std::make_shared<Label>("Stat1", "Stonksity: 0\n");
     Stonksity->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
-        using namespace Stat;
-        return std::string("Stonksity: ")
-               + std::to_string(state.getPlayer().getBalance() - Config::activePreset.initialMoney) + std::string(" $\n");
+        using namespace std::string_literals;
+        return "Stonksity: "s + std::to_string(state.getPlayer().getBalance() - Config::current().activePreset().initialMoney) + "$\n";
     });
     auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0\n");
     amountOfPurchases->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
-      using namespace Stat;
-      return std::string("Amount of purchases: ")
-               + std::to_string(Statistic::getValueByName("amountOfPurchases")) + std::string("\n");
+        using namespace std::string_literals;
+        return "Amount of purchases: "s + std::to_string(Stat::Statistic::getValueByName("amountOfPurchases")) + "\n";
     });
     auto amountOfItemsInWorld = std::make_shared<Label>("Stat2", "Amount of items in world: \n");
     amountOfItemsInWorld->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
-        using namespace Stat;
-        return std::string("Amount of items in world: ")
-               + std::to_string(Statistic::getValueByName("amountOfItemsInWorld")) + std::string("\n");
+        using namespace std::string_literals;
+        return "Amount of items in world: "s + std::to_string(Stat::Statistic::getValueByName("amountOfItemsInWorld")) + "\n";
     });
     auto deltaGraphic = std::make_shared<Graphic>("Test", "δ", "t",
-                                                 UISize{30, 10}, [&]() -> int {
-                                                     using namespace Stat;
-                                                     return abs(Statistic::getValueByName("sellItem") -
-                                                                Statistic::getValueByName("buyItem"));
-                                                 });
+                                                  UISize{30, 10}, [&]() -> int {
+                                                      using namespace Stat;
+                                                      return abs(Statistic::getValueByName("sellItem") -
+                                                                 Statistic::getValueByName("buyItem"));
+                                                  });
     auto graphicExplain = std::make_shared<Label>("Explaining deltaGrphic", "Global price change");
     rightGroup->bind(Stonksity);
     rightGroup->bind(amountOfPurchases);

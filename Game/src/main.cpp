@@ -12,6 +12,7 @@ using Frontend = console_gui::NCurses;
 using namespace std::chrono_literals;
 
 int main() {
+    bool failure = false;
     try {
         console_gui::init<Frontend>();
 
@@ -22,7 +23,7 @@ int main() {
                 std::make_shared<Canvas>("Guide", Left),
                 std::make_shared<Canvas>("Settings", Centered),
                 std::make_shared<Canvas>("Statistics", Vsplit)};
-        WorldState state(Config::botsAmount, Config::debug);
+        WorldState state(Config::current().botsAmount, Config::current().debug);
         setupMainMenu(state, scenes);
         setupGameField(state, scenes);
         setupInventory(state, scenes);
@@ -34,13 +35,13 @@ int main() {
 
         auto handler = EventHandler(scenes, state);
 
-        std::chrono::milliseconds sleepTime{static_cast<int>(1.0 / Config::maxFPS * 1000)};
+        std::chrono::milliseconds sleepTime{static_cast<int>(1.0 / Config::current().maxFPS * 1000)};
         std::thread renderThread([&]() {
             while (state.running()) {
                 auto stamp = std::chrono::system_clock::now();
                 clear();
                 if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
-                    paintGameFieldFrame(state, scenes, Config::debug);
+                    paintGameFieldFrame(state, scenes, Config::current().debug);
                 } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory]) {
                     paintInventoryFrame(state, scenes);
                 }
@@ -55,9 +56,13 @@ int main() {
         renderThread.join();
         state.cancelAllAI();
     } catch (const std::exception &ex) {
+        failure = true;
         Debug::logger << ex.what();
     } catch (...) {
+        failure = true;
         Debug::logger << "Unknown error occurred";
     }
     console_gui::dispose<Frontend>();
+    if (failure)
+        std::cout << "Exception occurred. See log.txt for details" << std::endl;
 }

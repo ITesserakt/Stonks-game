@@ -28,7 +28,7 @@ void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugF
         purch->setName(ss.str());
         purch->update(std::move(item.value()));
     }
-    if (state.getPlayer().getBalance() > Config::activePreset.winCondition) {
+    if (state.getPlayer().getBalance() > Config::current().activePreset().winCondition) {
         scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
         state.shutdown();
     }
