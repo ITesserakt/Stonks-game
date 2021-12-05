@@ -11,8 +11,32 @@
 using Frontend = console_gui::NCurses;
 using namespace std::chrono_literals;
 
+constexpr auto savePath = "../share/save.json";
+
+WorldState loadWorldState() {
+    std::ifstream in{savePath};
+    std::optional<WorldState> state;
+
+    try {
+        auto json = jsoncons::json::parse(in);
+        state.emplace(WorldState::fromJson(json));
+    } catch (...) {
+        state.emplace(Config::current().botsAmount, Config::current().debug);
+    }
+    return std::move(state.value());
+}
+
+void close(bool withFailure) {
+    console_gui::dispose<Frontend>();
+    if (withFailure)
+        std::cout << "Exception occurred. See log.txt for details" << std::endl;
+}
+
 int main() {
     bool failure = false;
+    WorldState state = loadWorldState();
+    std::set_terminate([] { close(true); });
+    std::set_unexpected([] { close(true); });
     try {
         console_gui::init<Frontend>();
 
@@ -23,7 +47,6 @@ int main() {
                 std::make_shared<Canvas>("Guide", Left),
                 std::make_shared<Canvas>("Settings", Centered),
                 std::make_shared<Canvas>("Statistics", Vsplit)};
-        WorldState state(Config::current().botsAmount, Config::current().debug);
         setupMainMenu(state, scenes);
         setupGameField(state, scenes);
         setupInventory(state, scenes);
@@ -62,7 +85,9 @@ int main() {
         failure = true;
         Debug::logger << "Unknown error occurred";
     }
-    console_gui::dispose<Frontend>();
-    if (failure)
-        std::cout << "Exception occurred. See log.txt for details" << std::endl;
+    std::ofstream out(savePath);
+    jsoncons::json j;
+    state.writeToJson(j);
+    jsoncons::encode_json_pretty(j, out);
+    close(failure);
 }
