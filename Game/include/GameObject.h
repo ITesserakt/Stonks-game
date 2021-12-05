@@ -22,7 +22,7 @@ public:
 private:
     JSONCONS_TYPE_TRAITS_FRIEND
 
-    GameObject(Name name, std::vector<Description> desc, const Id id, Cost cost, unsigned int timesSold);
+    GameObject(Name name, std::vector<Description> desc, Id id, Cost cost, unsigned int timesSold);
 
 public:
     const Name name;

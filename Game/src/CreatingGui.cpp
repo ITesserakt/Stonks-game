@@ -45,7 +45,7 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     });
     scenes[SceneNames::GameField]->bind(balance);
 
-    for (int i = 0; i < state.getWorld().getSlots().size(); i++) {
+    for (int i = 0; i < Config::current().worldSize; i++) {
         auto purch = std::make_shared<Purchase>(i, Command::noop());
         purch->applyAction(PurchaseCommand(purch, state));
         scenes[SceneNames::GameField]->bind(purch);

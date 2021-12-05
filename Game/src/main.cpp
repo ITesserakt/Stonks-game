@@ -18,8 +18,7 @@ WorldState loadWorldState() {
     std::optional<WorldState> state;
 
     try {
-        auto json = jsoncons::json::parse(in);
-        state.emplace(WorldState::fromJson(json));
+        state.emplace(jsoncons::decode_json<WorldState>(in));
     } catch (...) {
         state.emplace(Config::current().botsAmount, Config::current().debug);
     }
@@ -36,7 +35,6 @@ int main() {
     bool failure = false;
     WorldState state = loadWorldState();
     std::set_terminate([] { close(true); });
-    std::set_unexpected([] { close(true); });
     try {
         console_gui::init<Frontend>();
 
@@ -86,8 +84,6 @@ int main() {
         Debug::logger << "Unknown error occurred";
     }
     std::ofstream out(savePath);
-    jsoncons::json j;
-    state.writeToJson(j);
-    jsoncons::encode_json_pretty(j, out);
+    jsoncons::encode_json_pretty(state, out);
     close(failure);
 }

@@ -1,6 +1,6 @@
-#include <ncurses.h>
 #include <cpp-terminal/window.hpp>
 #include <locale>
+#include <ncurses.h>
 
 #include "GUI.h"
 
@@ -48,24 +48,41 @@ public:
     }
 };
 
+struct console_gui::__detail::NoopFrontend : Frontend {
+    void init() override {
+    }
+    void dispose() override {
+    }
+};
+
 static console_gui::__detail::TerminalFrontend terminal;
 
-template<>
+template <>
 void console_gui::init<console_gui::NCurses>() {
     __detail::NCursesFrontend().init();
 }
 
-template<>
+template <>
 void console_gui::init<console_gui::Terminal>() {
     terminal.init();
 }
 
-template<>
+template <>
+void console_gui::init<console_gui::Noop>() {
+    __detail::NoopFrontend().init();
+}
+
+template <>
 void console_gui::dispose<console_gui::NCurses>() {
     __detail::NCursesFrontend().dispose();
 }
 
-template<>
+template <>
 void console_gui::dispose<console_gui::Terminal>() {
     terminal.dispose();
+}
+
+template <>
+void console_gui::dispose<console_gui::Noop>() {
+    __detail::NoopFrontend().dispose();
 }

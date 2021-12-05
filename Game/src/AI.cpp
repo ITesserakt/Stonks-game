@@ -5,20 +5,21 @@
 #include <chrono>
 #include <range/v3/all.hpp>
 #include <thread>
+#include <utility>
 
 #include "AI.h"
 #include "Config.h"
 #include "Debug.h"
 
 GameObject::Id AI::predictToBuy() const {
-    if (world.getSlots().empty()) {
+    if (world->getSlots().empty()) {
         Debug::logger << "Choosing from empty container while buying";
         return predictToBuy();
     }
-    return ranges::max(world.getSlots(), {}, [this](int slot) { return world.getProfitness(slot); });
+    return ranges::max(world->getSlots(), {}, [this](int slot) { return world->getProfitness(slot); });
 }
 
-AI::AI(World &state, bool debug, unsigned int maxSlots) : world(state) {
+AI::AI(std::shared_ptr<World> state, bool debug, unsigned int maxSlots) : world(std::move(state)) {
     money = 10000;
     availableSlots = maxSlots;
     debugFlag = debug;
@@ -43,7 +44,9 @@ double AI::getProfitness(GameObject::Id itemId) const {
     return (availableSlots + 0.1) / sellByKind / (item->timesSold + 1) * item->cost;
 }
 
-std::thread AI::startTrading(const bool &running) {
+std::thread AI::startTrading(bool &running) {
+    using namespace std::chrono_literals;
+
     auto thread = std::thread([this, &running] {
         std::random_device seed;
         std::mt19937 randie(seed());
@@ -53,29 +56,29 @@ std::thread AI::startTrading(const bool &running) {
         while (running) {
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
             auto tradeType = random() % 2;
-            if (!world.getSlots().empty() && couldBuy() && tradeType) {
+            if (!world->getSlots().empty() && couldBuy() && tradeType) {
                 auto predicted = predictToBuy();
                 //                auto itemShadow = world.focusItem(predicted);
                 //                if (itemShadow.has_value() && getBalance() > itemShadow->cost) {
-                auto item = world.takeItem(predicted);
+                auto item = world->takeItem(predicted);
                 if (item == nullptr) continue;
                 buyItem(std::move(item));
             }
-            if (!getSlots().empty() && world.couldPutInto() && !tradeType) {
+            if (!getSlots().empty() && world->couldPutInto() && !tradeType) {
                 std::normal_distribution multiplierDistribution{1.01, 0.1};
                 auto predicted = predictToSell();
                 auto predictedItem = focusItem(predicted);
                 if (!predictedItem.has_value()) continue;
                 auto sold = sellItem(predicted, predictedItem->cost * multiplierDistribution(randie));
                 if (sold == nullptr) continue;
-                world.putItem(std::move(sold));
+                world->putItem(std::move(sold));
             }
         }
     });
     return thread;
 }
 
-AI AI::fromJson(World &world, const jsoncons::json &json) {
+AI AI::fromJson(std::shared_ptr<World> world, const jsoncons::json &json) {
     auto objects = json["objects"].as<std::map<GameObject::Id, GameObject>>();
     std::map<GameObject::Id, std::unique_ptr<GameObject>> objectsPtr;
     for (const auto &[id, g] : objects)
@@ -88,12 +91,5 @@ AI AI::fromJson(World &world, const jsoncons::json &json) {
             std::move(objectsPtr)};
 }
 
-AI::AI(World &world, bool debugFlag, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container)
+AI::AI(std::shared_ptr<World> world, bool debugFlag, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container)
     : world(world), debugFlag(debugFlag), Gamer(money, availableSlots, std::move(container)) {}
-
-void AI::writeToJson(jsoncons::json &json) {
-    json["debug"] = debugFlag;
-    json["money"] = money;
-    json["availableSlots"] = availableSlots.load();
-    json["objects"] = static_cast<ViewableContainer &>(*this);
-}

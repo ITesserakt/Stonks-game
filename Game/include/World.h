@@ -30,7 +30,7 @@ public:
 
     void putItem(std::unique_ptr<GameObject> obj);
 
-    void addGamer(std::shared_ptr<Gamer> &&gamer);
+    void addGamer(const std::shared_ptr<Gamer> &gamer);
 
     void fillUp();
 

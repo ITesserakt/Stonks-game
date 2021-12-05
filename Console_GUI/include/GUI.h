@@ -12,32 +12,41 @@ namespace console_gui {
         struct NCursesFrontend;
 
         class TerminalFrontend;
-    }
+
+        struct NoopFrontend;
+    }// namespace __detail
 
     using NCurses = __detail::NCursesFrontend;
     using Terminal = __detail::TerminalFrontend;
+    using Noop = __detail::NoopFrontend;
 
-    template<typename T>
+    template <typename T>
     void init() {
         static_assert(std::is_same<T, void>::value && !std::is_same<T, void>::value,
                       "Expected types from console_gui namespace");// impossible
     }
 
-    template<>
+    template <>
     void init<NCurses>();
 
-    template<>
+    template <>
     void init<Terminal>();
 
-    template<typename T>
+    template <>
+    void init<Noop>();
+
+    template <typename T>
     void dispose() {
         static_assert(std::is_same<T, void>::value && !std::is_same<T, void>::value,
                       "Expected types from console_gui namespace");// impossible
     }
 
-    template<>
+    template <>
     void dispose<NCurses>();
 
-    template<>
+    template <>
     void dispose<Terminal>();
-}
+
+    template <>
+    void dispose<Noop>();
+}// namespace console_gui

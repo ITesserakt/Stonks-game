@@ -1,26 +1,28 @@
 {
   "botsAmount": 3,
-  "worldSize": 18,
   "debug": false,
   "debugSpeedGame": 10,
+  "difficulty": 0,
+  "maxFPS": 15,
   "presets": [
     {
+      "initialMoney": 1000.0,
+      "inventorySize": 5,
       "name": "Easy",
-      "initialMoney": 1000,
-      "winCondition": 10000,
-      "inventorySize": 5
+      "winCondition": 10000
     },
     {
+      "initialMoney": 200.0,
+      "inventorySize": 3,
       "name": "Normal",
-      "initialMoney": 200,
-      "winCondition": 10000,
-      "inventorySize": 3
+      "winCondition": 10000
     },
     {
+      "initialMoney": 200.0,
+      "inventorySize": 1,
       "name": "Hard",
-      "initialMoney": 200,
-      "winCondition": 50000,
-      "inventorySize": 1
+      "winCondition": 50000
     }
-  ]
+  ],
+  "worldSize": 18
 }

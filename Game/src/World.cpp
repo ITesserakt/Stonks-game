@@ -30,7 +30,7 @@ void World::fillUp() {
     }
 }
 
-void World::addGamer(std::shared_ptr<Gamer> &&gamer) {
+void World::addGamer(const std::shared_ptr<Gamer> &gamer) {
     players.emplace_back(gamer);
 }
 
@@ -54,6 +54,8 @@ World::World(World &&w) noexcept
 World::World(unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> objects)
     : availableSlots(availableSlots),
       factory(ObjectFactory::fromFile("../share/objects.json")),
-      ViewableContainer(std::move(objects)) {}
+      ViewableContainer(std::move(objects)) {
+    Stat::Statistic("amountOfItemsInWorld", objects.size());
+}
 
 bool World::couldPutInto() const { return availableSlots > 0; }
