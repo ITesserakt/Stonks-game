@@ -98,7 +98,8 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     label->turnOn(COLOR_YELLOW);
 
     int butIndex = 0;
-    auto butRt = std::make_shared<Button>("reset\nconfig", butIndex++);
+    auto butRt = std::make_shared<Button>("reset config", butIndex++);
+    auto butSR = std::make_shared<Button>("remove save", butIndex++);
 
     auto levelNames = std::make_shared<Group>("Difficulties");
     auto levels = std::make_shared<Button>("difficulties", butIndex++,
@@ -123,6 +124,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     auto initialGroup = std::make_shared<Group>("Initial");
     initialGroup->bind(label);
     initialGroup->bind(butRt);
+    initialGroup->bind(butSR);
     initialGroup->bind(levels);
     initialGroup->bind(levelNames);
     initialGroup->bind(butStMn);
@@ -133,10 +135,10 @@ void setupSettings(WorldState &state, Canvases &scenes) {
                                                        "to apply config changes?",
                                                        SpecialPosition::Special);
 
-    auto yes = std::make_shared<Button>("yes", butIndex++);
-    yes->applyAction(Command::fromFunction([] {
-                         Config::modify([](ConfigData &data) { data = ConfigData{}; });
-                     }).then(ShutdownCommand(state)));
+    auto yes = std::make_shared<Button>("yes", butIndex++,
+                                        Command::fromFunction([] {
+                                            Config::modify([](ConfigData &data) { data = ConfigData{}; });
+                                        }).then(ShutdownCommand(state)));
     auto no = std::make_shared<Button>("no", butIndex++);
 
     auto groupForRestart = std::make_shared<Group>("Restart");
@@ -146,8 +148,33 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     groupForRestart->hide(true);
     scenes[SceneNames::Settings]->bind(groupForRestart);
 
+    auto saveDelete = std::make_shared<MessageBox>("save_remove",
+                                                   "Are you sure to delete save file?\n"
+                                                   "It cannot be restored",
+                                                   SpecialPosition::Special);
+
+    auto yesSR = std::make_shared<Button>("yes", butIndex++,
+                                          Command::fromFunction([] {
+                                              std::filesystem::remove("../share/save.json");
+                                              exit(0);
+                                          }));
+    auto noSR = std::make_shared<Button>("no", butIndex++);
+    auto groupForRemoveSave = std::make_shared<Group>("Save remove");
+    groupForRemoveSave->bind(saveDelete);
+    groupForRemoveSave->bind(yesSR);
+    groupForRemoveSave->bind(noSR);
+    groupForRemoveSave->hide();
+    scenes[SceneNames::Settings]->bind(groupForRemoveSave);
+
     butRt->applyAction(
             HideCommand(groupForRestart, false)
+                    .then(HideCommand(initialGroup))
+                    .then(StateCommand::fromFunction(state, [](WorldState &state) {    // for shifting
+                        state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
+                    })));
+
+    butSR->applyAction(
+            HideCommand(groupForRemoveSave, false)
                     .then(HideCommand(initialGroup))
                     .then(StateCommand::fromFunction(state, [](WorldState &state) {    // for shifting
                         state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
@@ -156,6 +183,13 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     no->applyAction(
             HideCommand(initialGroup, false)
                     .then(HideCommand(groupForRestart))
+                    .then(StateCommand::fromFunction(state, [](WorldState &state) {
+                        state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
+                    })));
+
+    noSR->applyAction(
+            HideCommand(initialGroup, false)
+                    .then(HideCommand(groupForRemoveSave))
                     .then(StateCommand::fromFunction(state, [](WorldState &state) {
                         state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
                     })));
