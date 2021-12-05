@@ -72,6 +72,28 @@ std::thread AI::startTrading(const bool &running) {
             }
         }
     });
-    thread.detach();
     return thread;
+}
+
+AI AI::fromJson(World &world, const jsoncons::json &json) {
+    auto objects = json["objects"].as<std::map<GameObject::Id, GameObject>>();
+    std::map<GameObject::Id, std::unique_ptr<GameObject>> objectsPtr;
+    for (const auto &[id, g] : objects)
+        objectsPtr.emplace(id, std::make_unique<GameObject>(g));
+
+    return {world,
+            json["debug"].as_bool(),
+            json["money"].as<double>(),
+            json["availableSlots"].as_integer<unsigned int>(),
+            std::move(objectsPtr)};
+}
+
+AI::AI(World &world, bool debugFlag, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container)
+    : world(world), debugFlag(debugFlag), Gamer(money, availableSlots, std::move(container)) {}
+
+void AI::writeToJson(jsoncons::json &json) {
+    json["debug"] = debugFlag;
+    json["money"] = money;
+    json["availableSlots"] = availableSlots.load();
+    json["objects"] = static_cast<ViewableContainer &>(*this);
 }

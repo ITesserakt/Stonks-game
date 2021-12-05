@@ -2,6 +2,7 @@
 
 #include "World.h"
 #include "Statistics.h"
+#include "Config.h"
 
 double World::getProfitness(const GameObject::Id &itemId) const {
     auto item = focusItem(itemId);
@@ -43,3 +44,16 @@ std::unique_ptr<GameObject> World::takeItem(GameObject::Id itemId) {
 void World::putItem(std::unique_ptr<GameObject> obj) {
     populate(obj->id, std::move(obj));
 }
+
+World::World(World &&w) noexcept
+    : players(std::move(w.players)),
+      availableSlots(w.availableSlots.load()),
+      factory(std::move(w.factory)),
+      ViewableContainer<GameObject, GameObject::Id>(std::move(w)) {}
+
+World::World(unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> objects)
+    : availableSlots(availableSlots),
+      factory(ObjectFactory::fromFile("../share/objects.json")),
+      ViewableContainer(std::move(objects)) {}
+
+bool World::couldPutInto() const { return availableSlots > 0; }

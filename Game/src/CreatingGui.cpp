@@ -135,7 +135,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
 
     auto yes = std::make_shared<Button>("yes", butIndex++);
     yes->applyAction(Command::fromFunction([] {
-                         std::filesystem::remove(Config::path);
+                         Config::modify([](ConfigData &data) { data = ConfigData{}; });
                      }).then(ShutdownCommand(state)));
     auto no = std::make_shared<Button>("no", butIndex++);
 

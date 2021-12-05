@@ -10,8 +10,16 @@ private:
     World &world;
     bool debugFlag;
 
+    JSONCONS_TYPE_TRAITS_FRIEND
+
+    AI(World &world, bool debugFlag, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container);
+
 public:
     AI(World &state, bool debug, unsigned int maxSlots);
+
+    static AI fromJson(World &world, const jsoncons::json &json);
+
+    void writeToJson(jsoncons::json &json);
 
     GameObject::Id predictToBuy() const;
 

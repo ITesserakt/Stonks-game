@@ -33,3 +33,15 @@ std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId) {
     if (!item.has_value()) return {};
     return sellItem(itemId, item->cost);
 }
+
+Gamer::Gamer(double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container)
+    : money(money), availableSlots(availableSlots), ViewableContainer(std::move(container)) {}
+
+Gamer::Gamer() : money(0), availableSlots(0) {}
+
+Gamer::Gamer(Gamer &&g) noexcept
+    : money(g.money), availableSlots(g.availableSlots.load()), ViewableContainer(std::move(g)) {}
+
+double Gamer::getBalance() const { return money; }
+
+bool Gamer::couldBuy() const { return availableSlots > 0; }

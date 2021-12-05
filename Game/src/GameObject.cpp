@@ -3,6 +3,7 @@
 //
 
 #include <range/v3/all.hpp>
+#include <utility>
 
 #include "GameObject.h"
 #include "utils.h"
@@ -21,7 +22,7 @@ bool GameObject::operator==(const GameObject &rhs) const {
     return name == rhs.name &&
            description == rhs.description &&
            std::abs(cost - rhs.cost) <
-           std::numeric_limits<GameObject::Cost>::epsilon() * 10000 &&
+                   std::numeric_limits<GameObject::Cost>::epsilon() * 10000 &&
            timesSold == rhs.timesSold &&
            id == rhs.id;
 }
@@ -32,8 +33,11 @@ bool GameObject::operator!=(const GameObject &rhs) const {
 
 std::string GameObject::fullName() const {
     std::stringstream ss;
-    for (const auto& d: description)
+    for (const auto &d : description)
         ss << d << " ";
     ss << name;
     return ss.str();
 }
+
+GameObject::GameObject(GameObject::Name name, std::vector<Description> desc, const unsigned int id, double cost, unsigned int timesSold)
+    : name(std::move(name)), description(std::move(desc)), id(id), cost(cost), timesSold(timesSold) {}

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "AI.h"
 #include "Canvas.h"
 #include "Player.h"
@@ -14,43 +16,33 @@ private:
     std::random_device engine;
     std::mt19937 random = std::mt19937(engine());
 
-    Canvas *currentScene;
+    Canvas *currentScene = nullptr;
+
+    explicit WorldState(World &&w, std::shared_ptr<Player> &&player, std::vector<std::shared_ptr<AI>> &&bots);
 
 public:
     WorldState(const WorldState &) = delete;
-
     WorldState &operator=(const WorldState &) = delete;
+    WorldState(WorldState &&s) noexcept;
+    explicit WorldState(unsigned int maxBots, bool debug = false, Canvas *currentScene = nullptr);
 
-    explicit WorldState(unsigned int maxBots, bool debug = false,
-                        Canvas *currentScene = nullptr) : bots(maxBots), botThreads(maxBots), currentScene(currentScene) {
-        player = std::make_shared<Player>();
-        world.addGamer(player);
-        for (unsigned int index = 0; index < maxBots; index++) {
-            bots[index] = std::make_shared<AI>(world, debug, 10);
-            world.addGamer(bots[index]);
-            botThreads[index] = bots[index]->startTrading(isActive);
-        }
-        world.fillUp();
-    }
+    static WorldState fromJson(const jsoncons::json &json);
 
-    void changeCurrentScene(Canvas &next) {
-        currentScene = &next;
-    }
+    void writeToJson(jsoncons::json &json);
 
-    Canvas &getCurrentScene() { return *currentScene; }
+    void changeCurrentScene(Canvas &next);
 
-    void shutdown() { isActive = false; }
+    Canvas &getCurrentScene();
 
-    World &getWorld() { return world; }
+    void shutdown();
 
-    Player &getPlayer() { return *player; }
+    World &getWorld();
 
-    [[nodiscard]] bool running() const { return isActive; }
+    Player &getPlayer();
 
-    AI &getRandomBot() { return *bots[random() % bots.size()]; }
+    [[nodiscard]] bool running() const;
 
-    void cancelAllAI() {
-        for (auto &thread : botThreads)
-            thread.std::thread::~thread();
-    }
+    AI &getRandomBot();
+
+    void cancelAllAI();
 };
