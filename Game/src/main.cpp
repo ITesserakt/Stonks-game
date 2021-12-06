@@ -40,7 +40,7 @@ int main() {
 
         Canvases scenes = {
                 std::make_shared<Canvas>("MainMenu", Centered),
-                std::make_shared<Canvas>("GameField", Left),
+                std::make_shared<Canvas>("GameField", Vsplit),
                 std::make_shared<Canvas>("Inventory", Left),
                 std::make_shared<Canvas>("Guide", Left),
                 std::make_shared<Canvas>("Settings", Centered),

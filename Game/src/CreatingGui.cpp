@@ -35,25 +35,41 @@ void setupMainMenu(WorldState &state, Canvases &scenes) {
 }
 
 void setupGameField(WorldState &state, Canvases &scenes) {
+    auto leftGroup = std::make_shared<Group>("Management");
     auto label = std::make_shared<Label>("stocks", "Game field\n");
     label->turnOn(COLOR_YELLOW);
-    scenes[SceneNames::GameField]->bind(label);
+    leftGroup->bind(label);
+    //scenes[SceneNames::GameField]->bind(label);
 
     auto balance = std::make_shared<Label>("Money Amount", "Balance: \n");
     balance->setRegularNameChanging(std::chrono::milliseconds(100), [&]() {
         return std::string("Balance: ") + std::to_string(state.getPlayer().getBalance()) + std::string(" $");
     });
-    scenes[SceneNames::GameField]->bind(balance);
+    leftGroup->bind(balance);
+    //scenes[SceneNames::GameField]->bind(balance);
 
     for (int i = 0; i < Config::current().worldSize; i++) {
         auto purch = std::make_shared<Purchase>(i, Command::noop());
         purch->applyAction(PurchaseCommand(purch, state));
-        scenes[SceneNames::GameField]->bind(purch);
+        leftGroup->bind(purch);
+        //scenes[SceneNames::GameField]->bind(purch);
     }
 
     auto winMessage = std::make_shared<MessageBox>("Win Message", "You have win!");
     winMessage->hide(true);
-    scenes[SceneNames::GameField]->bind(winMessage);
+    leftGroup->bind(winMessage);
+    scenes[SceneNames::GameField]->bind(leftGroup);
+    //scenes[SceneNames::GameField]->bind(winMessage);
+
+    /// Creating Right part of screen ///
+    auto rightGroup = std::make_shared<Group>("Statistics");
+    auto itemChangingGraphic = std::make_shared<Graphic>("Price", "$", "t",
+                                                         UISize{30, 15}, []() {
+        // TODO: make collecting of item cost
+        return 0;
+    });
+    rightGroup->bind(itemChangingGraphic);
+    scenes[SceneNames::GameField]->bind(rightGroup);
 }
 
 void setupInventory(WorldState &state, Canvases &scenes) {
