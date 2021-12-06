@@ -6,6 +6,7 @@
 #include "GUI.h"
 #include "WorldState.h"
 #include "widgets/MessageBox.h"
+#include "widgets/dsl/DSL.h"
 #include <thread>
 
 using Frontend = console_gui::NCurses;
