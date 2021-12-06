@@ -222,7 +222,7 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     auto amountOfItemsInWorld = std::make_shared<Label>("Stat2", "Amount of items in world: \n");
     amountOfItemsInWorld->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
         using namespace std::string_literals;
-        return "Amount of items in world: "s + std::to_string(Stat::Statistic::getValueByName("amountOfItemsInWorld")) + "\n";
+        return "Amount of items in world: "s + std::to_string(state.getWorld().getSlots().size()) + "\n";
     });
     auto deltaGraphic = std::make_shared<Graphic>("Test", "δ", "t",
                                                   UISize{30, 10}, [&]() -> int {

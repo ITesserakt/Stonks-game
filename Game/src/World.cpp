@@ -23,7 +23,6 @@ World::World(ObjectFactory &&factory, unsigned int maxSlots) : availableSlots(ma
 
 void World::fillUp() {
     while (availableSlots > 0) {
-        Stat::Statistic("amountOfItemsInWorld", 1);
         auto next = factory.generateNext();
         populate(next.id, std::make_unique<GameObject>(next));
         availableSlots--;
@@ -54,8 +53,6 @@ World::World(World &&w) noexcept
 World::World(unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> objects)
     : availableSlots(availableSlots),
       factory(ObjectFactory::fromFile("../share/objects.json")),
-      ViewableContainer(std::move(objects)) {
-    Stat::Statistic("amountOfItemsInWorld", objects.size());
-}
+      ViewableContainer(std::move(objects)) {}
 
 bool World::couldPutInto() const { return availableSlots > 0; }
