@@ -16,13 +16,13 @@ void Gamer::buyItem(std::unique_ptr<GameObject> item) {
 }
 
 std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::Cost newCost) {
-    Stat::Counter("amountOfPurchases");
     auto item = askItem(itemId);
     if (item == nullptr) return item;
     item->lastSeller = shared_from_this();
     item->cost = newCost;
 
     // Collecting statistic
+    Stat::Counter("amountOfPurchases");
     Stat::ItemStat(itemId, newCost);
     Stat::Counter("amountOfItemsInWorld", 1);
     Stat::sum(newCost);

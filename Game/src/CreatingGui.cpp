@@ -65,7 +65,7 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     /// Creating Right part of screen ///
     auto rightGroup = std::make_shared<Group>("Statistics");
     auto itemChangingGraphic = std::make_shared<SharedGraphic>("Price", "$", "t",
-                                                         UISize{30, 10},
+                                                         UISize{30, 20},
                                                                state);
     rightGroup->bind(itemChangingGraphic);
     scenes[SceneNames::GameField]->bind(rightGroup);
@@ -171,6 +171,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     auto yesSR = std::make_shared<Button>("yes", butIndex++,
                                           Command::fromFunction([] {
                                               std::filesystem::remove("../share/save.json");
+                                              std::filesystem::remove("../share/statistic.json");
                                               exit(0);
                                           }));
     auto noSR = std::make_shared<Button>("no", butIndex++);

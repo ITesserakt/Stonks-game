@@ -32,6 +32,7 @@ void Graphic::show() {
     using namespace std::string_literals;
     updateData(getNewValue());
     double max = *std::max_element(values.begin(), values.end());
+    isHidden = values.empty();
 
     if (isHidden) return;
 

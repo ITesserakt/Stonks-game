@@ -1,6 +1,5 @@
 #include "Statistics.h"
 #include <sstream>
-#include "Debug.h"
 
 auto Stat::ItemStat::_valuesForEveryObject = std::map<GameObject::Id, Stat::ItemStat::sharedList>();
 

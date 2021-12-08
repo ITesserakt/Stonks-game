@@ -4,6 +4,7 @@
 #include "EventHandler.h"
 #include "FramePainter.h"
 #include "GUI.h"
+#include "Statistics.h"
 #include "WorldState.h"
 #include "widgets/MessageBox.h"
 #include <thread>
@@ -25,6 +26,17 @@ WorldState loadWorldState() {
     return std::move(state.value());
 }
 
+void loadStatistic() {
+    std::ifstream in(Stat::pathForSave);
+    try {
+        jsoncons::json j = jsoncons::json::parse(in);
+        Stat::Counter() = j["counter"].as<Stat::Counter>();
+        Stat::ItemStat() = j["items"].as<Stat::ItemStat>();
+    } catch (...) {
+
+    }
+}
+
 void close(bool withFailure) {
     console_gui::dispose<Frontend>();
     if (withFailure)
@@ -34,6 +46,7 @@ void close(bool withFailure) {
 int main() {
     bool failure = false;
     WorldState state = loadWorldState();
+    loadStatistic();
     std::set_terminate([] { close(true); });
     try {
         console_gui::init<Frontend>();
@@ -86,5 +99,11 @@ int main() {
     // TODO replace to destructor
     std::ofstream out(savePath);
     jsoncons::encode_json_pretty(state, out);
+    out.close();
+    out.open(Stat::pathForSave);
+    jsoncons::json j;
+    j["counter"] = Stat::Counter();
+    j["items"] = Stat::ItemStat();
+    jsoncons::encode_json_pretty(j, out);
     close(failure);
 }
