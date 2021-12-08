@@ -14,8 +14,11 @@ WorldState::WorldState(std::shared_ptr<World> w, std::shared_ptr<Player> player,
 WorldState::WorldState(WorldState &&s) noexcept
     : player(std::move(s.player)),
       bots(std::move(s.bots)),
-      botThreads(std::move(s.botThreads)),
-      world(std::move(s.world)) {}
+      world(std::move(s.world)) {
+    botThreads.resize(this->bots.size());
+    for (unsigned int index = 0; index < this->bots.size(); index++)
+        botThreads[index] = this->bots[index]->startTrading(isActive);
+}
 
 WorldState::WorldState(unsigned int maxBots, bool debug, Canvas *currentScene)
     : bots(maxBots),

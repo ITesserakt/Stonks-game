@@ -13,8 +13,8 @@
 #include "commands/ShutdownCommand.h"
 #include "game_widgets/Purchase.h"
 #include "game_widgets/Sale.h"
-#include "widgets/Graphic.h"
 #include "game_widgets/SharedGraphic.h"
+#include "widgets/Graphic.h"
 #include "widgets/Group.h"
 #include "widgets/MessageBox.h"
 
@@ -65,7 +65,7 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     /// Creating Right part of screen ///
     auto rightGroup = std::make_shared<Group>("Statistics");
     auto itemChangingGraphic = std::make_shared<SharedGraphic>("Price", "$", "t",
-                                                         UISize{30, 20},
+                                                               UISize{30, 20},
                                                                state);
     rightGroup->bind(itemChangingGraphic);
     scenes[SceneNames::GameField]->bind(rightGroup);
@@ -147,13 +147,17 @@ void setupSettings(WorldState &state, Canvases &scenes) {
 
     auto restartMessage = std::make_shared<MessageBox>("configRestart",
                                                        "Do you want to restart game\n"
-                                                       "to apply config changes?",
+                                                       "to apply config changes?\n"
+                                                       "It will cause save delete.",
                                                        SpecialPosition::Special);
 
     auto yes = std::make_shared<Button>("yes", butIndex++,
                                         Command::fromFunction([] {
                                             Config::modify([](ConfigData &data) { data = ConfigData{}; });
-                                        }).then(ShutdownCommand(state)));
+                                            std::filesystem::remove("../share/save.json");
+                                            std::filesystem::remove("../share/statistic.json");
+                                            exit(0);
+                                        }));
     auto no = std::make_shared<Button>("no", butIndex++);
 
     auto groupForRestart = std::make_shared<Group>("Restart");

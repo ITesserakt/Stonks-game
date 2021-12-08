@@ -16,14 +16,12 @@ constexpr auto savePath = "../share/save.json";
 
 WorldState loadWorldState() {
     std::ifstream in{savePath};
-    std::optional<WorldState> state;
 
     try {
-        state.emplace(jsoncons::decode_json<WorldState>(in));
+        return jsoncons::decode_json<WorldState>(in);
     } catch (...) {
-        state.emplace(Config::current().botsAmount, Config::current().debug);
+        return WorldState{Config::current().botsAmount, Config::current().debug};
     }
-    return std::move(state.value());
 }
 
 void loadStatistic() {
@@ -33,7 +31,7 @@ void loadStatistic() {
         Stat::Counter() = j["counter"].as<Stat::Counter>();
         Stat::ItemStat() = j["items"].as<Stat::ItemStat>();
     } catch (...) {
-
+        // We are not loading Statistic from previous file
     }
 }
 
