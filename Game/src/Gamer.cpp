@@ -2,12 +2,12 @@
 // Created by tesserakt on 23.09.2021.
 //
 
-#include <Gamer.h>
 #include "Statistics.h"
+#include <Gamer.h>
 
 void Gamer::buyItem(std::unique_ptr<GameObject> item) {
-    Stat::Statistic("amountOfPurchases");
-    Stat::Statistic("amountOfItemsInWorld", -1);
+    Stat::Counter("amountOfPurchases");
+    Stat::Counter("amountOfItemsInWorld", -1);
     if (item->timesSold != 0 && item->lastSeller != nullptr)
         item->lastSeller->money += item->cost;
     money -= item->cost;
@@ -16,13 +16,18 @@ void Gamer::buyItem(std::unique_ptr<GameObject> item) {
 }
 
 std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::Cost newCost) {
-    Stat::Statistic("amountOfPurchases");
+    Stat::Counter("amountOfPurchases");
     auto item = askItem(itemId);
     if (item == nullptr) return item;
-    Stat::Statistic("amountOfItemsInWorld", 1);
-    Stat::sum(newCost);
     item->lastSeller = shared_from_this();
     item->cost = newCost;
+
+    // Collecting statistic
+    Stat::ItemStat(itemId, newCost);
+    Stat::Counter("amountOfItemsInWorld", 1);
+    Stat::sum(newCost);
+    // End of statistic
+
     item->timesSold++;
     availableSlots++;
     return item;

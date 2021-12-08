@@ -8,7 +8,7 @@
 #include "widgets/PositionedWidget.h"
 
 class Graphic : public PositionedWidget, public ColorWidget {
-private:
+protected:
     std::string ordinance;
     std::string abscissa;
     unsigned int amountOfColumns;
@@ -19,7 +19,7 @@ private:
     std::chrono::time_point<std::chrono::system_clock> start;
 
     void printColumn(std::string colSymbol, int colPos, double value, double max);
-    void updateData();
+    virtual void updateData(double value);
 
 public:
     Graphic(const std::string &name, std::string OY, std::string OX,

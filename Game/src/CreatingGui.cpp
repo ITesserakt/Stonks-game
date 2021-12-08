@@ -14,6 +14,7 @@
 #include "game_widgets/Purchase.h"
 #include "game_widgets/Sale.h"
 #include "widgets/Graphic.h"
+#include "game_widgets/SharedGraphic.h"
 #include "widgets/Group.h"
 #include "widgets/MessageBox.h"
 
@@ -63,11 +64,9 @@ void setupGameField(WorldState &state, Canvases &scenes) {
 
     /// Creating Right part of screen ///
     auto rightGroup = std::make_shared<Group>("Statistics");
-    auto itemChangingGraphic = std::make_shared<Graphic>("Price", "$", "t",
-                                                         UISize{30, 15}, []() {
-        // TODO: make collecting of item cost
-        return 0;
-    });
+    auto itemChangingGraphic = std::make_shared<SharedGraphic>("Price", "$", "t",
+                                                         UISize{30, 10},
+                                                               state);
     rightGroup->bind(itemChangingGraphic);
     scenes[SceneNames::GameField]->bind(rightGroup);
 }
@@ -233,7 +232,7 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     auto amountOfPurchases = std::make_shared<Label>("Stat1", "Amount of purchases: 0\n");
     amountOfPurchases->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
         using namespace std::string_literals;
-        return "Amount of purchases: "s + std::to_string(Stat::Statistic::getValueByName("amountOfPurchases")) + "\n";
+        return "Amount of purchases: "s + std::to_string(Stat::Counter::getValueByName("amountOfPurchases")) + "\n";
     });
     auto amountOfItemsInWorld = std::make_shared<Label>("Stat2", "Amount of items in world: \n");
     amountOfItemsInWorld->setRegularNameChanging(std::chrono::seconds{1}, [&]() -> std::string {
@@ -243,8 +242,8 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
     auto deltaGraphic = std::make_shared<Graphic>("Test", "δ", "t",
                                                   UISize{30, 10}, [&]() -> int {
                                                       using namespace Stat;
-                                                      return abs(Statistic::getValueByName("sellItem") -
-                                                                 Statistic::getValueByName("buyItem"));
+                                                      return abs(Counter::getValueByName("sellItem") -
+                                                                 Counter::getValueByName("buyItem"));
                                                   });
     auto graphicExplain = std::make_shared<Label>("Explaining deltaGrphic", "Global price change");
     rightGroup->bind(Stonksity);

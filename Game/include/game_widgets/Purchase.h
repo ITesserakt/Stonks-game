@@ -29,6 +29,9 @@ public:
     void update(GameObject &&item);
     void clearItem();
 
+    bool isObjectExist() { return object.has_value(); }
+    GameObject::Id getItemId() { return object->id; }
+
     UISize getSize() override;
 
     void show() override;

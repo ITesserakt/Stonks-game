@@ -83,6 +83,7 @@ int main() {
         failure = true;
         Debug::logger << "Unknown error occurred";
     }
+    // TODO replace to destructor
     std::ofstream out(savePath);
     jsoncons::encode_json_pretty(state, out);
     close(failure);

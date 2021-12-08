@@ -1,4 +1,5 @@
 #include "ObjectFactory.h"
+#include "Statistics.h"
 #include <range/v3/all.hpp>
 
 std::random_device ObjectFactory::engine = {};
@@ -29,6 +30,9 @@ GameObject ObjectFactory::generateNext() {
                                                         return acc *
                                                                kind.descriptions[b];
                                                     });
+
+    // Collecting statistic
+    Stat::ItemStat(lastId, cost);
 
     return {name, descriptions, lastId++, cost};
 }

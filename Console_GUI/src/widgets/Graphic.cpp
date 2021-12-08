@@ -17,7 +17,7 @@ void Graphic::printColumn(std::string colSymbol, int colPos, double value, doubl
     attroff(COLOR_PAIR(widgetId));
 }
 
-void Graphic::updateData() {
+void Graphic::updateData(double value) {
     std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
     if (end - start > delta) {
         start = std::chrono::system_clock::now();
@@ -30,7 +30,7 @@ void Graphic::updateData() {
 
 void Graphic::show() {
     using namespace std::string_literals;
-    updateData();
+    updateData(getNewValue());
     double max = *std::max_element(values.begin(), values.end());
 
     if (isHidden) return;
