@@ -44,10 +44,8 @@ void Canvas::show() {
     } else if (align == Vsplit) {
         int xMax = this->getSize().width;
         int yMax = this->getSize().height;
-        int w = 0;
-        int h = 0;
-        int xInd = xMax / 2;// x Indent
-        int yInd = yMax / 2;
+        int windowsAmount = children.size();
+        int xInd = xMax / windowsAmount;// x Indent
 
         for (auto child : getChildrenWithType<PositionedWidget>()) {
             child->changePos(x, y);
@@ -56,9 +54,11 @@ void Canvas::show() {
         }
 
         // printing center line
-        // TODO make for more childrens than 2
-        for (int i = 0; i < yMax; i++)
-            mvprintw(i, xInd, "|");
+        for (int j = 1; j <= windowsAmount; j++) {
+            for (int i = 0; i < yMax; i++)
+                mvprintw(i, xInd, "|");
+            xInd *= j;
+        }
     }
 }
 
