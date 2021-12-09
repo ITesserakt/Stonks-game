@@ -4,6 +4,7 @@
 #include "EventHandler.h"
 #include "FramePainter.h"
 #include "GUI.h"
+#include "GameLoading.h"
 #include "Statistics.h"
 #include "WorldState.h"
 #include "widgets/MessageBox.h"
@@ -11,30 +12,6 @@
 
 using Frontend = console_gui::NCurses;
 using namespace std::chrono_literals;
-
-constexpr auto savePath = "../share/save.json";
-
-// TODO change place for this functions
-WorldState loadWorldState() {
-    std::ifstream in{savePath};
-
-    try {
-        return jsoncons::decode_json<WorldState>(in);
-    } catch (...) {
-        return WorldState{Config::current().botsAmount, Config::current().debug};
-    }
-}
-
-void loadStatistic() {
-    std::ifstream in(Stat::pathForSave);
-    try {
-        jsoncons::json j = jsoncons::json::parse(in);
-        Stat::Counter() = j["counter"].as<Stat::Counter>();
-        Stat::ItemStat() = j["items"].as<Stat::ItemStat>();
-    } catch (...) {
-        // We are not loading Statistic from previous file
-    }
-}
 
 void close(bool withFailure) {
     console_gui::dispose<Frontend>();
@@ -95,14 +72,7 @@ int main() {
         failure = true;
         Debug::logger << "Unknown error occurred";
     }
-    // TODO replace to destructor
-    std::ofstream out(savePath);
-    jsoncons::encode_json_pretty(state, out);
-    out.close();
-    out.open(Stat::pathForSave);
-    jsoncons::json j;
-    j["counter"] = Stat::Counter();
-    j["items"] = Stat::ItemStat();
-    jsoncons::encode_json_pretty(j, out);
+
+    saveGameData(state);
     close(failure);
 }

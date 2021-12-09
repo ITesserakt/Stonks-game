@@ -47,6 +47,9 @@ public:
 };
 
 namespace jsoncons {
+    // FIXME
+    // WorldState doesn't save last seller
+    // that's why when we restart game purchases will not bring us money
     template <>
     struct json_type_traits<json, WorldState> {
         static bool is(const json &j) {

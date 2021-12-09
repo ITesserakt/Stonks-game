@@ -167,7 +167,6 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     groupForRestart->hide(true);
     scenes[SceneNames::Settings]->bind(groupForRestart);
 
-    // TODO this widget works badf
     auto saveDelete = std::make_shared<MessageBox>("save_remove",
                                                    "Are you sure to delete save file?\n"
                                                    "It cannot be restored",
