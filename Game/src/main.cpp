@@ -14,6 +14,7 @@ using namespace std::chrono_literals;
 
 constexpr auto savePath = "../share/save.json";
 
+// TODO change place for this functions
 WorldState loadWorldState() {
     std::ifstream in{savePath};
 

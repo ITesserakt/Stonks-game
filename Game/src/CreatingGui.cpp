@@ -1,11 +1,11 @@
 #include "Config.h"// for changing current difficulty
 #include <filesystem>
-#include <jsoncons_ext/jsonpath/json_query.hpp>// for changing current difficulty
 #include <random>
 
 #include "CreatingGui.h"
 #include "Statistics.h"
 #include "WorldState.h"
+#include "commands/ChangeActiveWidgetCommand.h"
 #include "commands/HideCommand.h"
 #include "commands/PurchaseCommand.h"
 #include "commands/SaleCommand.h"
@@ -167,6 +167,7 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     groupForRestart->hide(true);
     scenes[SceneNames::Settings]->bind(groupForRestart);
 
+    // TODO this widget works badf
     auto saveDelete = std::make_shared<MessageBox>("save_remove",
                                                    "Are you sure to delete save file?\n"
                                                    "It cannot be restored",
@@ -189,30 +190,24 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     butRt->applyAction(
             HideCommand(groupForRestart, false)
                     .then(HideCommand(initialGroup))
-                    .then(StateCommand::fromFunction(state, [](WorldState &state) {    // for shifting
-                        state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
-                    })));
+                    .then(ChangeActiveWidgetCommand(state, Direction::DOWN)));
 
     butSR->applyAction(
             HideCommand(groupForRemoveSave, false)
                     .then(HideCommand(initialGroup))
-                    .then(StateCommand::fromFunction(state, [](WorldState &state) {    // for shifting
-                        state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
-                    })));
+                    .then(ChangeActiveWidgetCommand(state, Direction::DOWN)));
 
     no->applyAction(
             HideCommand(initialGroup, false)
                     .then(HideCommand(groupForRestart))
-                    .then(StateCommand::fromFunction(state, [](WorldState &state) {
-                        state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
-                    })));
+                    .then(HideCommand(levelNames))
+                    .then(ChangeActiveWidgetCommand(state, Direction::UP, 2)));
 
     noSR->applyAction(
             HideCommand(initialGroup, false)
                     .then(HideCommand(groupForRemoveSave))
-                    .then(StateCommand::fromFunction(state, [](WorldState &state) {
-                        state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
-                    })));
+                    .then(HideCommand(levelNames))
+                    .then(ChangeActiveWidgetCommand(state, Direction::UP, 2)));
 
     butStMn->applyAction(
             SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
