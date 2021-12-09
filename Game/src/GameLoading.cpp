@@ -12,6 +12,7 @@ void saveGameData(WorldState &state) {
     // Connecting statistic from counter and Items
     j["counter"] = Stat::Counter();
     j["items"] = Stat::ItemStat();
+    j["timer"] = Stat::Timer();
     jsoncons::encode_json_pretty(j, out);
 }
 
@@ -31,6 +32,7 @@ void loadStatistic() {
         jsoncons::json j = jsoncons::json::parse(in);
         Stat::Counter() = j["counter"].as<Stat::Counter>();
         Stat::ItemStat() = j["items"].as<Stat::ItemStat>();
+        Stat::Timer() = j["timer"].as<Stat::Timer>();
     } catch (...) {
         // We are not loading Statistic from previous file
     }

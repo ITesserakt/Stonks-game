@@ -245,9 +245,30 @@ void setupStatistics(WorldState &state, Canvases &scenes) {
                                                                  Counter::getValueByName("buyItem"));
                                                   });
     auto graphicExplain = std::make_shared<Label>("Explaining deltaGrphic", "Global price change");
+
+    auto TimeInGame = std::make_shared<Label>("Stat3", "Time in game:");
+    Stat::Timer::start("GameStart");
+    TimeInGame->setRegularNameChanging(std::chrono::seconds{1}, []() -> std::string {
+        return std::string("Time in game:            ") + Stat::Timer::getTimeByName("GameStart");
+    });
+
+    auto PurchaseTime = std::make_shared<Label>("Stat4", "Time between purchases:");
+    PurchaseTime->setRegularNameChanging(std::chrono::seconds{1}, []() -> std::string {
+        return std::string("Time between purchases:  ") + Stat::Timer::getTimeByName("purchaseTimer");
+    });
+
+    auto TimeInSession = std::make_shared<Label>("Stat5", "Time in current session: \n");
+    Stat::Timer::start("SessionStart");
+    Stat::Timer::noSave("SessionStart");
+    TimeInSession->setRegularNameChanging(std::chrono::seconds{1}, []() -> std::string {
+        return std::string("Time in current session: ") + Stat::Timer::getTimeByName("SessionStart");
+    });
     rightGroup->bind(Stonksity);
     rightGroup->bind(amountOfPurchases);
     rightGroup->bind(amountOfItemsInWorld);
+    rightGroup->bind(TimeInGame);
+    rightGroup->bind(PurchaseTime);
+    rightGroup->bind(TimeInSession);
     rightGroup->bind(deltaGraphic);
     rightGroup->bind(graphicExplain);
 

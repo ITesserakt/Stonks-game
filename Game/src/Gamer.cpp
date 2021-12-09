@@ -6,8 +6,13 @@
 #include <Gamer.h>
 
 void Gamer::buyItem(std::unique_ptr<GameObject> item) {
+
+    // Collecting statistic
+    Stat::Timer::start("purchaseTimer", true);
     Stat::Counter("amountOfPurchases");
     Stat::Counter("amountOfItemsInWorld", -1);
+    // End of statistic
+
     if (item->timesSold != 0 && item->lastSeller != nullptr)
         item->lastSeller->money += item->cost;
     money -= item->cost;
@@ -22,6 +27,7 @@ std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId, GameObject::C
     item->cost = newCost;
 
     // Collecting statistic
+    Stat::Timer::start("purchaseTimer", true);
     Stat::Counter("amountOfPurchases");
     Stat::ItemStat(itemId, newCost);
     Stat::Counter("amountOfItemsInWorld", 1);
