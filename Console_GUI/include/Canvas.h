@@ -18,16 +18,21 @@ private:
     std::shared_ptr<HoverableWidget> activeWidget;
 
 public:
-    Canvas(const std::string &name, Align al)
-        : Widget(name),
-          align(al) {}
+    Canvas(const std::string &name, Align al) : Widget(name), align(al) {}
 
     void show() override;
 
     void changeActiveWidget(Direction direct, unsigned int length = 1);
-    auto getActiveWidget() const { return activeWidget; }
+    auto getActiveWidget() const {
+        return activeWidget;
+    }
 
     void bind(std::shared_ptr<Widget> widget) override;
+
+    template <typename W>
+    void bind(std::vector<std::shared_ptr<W>> widgets) {
+        for (const auto &widget : std::move(widgets)) bind(widget);
+    }
 
     UISize getSize() override;
 };

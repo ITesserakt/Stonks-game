@@ -1,20 +1,30 @@
 # Generated from CLion C/C++ Code Style settings
-BasedOnStyle: WebKit
 AccessModifierOffset: -4
 AllowAllArgumentsOnNextLine: true
-PackConstructorInitializers: CurrentLine
-AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: Always
+PackConstructorInitializers: BinPack
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true
-AllowShortFunctionsOnASingleLine: All
+AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: Always
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
 AlwaysBreakTemplateDeclarations: Yes
 BreakBeforeBraces: Custom
+AlignAfterOpenBracket: DontAlign
+AlignConsecutiveAssignments: AcrossComments
+AlignArrayOfStructures: None
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveDeclarations: Consecutive
+AlignOperands: AlignAfterOperator
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: Right
+AlignTrailingComments: true
+IndentWrappedFunctionNames: true
 BraceWrapping:
   AfterCaseLabel: false
+  BeforeLambdaBody: false
   AfterClass: false
   AfterControlStatement: Never
   AfterEnum: false
@@ -26,7 +36,6 @@ BraceWrapping:
   IndentBraces: false
   SplitEmptyFunction: false
   SplitEmptyRecord: true
-BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon

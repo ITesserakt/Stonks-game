@@ -36,10 +36,12 @@ struct CloneCommand : virtual Command {
 template <typename T>
 class WidgetCommand : public virtual Command {
 protected:
-    std::shared_ptr<T> sender;
+    T &sender;
 
 public:
-    explicit WidgetCommand(std::shared_ptr<T> sender) : sender(sender) {}
+    using widget_type = T;
+
+    explicit WidgetCommand(T &sender) : sender(sender) {}
 };
 
 template <typename T>

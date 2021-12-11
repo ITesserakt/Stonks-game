@@ -15,37 +15,30 @@ using namespace std::chrono_literals;
 constexpr auto savePath = "../share/save.json";
 
 WorldState loadWorldState() {
-    std::ifstream in{savePath};
+    std::ifstream             in{savePath};
     std::optional<WorldState> state;
 
     try {
         state.emplace(jsoncons::decode_json<WorldState>(in));
-    } catch (...) {
-        state.emplace(Config::current().botsAmount, Config::current().debug);
-    }
+    } catch (...) { state.emplace(Config::current().botsAmount, Config::current().debug); }
     return std::move(state.value());
 }
 
 void close(bool withFailure) {
     console_gui::dispose<Frontend>();
-    if (withFailure)
-        std::cout << "Exception occurred. See log.txt for details" << std::endl;
+    if (withFailure) std::cout << "Exception occurred. See log.txt for details" << std::endl;
 }
 
 int main() {
-    bool failure = false;
-    WorldState state = loadWorldState();
+    bool       failure = false;
+    WorldState state   = loadWorldState();
     std::set_terminate([] { close(true); });
     try {
         console_gui::init<Frontend>();
 
-        Canvases scenes = {
-                std::make_shared<Canvas>("MainMenu", Centered),
-                std::make_shared<Canvas>("GameField", Left),
-                std::make_shared<Canvas>("Inventory", Left),
-                std::make_shared<Canvas>("Guide", Left),
-                std::make_shared<Canvas>("Settings", Centered),
-                std::make_shared<Canvas>("Statistics", Vsplit)};
+        Canvases scenes = {widget::canvas("MainMenu", Centered), widget::canvas("GameField", Left),
+                widget::canvas("Inventory", Left), widget::canvas("Guide", Centered),
+                widget::canvas("Settings", Centered), widget::canvas("Statistics", Vsplit)};
         setupMainMenu(state, scenes);
         setupGameField(state, scenes);
         setupInventory(state, scenes);
@@ -58,7 +51,7 @@ int main() {
         auto handler = EventHandler(scenes, state);
 
         std::chrono::milliseconds sleepTime{static_cast<int>(1.0 / Config::current().maxFPS * 1000)};
-        std::thread renderThread([&]() {
+        std::thread               renderThread([&]() {
             while (state.running()) {
                 auto stamp = std::chrono::system_clock::now();
                 clear();
@@ -72,7 +65,7 @@ int main() {
                 auto passed = std::chrono::system_clock::now() - stamp;
                 std::this_thread::sleep_for(sleepTime - passed);
             }
-        });
+                      });
 
         handler.startLoop();
         renderThread.join();
