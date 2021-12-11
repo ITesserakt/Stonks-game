@@ -3,8 +3,8 @@
 //
 
 #include "EventHandler.h"
-#include "utils.h"
 #include "game_widgets/Sale.h"
+#include "utils.h"
 
 void EventHandler::startLoop() {
     Event event;
@@ -45,4 +45,3 @@ void EventHandler::startLoop() {
 
 EventHandler::EventHandler(const std::vector<std::shared_ptr<Canvas>> &scenes,
                            WorldState &state) : scenes(scenes), state(state) {}
-

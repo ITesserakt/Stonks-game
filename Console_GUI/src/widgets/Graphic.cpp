@@ -12,7 +12,7 @@ void Graphic::printColumn(std::string colSymbol, int colPos, double value, doubl
     int colSize = std::round((size.height - 4) * value / max);
     attron(COLOR_PAIR(widgetId));
     for (int i = 1; i <= colSize; i++) {
-        mvprintw(position.y + size.height - 1 - i, position.x + colPos, colSymbol.c_str());
+        mvprintw(position.y + size.height - 1 - i, position.x + colPos, "%s", colSymbol.c_str());
     }
     attroff(COLOR_PAIR(widgetId));
 }

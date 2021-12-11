@@ -163,7 +163,7 @@ namespace jsoncons {
             std::map<std::string, time_t> res;
             for (const auto &el : c._nameAndStart) {
                 if (el.second.isSave)
-                    res.insert(std::tuple<std::string, time_t>(el.first, el.second.delta));
+                    res[el.first] = el.second.delta;
             }
 
             return {res};
