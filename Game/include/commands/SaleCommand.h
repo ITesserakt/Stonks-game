@@ -10,30 +10,27 @@
 #include "StateCommand.h"
 #include "game_widgets/Sale.h"
 
-struct SaleCommand
-    : virtual GameObjectCommand,
-      virtual StateCommand,
-      virtual UpdateCommand<Sale>,
-      virtual CloneCommand<SaleCommand> {
-    explicit SaleCommand(std::shared_ptr<Sale> sender, WorldState &state)
-        : StateCommand(state), WidgetCommand(std::move(sender)) {}
+struct SaleCommand : virtual GameObjectCommand,
+                     virtual StateCommand,
+                     virtual UpdateCommand<Sale>,
+                     virtual CloneCommand<SaleCommand> {
+    explicit SaleCommand(Sale &sender, WorldState &state) : StateCommand(state), WidgetCommand(sender) {}
 
     void act() override {
         if (!object.has_value()) return;
         auto item = object.value();
         if (state.getWorld().couldPutInto()) {
-            auto sold = state.getPlayer().sellItem(item.id, sender->currentPrice());
+            auto sold = state.getPlayer().sellItem(item.id, sender.currentPrice());
             if (sold == nullptr) return;
             state.getWorld().putItem(std::move(sold));
-            sender->growPrice(-sender->currentPrice());
+            sender.growPrice(-sender.currentPrice());
             object.reset();
-            sender->clearItem();
+            sender.clearItem();
         }
     }
 
     void update() override {
-        if (sender->object.has_value())
-            object.emplace(*sender->object);
+        if (sender.object.has_value()) object.emplace(*sender.object);
         else
             object.reset();
     }

@@ -10,13 +10,11 @@
 #include "StateCommand.h"
 #include "game_widgets/Purchase.h"
 
-struct PurchaseCommand
-    : virtual GameObjectCommand,
-      virtual StateCommand,
-      virtual UpdateCommand<Purchase>,
-      virtual CloneCommand<PurchaseCommand> {
-    explicit PurchaseCommand(std::shared_ptr<Purchase> sender, WorldState &state)
-        : StateCommand(state), WidgetCommand(std::move(sender)) {}
+struct PurchaseCommand : virtual GameObjectCommand,
+                         virtual StateCommand,
+                         virtual UpdateCommand<Purchase>,
+                         virtual CloneCommand<PurchaseCommand> {
+    explicit PurchaseCommand(Purchase &sender, WorldState &state) : StateCommand(state), WidgetCommand(sender) {}
 
     void act() override {
         if (!object.has_value()) return;
@@ -26,13 +24,12 @@ struct PurchaseCommand
             if (bought == nullptr) return;
             state.getPlayer().buyItem(std::move(bought));
             object.reset();
-            sender->clearItem();
+            sender.clearItem();
         }
     }
 
     void update() override {
-        if (sender->object.has_value())
-            object.emplace(*sender->object);
+        if (sender.object.has_value()) object.emplace(*sender.object);
         else
             object.reset();
     }

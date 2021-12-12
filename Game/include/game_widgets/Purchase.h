@@ -6,10 +6,10 @@
 
 #include <functional>
 
-#include "widgets/HoverableWidget.h"
 #include "Command.h"
 #include "GameObject.h"
 #include "optional.hpp"
+#include "widgets/HoverableWidget.h"
 
 class Purchase : public HoverableWidget {
     friend struct PurchaseCommand;
@@ -19,12 +19,11 @@ private:
 
 public:
     template <typename C>
-    Purchase(int index, C &&cmd)
-        : Widget(""),
-          ColorWidget(""),
-          HoverableWidget(index, Command::noop()) {
+    Purchase(int index, C &&cmd) : Widget(""), ColorWidget(""), HoverableWidget(index, Command::noop()) {
         applyAction(std::forward<C>(cmd));
     }
+
+    explicit Purchase(int index) : Purchase(index, Command::noop()) {}
 
     void update(GameObject &&item);
     void clearItem();

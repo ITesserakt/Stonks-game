@@ -13,17 +13,16 @@ class Sale : public HoverableWidget {
     friend struct SaleCommand;
 
 private:
-    GameObject::Cost newPrice = 0;
+    GameObject::Cost                        newPrice = 0;
     std::experimental::optional<GameObject> object;
 
 public:
     template <typename C>
-    explicit Sale(int index, C &&cmd)
-        : Widget(""),
-          ColorWidget(""),
-          HoverableWidget(index, Command::noop()) {
+    explicit Sale(int index, C &&cmd) : Widget(""), ColorWidget(""), HoverableWidget(index, Command::noop()) {
         applyAction(std::forward<C>(cmd));
     }
+
+    explicit Sale(int index) : Sale(index, Command::noop()) {}
 
     GameObject::Cost currentPrice();
 

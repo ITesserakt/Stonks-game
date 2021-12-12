@@ -8,6 +8,7 @@
 #include "Statistics.h"
 #include "WorldState.h"
 #include "widgets/MessageBox.h"
+#include "widgets/dsl/DSL.h"
 #include <thread>
 
 using Frontend = console_gui::NCurses;
@@ -15,8 +16,7 @@ using namespace std::chrono_literals;
 
 void close(bool withFailure) {
     console_gui::dispose<Frontend>();
-    if (withFailure)
-        std::cout << "Exception occurred. See log.txt for details" << std::endl;
+    if (withFailure) std::cout << "Exception occurred. See log.txt for details" << std::endl;
 }
 
 int main() {
@@ -46,7 +46,7 @@ int main() {
         auto handler = EventHandler(scenes, state);
 
         std::chrono::milliseconds sleepTime{static_cast<int>(1.0 / Config::current().maxFPS * 1000)};
-        std::thread renderThread([&]() {
+        std::thread               renderThread([&]() {
             while (state.running()) {
                 auto stamp = std::chrono::system_clock::now();
                 clear();
@@ -60,7 +60,7 @@ int main() {
                 auto passed = std::chrono::system_clock::now() - stamp;
                 std::this_thread::sleep_for(sleepTime - passed);
             }
-        });
+                      });
 
         handler.startLoop();
         renderThread.join();

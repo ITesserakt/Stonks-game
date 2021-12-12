@@ -6,6 +6,7 @@
 #include "Canvas.h"
 #include "World.h"
 #include "WorldState.h"
+#include "widgets/dsl/DSL.h"
 
 using Canvases = std::vector<std::shared_ptr<Canvas>>;
 

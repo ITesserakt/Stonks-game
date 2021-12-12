@@ -31,15 +31,22 @@ struct CloneCommand : virtual Command {
 
     template <typename C>
     auto then(CloneCommand<C> &&cmd) &&;
+
+    template <typename C>
+    auto operator|(C cmd) && {
+        return std::move(*this).then(std::move(cmd));
+    }
 };
 
 template <typename T>
 class WidgetCommand : public virtual Command {
 protected:
-    std::shared_ptr<T> sender;
+    T &sender;
 
 public:
-    explicit WidgetCommand(std::shared_ptr<T> sender) : sender(sender) {}
+    using widget_type = T;
+
+    explicit WidgetCommand(T &sender) : sender(sender) {}
 };
 
 template <typename T>
@@ -67,10 +74,9 @@ template <typename C>
 auto CloneCommand<Self>::then(CloneCommand<C> &&cmd) && {
     struct ChainCommand : CloneCommand<ChainCommand> {
         Self a;
-        C b;
+        C    b;
 
-        ChainCommand(CloneCommand<Self> &&a, CloneCommand<C> &&b)
-            : a(a.clone()), b(b.clone()) {}
+        ChainCommand(CloneCommand<Self> &&a, CloneCommand<C> &&b) : a(a.clone()), b(b.clone()) {}
 
         void act() override {
             a.act();
