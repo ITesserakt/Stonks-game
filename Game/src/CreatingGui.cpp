@@ -19,12 +19,14 @@ using namespace std::string_literals;
 using namespace widget;
 
 void setupMainMenu(WorldState &state, Canvases &scenes) {
+    setup::auto_index<button> guard;
+
     canvas{scenes[MainMenu]}.append(label{"game name", "Stonks Game\n", setup::color(COLOR_YELLOW)},
-            button{"play", 0, setup::command<SceneChangeCommand>(state, scenes[SceneNames::GameField])},
-            button{"settings", 1, setup::command<SceneChangeCommand>{state, scenes[SceneNames::Settings]}},
-            button{"guide", 2, setup::command<SceneChangeCommand>{state, scenes[SceneNames::Guide]}},
-            button{"statistics", 3, setup::command<SceneChangeCommand>{state, scenes[SceneNames::Statistics]}},
-            button{"quit", 4, setup::command<ShutdownCommand>{state}});
+            button{"play", guard, setup::command<SceneChangeCommand>(state, scenes[GameField])},
+            button{"settings", guard, setup::command<SceneChangeCommand>{state, scenes[Settings]}},
+            button{"guide", guard, setup::command<SceneChangeCommand>{state, scenes[Guide]}},
+            button{"statistics", guard, setup::command<SceneChangeCommand>{state, scenes[Statistics]}},
+            button{"quit", guard, setup::command<ShutdownCommand>{state}});
 }
 
 void setupGameField(WorldState &state, Canvases &scenes) {
@@ -130,29 +132,23 @@ void setupSettings(WorldState &state, Canvases &scenes) {
     groupForRemoveSave->hide();
     scenes[SceneNames::Settings]->bind(groupForRemoveSave);
 
-    butRt->applyAction(HideCommand(*groupForRestart, false)
-                               .then(HideCommand(*initialGroup))
-                               .then(StateCommand::fromFunction(state, [](WorldState &state) {    // for shifting
-                                   state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
-                               })));
+    butRt->applyAction(HideCommand(*groupForRestart, false) | HideCommand(*initialGroup) |
+                       StateCommand::fromFunction(state, [](WorldState &state) {          // for shifting
+                           state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
+                       }));
 
-    butSR->applyAction(HideCommand(*groupForRemoveSave, false)
-                               .then(HideCommand(*initialGroup))
-                               .then(StateCommand::fromFunction(state, [](WorldState &state) {    // for shifting
-                                   state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
-                               })));
+    butSR->applyAction(HideCommand(*groupForRemoveSave, false) | HideCommand(*initialGroup) |
+                       StateCommand::fromFunction(state, [](WorldState &state) {          // for shifting
+                           state.getCurrentScene().changeActiveWidget(Direction::DOWN, 1);// cursor
+                       }));
 
-    no->applyAction(HideCommand(*initialGroup, false)
-                            .then(HideCommand(*groupForRestart))
-                            .then(StateCommand::fromFunction(state, [](WorldState &state) {
-                                state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
-                            })));
+    no->applyAction(HideCommand(*initialGroup, false) | HideCommand(*groupForRestart) |
+                    StateCommand::fromFunction(state,
+                            [](WorldState &state) { state.getCurrentScene().changeActiveWidget(Direction::UP, 2); }));
 
-    noSR->applyAction(HideCommand(*initialGroup, false)
-                              .then(HideCommand(*groupForRemoveSave))
-                              .then(StateCommand::fromFunction(state, [](WorldState &state) {
-                                  state.getCurrentScene().changeActiveWidget(Direction::UP, 2);
-                              })));
+    noSR->applyAction(HideCommand(*initialGroup, false) | HideCommand(*groupForRemoveSave) |
+                      StateCommand::fromFunction(state,
+                              [](WorldState &state) { state.getCurrentScene().changeActiveWidget(Direction::UP, 2); }));
 
     butStMn->applyAction(SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
 }

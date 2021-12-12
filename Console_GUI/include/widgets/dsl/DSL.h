@@ -134,6 +134,15 @@ namespace widget {
                 *nullable = widget;
             }
         };
+
+        template <typename H>
+        struct auto_index {
+            std::size_t index = 0;
+
+            std::size_t operator()() {
+                return index++;
+            }
+        };
     }// namespace setup
 
     template <typename W>
@@ -148,9 +157,13 @@ namespace widget {
 
         Holder(std::shared_ptr<W> widget) : constructed(std::move(widget)) {}
 
-        operator std::shared_ptr<W>() { return constructed; }
+        operator std::shared_ptr<W>() {
+            return constructed;
+        }
 
-        W *operator->() { return constructed.operator->(); }
+        W *operator->() {
+            return constructed.operator->();
+        }
 
         template <typename Default>
         Holder<W> &operator<<(Default &&def) {
@@ -163,6 +176,10 @@ namespace widget {
         template <typename... Defaults>
         button(const std::string &name, unsigned int index, Defaults &&...def)
             : Holder<Button>(std::tuple<Defaults &&...>{std::forward<Defaults &&>(def)...}, name, index) {}
+
+        template <typename... Defaults>
+        button(const std::string &name, setup::auto_index<button> &idx, Defaults &&...def)
+            : button(name, idx(), std::forward<Defaults &&>(def)...) {}
     };
 
     struct label : Holder<Label> {
