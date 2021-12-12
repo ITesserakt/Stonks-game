@@ -27,12 +27,9 @@ int main() {
     try {
         console_gui::init<Frontend>();
 
-        Canvases scenes = {
-                std::make_shared<Canvas>("MainMenu", Centered),
-                std::make_shared<Canvas>("GameField", Vsplit),
-                std::make_shared<Canvas>("Inventory", Left),
-                std::make_shared<Canvas>("Guide", Left),
-                std::make_shared<Canvas>("Settings", Centered),
+        Canvases scenes = {std::make_shared<Canvas>("MainMenu", Centered),
+                std::make_shared<Canvas>("GameField", Vsplit), std::make_shared<Canvas>("Inventory", Vsplit),
+                std::make_shared<Canvas>("Guide", Left), std::make_shared<Canvas>("Settings", Centered),
                 std::make_shared<Canvas>("Statistics", Vsplit)};
         setupMainMenu(state, scenes);
         setupGameField(state, scenes);

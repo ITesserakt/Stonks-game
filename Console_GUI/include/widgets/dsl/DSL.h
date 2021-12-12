@@ -192,7 +192,7 @@ namespace widget {
         template <typename... Defaults>
         graphic(const std::string &name, const std::string &abscissa, const std::string &ordinance, UISize size,
                 const std::function<double()> &valueSink, Defaults &&...def)
-            : Holder<Graphic>(std::tuple<Defaults &&...>{std::forward<Defaults &&>(def)...}, name, ordinance, abscissa,
+            : Holder<Graphic>(std::tuple<Defaults &&...>{std::forward<Defaults &&>(def)...}, name, abscissa, ordinance,
                       size, valueSink) {}
     };
 
