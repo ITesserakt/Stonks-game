@@ -6,15 +6,13 @@
 
 #include "Command.h"
 #include "GameObject.h"
-#include "optional.hpp"
-#include "widgets/HoverableWidget.h"
+#include "game_widgets/TradeButton.h"
 
-class Sale : public HoverableWidget {
+class Sale : public TradeButton {
     friend struct SaleCommand;
 
 private:
     GameObject::Cost                        newPrice = 0;
-    std::experimental::optional<GameObject> object;
 
 public:
     template <typename C>
@@ -33,6 +31,4 @@ public:
     void show() override;
 
     void update(GameObject &&item);
-
-    void clearItem();
 };

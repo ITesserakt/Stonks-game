@@ -49,8 +49,3 @@ void Sale::update(GameObject &&item) {
     if (dynamic_cast<UpdateCommand<Sale> *>(todo.get()) != nullptr)
         dynamic_cast<UpdateCommand<Sale> *>(todo.get())->update();
 }
-
-void Sale::clearItem() {
-    object.reset();
-    setName("");
-}

@@ -8,15 +8,11 @@
 
 #include "Command.h"
 #include "GameObject.h"
-#include "optional.hpp"
 #include "widgets/HoverableWidget.h"
+#include "game_widgets/TradeButton.h"
 
-class Purchase : public HoverableWidget {
+class Purchase : public TradeButton {
     friend struct PurchaseCommand;
-
-private:
-    std::experimental::optional<GameObject> object;
-
 public:
     template <typename C>
     Purchase(int index, C &&cmd) : Widget(""), ColorWidget(""), HoverableWidget(index, Command::noop()) {
@@ -26,10 +22,6 @@ public:
     explicit Purchase(int index) : Purchase(index, Command::noop()) {}
 
     void update(GameObject &&item);
-    void clearItem();
-
-    bool isObjectExist() { return object.has_value(); }
-    GameObject::Id getItemId() { return object->id; }
 
     UISize getSize() override;
 

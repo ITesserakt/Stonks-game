@@ -11,7 +11,8 @@ void Canvas::show() {
             child->show();
             y += child->getSize().height;
         }
-    } else if (align == Centered) {
+    }
+    else if (align == Centered) {
         int xMax = this->getSize().width;
         int yMax = this->getSize().height;
 
@@ -34,14 +35,16 @@ void Canvas::show() {
             child->show();
             yInd += child->getSize().height;
         }
-    } else if (align == Right) {
+    }
+    else if (align == Right) {
         x = getSize().width;
         for (auto child : getChildrenWithType<PositionedWidget>()) {
             child->changePos(x - child->getSize().width, y);
             child->show();
             y += child->getSize().height;
         }
-    } else if (align == Vsplit) {
+    }
+    else if (align == Vsplit) {
         int xMax = this->getSize().width;
         int yMax = this->getSize().height;
         int windowsAmount = children.size();

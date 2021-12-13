@@ -9,7 +9,11 @@ private:
 
     JSONCONS_TYPE_TRAITS_FRIEND
 
-    Player(unsigned int inventorySize, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container);
+    Player(unsigned int inventorySize,
+           double money,
+           unsigned int availableSlots,
+           std::map<GameObject::Id, std::unique_ptr<GameObject>> container,
+           unsigned int playerId);
 
 public:
     explicit Player();
@@ -25,6 +29,7 @@ namespace jsoncons {
             if (!j.contains("money")) return false;
             if (!j.contains("availableSlots")) return false;
             if (!j.contains("objects")) return false;
+            if (!j.contains("Id")) return false;
             return true;
         }
 
@@ -33,18 +38,20 @@ namespace jsoncons {
             auto money = j["money"].as<double>();
             auto availableSlots = j["availableSlots"].as<unsigned int>();
             auto objs = j["objects"].as<std::map<GameObject::Id, GameObject>>();
+            auto PlayerId = j["Id"].as<unsigned int>();
             std::map<GameObject::Id, std::unique_ptr<GameObject>> objsPtr;
             for (auto &[id, obj] : objs)
                 objsPtr[id] = std::make_unique<GameObject>(obj);
 
-            return {invSize, money, availableSlots, std::move(objsPtr)};
+            return {invSize, money, availableSlots, std::move(objsPtr), PlayerId};
         }
 
         static json to_json(const Player &g) {
             return json{{{"inventorySize", g.inventorySize},
                          {"money", g.money},
                          {"availableSlots", g.availableSlots.load()},
-                         {"objects", g.container}}};
+                         {"objects", g.container},
+                         {"id", g.Id}}};
         }
     };
 }// namespace jsoncons

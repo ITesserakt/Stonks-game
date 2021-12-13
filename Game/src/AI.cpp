@@ -88,8 +88,12 @@ AI AI::fromJson(std::shared_ptr<World> world, const jsoncons::json &json) {
             json["debug"].as_bool(),
             json["money"].as<double>(),
             json["availableSlots"].as_integer<unsigned int>(),
-            std::move(objectsPtr)};
+            std::move(objectsPtr),
+            json["id"].as_integer<unsigned int>()};
 }
 
-AI::AI(std::shared_ptr<World> world, bool debugFlag, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container)
-    : world(world), debugFlag(debugFlag), Gamer(money, availableSlots, std::move(container)) {}
+AI::AI(std::shared_ptr<World> world, bool debugFlag,
+       double money, unsigned int availableSlots,
+       std::map<GameObject::Id, std::unique_ptr<GameObject>> container,
+       unsigned int gamerId)
+    : world(world), debugFlag(debugFlag), Gamer(money, availableSlots, gamerId, std::move(container)) {}

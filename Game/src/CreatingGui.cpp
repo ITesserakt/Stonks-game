@@ -43,15 +43,19 @@ void setupGameField(WorldState &state, Canvases &scenes) {
                     label{"money_amount", "Balance: \n", withUpdate(100ms, balanceUpdate)},
                     many<Purchase>(Config::current().worldSize) << command<PurchaseCommand>(self<Purchase>{}, state),
                     message_box{"win_message", "You have won!", Center, hide(true)}},
-            group{"statistics"}, shared_graphic{"Price", "$", "t", {30, 20}, state});
-}// FIXME There are 3 panels on the screen. Is it expected?
+            group{"statistics",
+                    shared_graphic{"Price", "$", "t", {30, 20}, state}});
+}
 
 void setupInventory(WorldState &state, Canvases &scenes) {
-    canvas{scenes[Inventory]}.append(group{"management", label{"inv", "Inventory\n", color(COLOR_YELLOW)},
-                                             many<Sale>(Config::current().activePreset().inventorySize)
-                                                     << command<SaleCommand>(self<Sale>{}, state)},
-            group{"statistics"}, shared_graphic{"Price", "$", "t", {30, 20}, state});
-}// FIXME left group does not work
+    canvas{scenes[Inventory]}.append(
+            group{"management",
+                  label{"inv", "Inventory\n", color(COLOR_YELLOW)},
+                  many<Sale>(Config::current().activePreset().inventorySize)
+                        << command<SaleCommand>(self<Sale>{}, state)},
+            group{"statistics",
+                    shared_graphic{"Price", "$", "t", {30, 20}, state}});
+}
 
 void setupGuide(WorldState &state, Canvases &scenes) {
     constexpr auto guideText = "STONKS GAME is a exchange trading simulator. In this game you\n"

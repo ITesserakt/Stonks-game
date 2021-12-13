@@ -36,7 +36,3 @@ UISize Purchase::getSize() {
     return size;
 }
 
-void Purchase::clearItem() {
-    object.reset();
-    setName("");
-}

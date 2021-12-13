@@ -4,7 +4,7 @@
 #include "Statistics.h"
 #include "WorldState.h"
 
-// This graphic is using data from statistic doesn't use it's own
+// This graphic is using data from statistic and doesn't use it's own std::list<double> values
 // It has SHARED data
 class SharedGraphic : public Graphic {
 protected:

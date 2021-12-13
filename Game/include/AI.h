@@ -12,7 +12,7 @@ private:
 
     JSONCONS_TYPE_TRAITS_FRIEND
 
-    AI(std::shared_ptr<World> world, bool debugFlag, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container);
+    AI(std::shared_ptr<World> world, bool debugFlag, double money, unsigned int availableSlots, std::map<GameObject::Id, std::unique_ptr<GameObject>> container, unsigned int gamerId);
 
 public:
     AI(std::shared_ptr<World> state, bool debug, unsigned int maxSlots);
@@ -35,6 +35,7 @@ namespace jsoncons {
             if (!j.is_object()) return false;
             if (!j.contains("debug")) return false;
             if (!j.contains("money")) return false;
+            if (!j.contains("id")) return false;
             if (!j.contains("availableSlots") && !j["availableSlots"].is_number()) return false;
             if (!j.contains("objects") && !j["objects"].is_array()) return false;
             return true;
@@ -44,6 +45,7 @@ namespace jsoncons {
             return json{{{"debug", bot.debugFlag},
                          {"money", bot.money},
                          {"availableSlots", bot.availableSlots.load()},
+                         {"id", bot.Id},
                          {"objects", static_cast<const ViewableContainer<GameObject, GameObject::Id> &>(bot)}}};
         }
     };
