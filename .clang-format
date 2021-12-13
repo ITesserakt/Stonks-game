@@ -1,7 +1,8 @@
 # Generated from CLion C/C++ Code Style settings
+BinPackParameters: false
+BinPackArguments: true
 AccessModifierOffset: -4
 AllowAllArgumentsOnNextLine: true
-PackConstructorInitializers: BinPack
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true

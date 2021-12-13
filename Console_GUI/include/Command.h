@@ -33,7 +33,7 @@ struct CloneCommand : virtual Command {
     auto then(CloneCommand<C> &&cmd) &&;
 
     template <typename C>
-    auto operator|(C cmd) && {
+    auto operator+(C cmd) && {
         return std::move(*this).then(std::move(cmd));
     }
 };

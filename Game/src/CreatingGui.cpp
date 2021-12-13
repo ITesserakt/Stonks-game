@@ -13,24 +13,24 @@
 #include "commands/ShutdownCommand.h"
 #include "game_widgets/Purchase.h"
 #include "game_widgets/Sale.h"
-#include "game_widgets/SharedGraphic.h"
 #include "game_widgets/dsl/DSL.h"
 #include "widgets/dsl/DSL.h"
 
 using namespace widget;
+using namespace widget::setup;
+using namespace widget::implicit;
 using namespace std::string_literals;
 using namespace std::chrono_literals;
-using namespace widget::setup;
 
 void setupMainMenu(WorldState &state, Canvases &scenes) {
-    setup::auto_index<button> guard;
+    setup::auto_index<Button> guard;
 
     canvas{scenes[MainMenu]}.append(label{"game name", "Stonks Game\n", color(COLOR_YELLOW)},
             button{"play", guard, command<SceneChangeCommand>(state, scenes[GameField])},
-            button{"settings", guard, command<SceneChangeCommand>{state, scenes[Settings]}},
-            button{"guide", guard, command<SceneChangeCommand>{state, scenes[Guide]}},
-            button{"statistics", guard, command<SceneChangeCommand>{state, scenes[Statistics]}},
-            button{"quit", guard, command<ShutdownCommand>{state}});
+            button{"settings", guard, command<SceneChangeCommand>(state, scenes[Settings])},
+            button{"guide", guard, command<SceneChangeCommand>(state, scenes[Guide])},
+            button{"statistics", guard, command<SceneChangeCommand>(state, scenes[Statistics])},
+            button{"quit", guard, command<ShutdownCommand>(state)});
 }
 
 void setupGameField(WorldState &state, Canvases &scenes) {
@@ -41,15 +41,15 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     canvas{scenes[GameField]}.append(
             group{"management", label{"stocks", "Game field\n"} << color(COLOR_YELLOW),
                     label{"money_amount", "Balance: \n", withUpdate(100ms, balanceUpdate)},
-                    many<Purchase>(Config::current().worldSize) << sender_command<PurchaseCommand>(state),
+                    many<Purchase>(Config::current().worldSize) << command<PurchaseCommand>(self<Purchase>{}, state),
                     message_box{"win_message", "You have won!", Center, hide(true)}},
             group{"statistics"}, shared_graphic{"Price", "$", "t", {30, 20}, state});
 }// FIXME There are 3 panels on the screen. Is it expected?
 
 void setupInventory(WorldState &state, Canvases &scenes) {
-    canvas{scenes[Inventory]}.append(
-            group{"management", label{"inv", "Inventory\n", color(COLOR_YELLOW)},
-                    many<Sale>(Config::current().activePreset().inventorySize) << sender_command<SaleCommand>(state)},
+    canvas{scenes[Inventory]}.append(group{"management", label{"inv", "Inventory\n", color(COLOR_YELLOW)},
+                                             many<Sale>(Config::current().activePreset().inventorySize)
+                                                     << command<SaleCommand>(self<Sale>{}, state)},
             group{"statistics"}, shared_graphic{"Price", "$", "t", {30, 20}, state});
 }// FIXME left group does not work
 
@@ -71,95 +71,67 @@ void setupGuide(WorldState &state, Canvases &scenes) {
 }
 
 void setupSettings(WorldState &state, Canvases &scenes) {
-    auto label = std::make_shared<Label>("guide", "Settings\n");
-    label->turnOn(COLOR_YELLOW);
-
-    int  butIndex = 0;
-    auto butRt    = std::make_shared<Button>("reset config", butIndex++);
-    auto butSR    = std::make_shared<Button>("remove save", butIndex++);
-
-    auto levelNames = std::make_shared<Group>("Difficulties");
-    auto levels     = std::make_shared<Button>(
-            "difficulties", butIndex++, Command::fromFunction([isLevelsExpanded = false, levelNames]() mutable {
-                levelNames->hide(isLevelsExpanded);
-                isLevelsExpanded = !isLevelsExpanded;
-                }));
-
-    int number = 0;
-    for (const auto &level : Config::current().presets) {
-        auto levelLabel = std::make_shared<Button>("level " + std::to_string(number), butIndex++);
-        levelLabel->applyAction(Command::fromFunction([number]() {
-            Config::modify([number](ConfigData &data) { data.difficulty = number; });
-        }).then(ShutdownCommand(state)));
-        levelNames->bind(levelLabel);
-        number++;
-    }
-    levelNames->hide(true);
-
-    auto butStMn =
-            std::make_shared<Button>("back", butIndex++, SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
-
-    auto initialGroup = std::make_shared<Group>("Initial");
-    initialGroup->bind(label);
-    initialGroup->bind(butRt);
-    initialGroup->bind(butSR);
-    initialGroup->bind(levels);
-    initialGroup->bind(levelNames);
-    initialGroup->bind(butStMn);
-    scenes[SceneNames::Settings]->bind(initialGroup);
-
-    auto restartMessage = std::make_shared<MessageBox>("configRestart",
-            "Do you want to restart game\n"
-            "to apply config changes?\n"
-            "It will cause save delete.",
-            SpecialPosition::Special);
-
-    auto yes = std::make_shared<Button>("yes", butIndex++, Command::fromFunction([] {
+    auto_index<Button> guard;
+    auto               toggle = [toggled = false]() mutable {
+        toggled = !toggled;
+        return toggled;
+    };
+    auto constructLevel = [&state, &guard](std::size_t idx) {
+        auto preset = Config::current().presets[idx];
+        return std::move(*button{
+                preset.name, guard, command_fn{[idx, &state] {
+                    Config::modify([idx](ConfigData &data) { data.difficulty = idx; });
+                    ShutdownCommand(state).act();
+                }}}.constructed);
+    };
+    auto restartConfigFn = [] {
         Config::modify([](ConfigData &data) { data = ConfigData{}; });
         std::filesystem::remove("../share/save.json");
         std::filesystem::remove("../share/statistic.json");
         exit(0);
-    }));
-    auto no  = std::make_shared<Button>("no", butIndex++);
-
-    auto groupForRestart = std::make_shared<Group>("Restart");
-    groupForRestart->bind(restartMessage);
-    groupForRestart->bind(yes);
-    groupForRestart->bind(no);
-    groupForRestart->hide(true);
-    scenes[SceneNames::Settings]->bind(groupForRestart);
-
-    auto saveDelete = std::make_shared<MessageBox>("save_remove",
-            "Are you sure to delete save file?\n"
-            "It cannot be restored",
-            SpecialPosition::Special);
-
-    auto yesSR              = std::make_shared<Button>("yes", butIndex++, Command::fromFunction([] {
+    };
+    auto restartSaveFn = [] {
         std::filesystem::remove("../share/save.json");
         std::filesystem::remove("../share/statistic.json");
         exit(0);
-                 }));
-    auto noSR               = std::make_shared<Button>("no", butIndex++);
-    auto groupForRemoveSave = std::make_shared<Group>("Save remove");
-    groupForRemoveSave->bind(saveDelete);
-    groupForRemoveSave->bind(yesSR);
-    groupForRemoveSave->bind(noSR);
-    groupForRemoveSave->hide();
-    scenes[SceneNames::Settings]->bind(groupForRemoveSave);
+    };
 
-    butRt->applyAction(HideCommand(*groupForRestart, false) | HideCommand(*initialGroup) |
-                       ChangeActiveWidgetCommand(state, Direction::DOWN));
-
-    butSR->applyAction(HideCommand(*groupForRemoveSave, false) | HideCommand(*initialGroup) |
-                       ChangeActiveWidgetCommand(state, Direction::DOWN));
-
-    no->applyAction(HideCommand(*initialGroup, false) | HideCommand(*groupForRestart) | HideCommand(*levelNames) |
-                    ChangeActiveWidgetCommand(state, Direction::UP, 2));
-
-    noSR->applyAction(HideCommand(*initialGroup, false) | HideCommand(*groupForRemoveSave) | HideCommand(*levelNames) |
-                      ChangeActiveWidgetCommand(state, Direction::UP, 2));
-
-    butStMn->applyAction(SceneChangeCommand(state, scenes[SceneNames::MainMenu]));
+    canvas{scenes[Settings]}.append(
+            group{"initial", label{"title", "Settings\n", color(COLOR_YELLOW)},
+                    button{"reset_config", guard,
+                            command<HideCommand>(search<Group>("initial"), true) +
+                                    command<HideCommand>(search<Group>("restart_config"), false) +
+                                    command<ChangeActiveWidgetCommand>(state, Direction::DOWN)},
+                    button{"remove_save", guard,
+                            command<HideCommand>(search<Group>("initial"), true) +
+                                    command<HideCommand>(search<Group>("restart_save"), false) +
+                                    command<ChangeActiveWidgetCommand>(state, Direction::DOWN)},
+                    button{"Difficulties", guard, command<HideCommand>(search<Group>("difficulties"), toggle)},
+                    group{"difficulties", many<Button>(Config::current().presets.size(), constructLevel) << hide(true)},
+                    button{"back", guard, command<SceneChangeCommand>(state, scenes[MainMenu])}},
+            group{"restart_config",
+                    message_box{"restart_message",
+                            "Do you want to restart game\n"
+                            "to apply config changes?\n"
+                            "It will cause save delete.",
+                            SpecialPosition::Special},
+                    button{"yes", guard, command_fn{restartConfigFn}},
+                    button{"no", guard,
+                            command<HideCommand>(search<Group>("initial"), false) +
+                                    command<HideCommand>(search<Group>("restart_config"), true) +
+                                    command<ChangeActiveWidgetCommand>(state, Direction::UP, 2)}}
+                    << hide(true),
+            group{"restart_save",
+                    message_box{"restart_message",
+                            "Are you sure to delete save file?\n"
+                            "It cannot be restored",
+                            SpecialPosition::Special},
+                    button{"yes", guard, command_fn{restartSaveFn}},
+                    button{"no", guard,
+                            command<HideCommand>(search<Group>("initial"), true) +
+                                    command<HideCommand>(search<Group>("restart_save"), false) +
+                                    command<ChangeActiveWidgetCommand>(state, Direction::UP, 2)}}
+                    << hide(true));
 }
 
 void setupStatistics(WorldState &state, Canvases &scenes) {

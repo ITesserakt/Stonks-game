@@ -4,6 +4,7 @@
 // Created by tesserakt on 06.12.2021.
 //
 
+#include <any>
 #include <string>
 #include <utility>
 
@@ -18,6 +19,8 @@
 #pragma once
 
 namespace widget {
+    enum Resolution { Lazy, Eager };
+
     namespace __detail {
         template <std::size_t index, typename F, typename... Ts>
         struct foreach {
@@ -30,7 +33,7 @@ namespace widget {
 
         template <typename F, typename... Ts>
         struct foreach<0, F, Ts...> {
-            foreach (std::tuple<Ts...> &tuple, F action) { action(std::get<0>(tuple)); }
+            foreach (std::tuple<Ts...> &tuple, F action) { action(std::move(std::get<0>(tuple))); }
         };
 
         template <typename F, typename... Ts>
@@ -41,13 +44,41 @@ namespace widget {
                     <sizeof...(Ts) - 1, F, Ts...>(tuple, action);
         }
 
+        template <class TCallback, class TSourceTuple>
+        auto mapTuple(TCallback &&callback, const TSourceTuple &sourceTuple);
+
+        namespace {
+            template <class TCallback, class TSourceTuple, std::size_t... Indices>
+            auto mapTuple_(TCallback &&callback, const TSourceTuple &sourceTuple, std::index_sequence<Indices...>) {
+                return std::forward_as_tuple(callback(std::get<Indices>(sourceTuple))...);
+            }
+        }// namespace
+
+        template <class TCallback, class TSourceTuple>
+        auto mapTuple(TCallback &&callback, const TSourceTuple &sourceTuple) {
+            return mapTuple_(callback, sourceTuple, std::make_index_sequence<std::tuple_size<TSourceTuple>::value>());
+        }
+
         template <typename R, typename T, typename... Ts>
         constexpr bool hasArgOfType() {
-            if constexpr (std::is_same<T, R>::value) {
-                return true;
-            } else if constexpr (sizeof...(Ts) > 0) {
+            if constexpr (std::is_same<T, R>::value) { return true; }
+            else if constexpr (sizeof...(Ts) > 0) {
                 return hasArgOfType<R, Ts...>();
-            } else {
+            }
+            else {
+                return false;
+            }
+        }
+
+        template <typename R, typename T, typename... Ts>
+        constexpr bool hasArgWithSupertype() {
+            using Derived = std::remove_reference_t<T>;
+            using Base    = std::remove_reference_t<R>;
+            if constexpr (std::is_base_of<Base, Derived>::value) { return true; }
+            else if constexpr (sizeof...(Ts) > 0) {
+                return hasArgOfType<R, Ts...>();
+            }
+            else {
                 return false;
             }
         }
@@ -56,15 +87,108 @@ namespace widget {
         T ctor(Args &&...args) {
             return T(std::forward<Args &&>(args)...);
         }
+
+        constexpr Resolution operator&&(Resolution lhs, Resolution rhs) {
+            if (lhs == Lazy || rhs == Lazy) return Lazy;
+            return Eager;
+        }
     }// namespace __detail
 
-    namespace setup {
-        template <typename W>
-        struct DSLSetup {
-            virtual void effect(W &widget) = 0;
+    namespace implicit {
+        enum SearchScope { Root, FirstBindable, Bindable };
+
+        template <Resolution type>
+        struct DSLImplicit {
+            constexpr static auto resolution_type = type;
         };
 
-        struct hide : DSLSetup<PositionedWidget> {
+        template <typename W>
+        struct self : DSLImplicit<Eager> {
+            W &inject(Widget &self) {
+                return *self.as<W>();
+            }
+        };
+
+        template <typename W, SearchScope scope = Root>
+        struct search : DSLImplicit<Lazy> {
+            static constexpr bool lazy = true;
+            const std::string    &name;
+            std::string           bindableName;
+
+            search(const std::string &name) : name(name) {}
+            search(const std::string &name, std::string bindableName)
+                : search(name), bindableName(std::move(bindableName)) {}
+
+            template <typename B, typename F = bool(B &)>
+            B &findParentBindable(
+                    Widget &current,
+                    F       condition = [](auto &_) { return true; }) {
+                if (current.getParent().expired()) {
+                    throw std::runtime_error(
+                            "Parent widget of " + current.getName() + " had expired or current widget is root");
+                }
+                else {
+                    auto parent = current.getParent().lock();
+                    if (parent == nullptr)
+                        throw std::runtime_error(
+                                "Cannot find canvas in parents of " + current.getName() + " because it's root");
+                    if (parent->is<B>() && condition(*parent->as<B>())) return *parent->as<B>();
+                    else
+                        return findParentBindable<B>(*parent);
+                }
+            }
+
+            W &inject(Widget &self) {
+                if constexpr (scope == Root)
+                    return *findParentBindable<Canvas>(self).getChildWithName(name)->template as<W>();
+                else if constexpr (scope == FirstBindable)
+                    return *findParentBindable<BindableWidget>(self).getChildWithName(name)->template as<W>();
+                else
+                    return *findParentBindable<BindableWidget>(
+                            self, [this](auto &b) { return b.getName() == this->bindableName; })
+                                    .getChildWithName(name)
+                                    ->template as<W>();
+            }
+        };
+
+        template <typename T>
+        constexpr auto is_implicit_v = std::is_base_of_v<DSLImplicit<Lazy>, std::remove_reference_t<T>> ||
+                                       std::is_base_of_v<DSLImplicit<Eager>, std::remove_reference_t<T>>;
+
+        template <typename Tu>
+        auto resolveImplicits(Widget &scope, Tu &&args) {
+            auto mapFn = [&scope](auto &&arg) -> decltype(auto) {
+                if constexpr (implicit::is_implicit_v<decltype(arg)>) return arg.inject(scope);
+                else
+                    return std::forward<decltype(arg)>(arg);
+            };
+            return __detail::mapTuple(mapFn, args);
+        }
+    }// namespace implicit
+
+    namespace setup {
+        struct DSLSetupErased {
+            virtual void effectErased(std::shared_ptr<Widget> widget) = 0;
+            template <typename W>
+            void effectErased(std::vector<std::shared_ptr<W>> widgets) {
+                for (auto &item : widgets) effectErased(item->template as<Widget>());
+            }
+        };
+
+        template <typename W, Resolution type>
+        struct DSLSetup : DSLSetupErased {
+            constexpr static auto resolution_type = type;
+
+            virtual void effect(W &widget) = 0;
+            virtual ~DSLSetup()            = default;
+
+        private:
+            void effectErased(std::shared_ptr<Widget> widget) final {
+                effect(*widget->template as<W>());
+            }
+        };
+
+        struct hide : DSLSetup<PositionedWidget, Eager> {
             bool h;
             hide(bool hide) : h(hide) {}
             void effect(PositionedWidget &widget) override {
@@ -72,43 +196,54 @@ namespace widget {
             }
         };
 
-        template <typename C>
-        struct command : DSLSetup<HoverableWidget> {
-            C cmd;
-            template <typename... Args>
-            command(Args &&...cmd) : cmd(std::forward<Args>(cmd)...) {}
+        namespace __detail {
+            template <typename C, Resolution type, typename... Args>
+            struct command_helper : DSLSetup<HoverableWidget, type> {
+                std::tuple<Args &&...> args;
+                command_helper(Args &&...cmd) : args(std::forward<Args>(cmd)...) {}
+                command_helper(std::tuple<Args &&...> &&args) : args(std::move(args)) {}
+                void effect(HoverableWidget &widget) override {
+                    auto cmd = std::make_from_tuple<C>(implicit::resolveImplicits(widget, args));
+                    widget.applyAction(std::move(cmd));
+                }
+
+                template <typename C2, Resolution type2, typename... Ts>
+                auto operator+(command_helper<C2, type2, Ts...> &&other) && {
+                    constexpr auto combinedType = widget::__detail::operator&&(type, type2);
+                    struct combine : command_helper<C, combinedType, Args...> {
+                        std::tuple<Ts &&...> otherArgs;
+                        combine(std::tuple<Args &&...> &&args, std::tuple<Ts &&...> &&otherArgs)
+                            : command_helper<C, combinedType, Args...>(std::move(args)),
+                              otherArgs(std::move(otherArgs)) {}
+
+                        void effect(HoverableWidget &widget) override {
+                            auto cmd1 = std::make_from_tuple<C>(implicit::resolveImplicits(widget, args));
+                            auto cmd2 = std::make_from_tuple<C2>(implicit::resolveImplicits(widget, otherArgs));
+                            widget.applyAction(std::move(cmd1) + std::move(cmd2));
+                        }
+                    };
+                    return combine{std::move(args), std::move(other.args)};
+                }
+            };
+        }// namespace __detail
+
+        template <typename C, typename... Args>
+        auto command(Args &&...args) {
+            return __detail::command_helper<C, Lazy, Args...>{std::forward<Args &&>(args)...};
+        }
+
+        struct command_fn : DSLSetup<HoverableWidget, Eager> {
+            std::function<void()> fn;
+
+            template <typename F>
+            command_fn(F fn) : fn(fn) {}
+
             void effect(HoverableWidget &widget) override {
-                widget.applyAction(std::move(cmd));
+                widget.applyAction(Command::fromFunction(fn));
             }
         };
 
-        template <typename C, typename... Args>
-        auto sender_command(Args &&...args) {
-            using T = typename C::widget_type;
-
-            static_assert(std::is_constructible_v<C, T &, Args...> || std::is_constructible_v<C, Args...>,
-                    "Cannot find appropriate constructor. Sender param should be the first in the chosen parameters "
-                    "list");
-
-            struct sender_command_helper : DSLSetup<T> {
-                std::tuple<Args &&...> args;
-                sender_command_helper(Args &&...args) : args(std::forward<Args>(args)...) {}
-                void effect(T &widget) override {
-                    if constexpr (__detail::hasArgOfType<T, Args...>()) {
-                        auto obj = std::apply(__detail::ctor<C, Args &&...>, args);
-                        widget.applyAction(std::move(obj));
-                    } else {
-                        auto obj = std::apply(__detail::ctor<C, T &, Args &&...>,
-                                std::tuple_cat(std::tuple<T &>{widget}, std::move(args)));
-                        widget.applyAction(std::move(obj));
-                    }
-                }
-            };
-
-            return sender_command_helper(std::forward<Args &&>(args)...);
-        }
-
-        struct color : DSLSetup<ColorWidget> {
+        struct color : DSLSetup<ColorWidget, Eager> {
             int c;
             color(int color) : c(color) {}
             void effect(ColorWidget &widget) override {
@@ -117,7 +252,7 @@ namespace widget {
         };
 
         template <typename F>
-        struct withUpdate : DSLSetup<Label> {
+        struct withUpdate : DSLSetup<Label, Lazy> {
             F                         onUpdate;
             std::chrono::milliseconds duration;
             withUpdate(std::chrono::milliseconds duration, F onUpdate) : onUpdate(onUpdate), duration(duration) {}
@@ -127,7 +262,7 @@ namespace widget {
         };
 
         template <typename W>
-        struct copyTo : DSLSetup<W> {
+        struct copyTo : DSLSetup<W, Eager> {
             std::shared_ptr<W> *nullable;
             copyTo(std::shared_ptr<W> *nullable) : nullable(nullable) {}
             void effect(W &widget) override {
@@ -147,12 +282,23 @@ namespace widget {
 
     template <typename W>
     struct Holder {
-        std::shared_ptr<W> constructed;
+        std::shared_ptr<W>                                                       constructed;
+        std::vector<std::pair<std::shared_ptr<Widget>, setup::DSLSetupErased *>> lazyDefaults;
+        using widget_type = W;
 
         template <typename... Args, typename... Defaults>
         explicit Holder(std::tuple<Defaults...> &&def, Args &&...args)
             : constructed(std::make_shared<W>(std::forward<Args &&>(args)...)) {
-            __detail::tupleForeach(def, [this](auto &d) { d.effect(*constructed); });
+            __detail::tupleForeach(def, [this](auto &&d) {
+                using arg_type = std::remove_reference_t<decltype(d)>;
+                if constexpr (arg_type::resolution_type == Eager) d.effect(*constructed);
+                else if constexpr (arg_type::resolution_type == Lazy) {
+                    auto copy = new arg_type(std::forward<decltype(d)>(d));
+                    lazyDefaults.emplace_back(constructed, copy);
+                }
+                else
+                    throw std::runtime_error("Cannot defer class, not extended from DSLSetup");
+            });
         }
 
         Holder(std::shared_ptr<W> widget) : constructed(std::move(widget)) {}
@@ -178,7 +324,7 @@ namespace widget {
             : Holder<Button>(std::tuple<Defaults &&...>{std::forward<Defaults &&>(def)...}, name, index) {}
 
         template <typename... Defaults>
-        button(const std::string &name, setup::auto_index<button> &idx, Defaults &&...def)
+        button(const std::string &name, setup::auto_index<Button> &idx, Defaults &&...def)
             : button(name, idx(), std::forward<Defaults &&>(def)...) {}
     };
 
@@ -190,10 +336,18 @@ namespace widget {
 
     struct graphic : Holder<Graphic> {
         template <typename... Defaults>
-        graphic(const std::string &name, const std::string &abscissa, const std::string &ordinance, UISize size,
-                const std::function<double()> &valueSink, Defaults &&...def)
-            : Holder<Graphic>(std::tuple<Defaults &&...>{std::forward<Defaults &&>(def)...}, name, abscissa, ordinance,
-                      size, valueSink) {}
+        graphic(const std::string             &name,
+                const std::string             &abscissa,
+                const std::string             &ordinance,
+                UISize                         size,
+                const std::function<double()> &valueSink,
+                Defaults &&...def)
+            : Holder<Graphic>(std::tuple<Defaults &&...>{std::forward<Defaults &&>(def)...},
+                      name,
+                      abscissa,
+                      ordinance,
+                      size,
+                      valueSink) {}
     };
 
     struct message_box : Holder<MessageBox> {
@@ -204,8 +358,11 @@ namespace widget {
 
     struct canvas : Holder<Canvas> {
         template <typename... Widgets>
-        canvas(std::string name, Align align, Widgets... widgets) : Holder<Canvas>({}, name, align) {
+        canvas(std::string name, Align align, Widgets &&...widgets) : Holder<Canvas>({}, name, align) {
             (constructed->bind(widgets.constructed), ...);
+            (std::for_each(widgets.lazyDefaults.begin(), widgets.lazyDefaults.end(),
+                     [&widgets](auto d) { d.second->effectErased(d.first); }),
+                    ...);
         }
 
         canvas(std::shared_ptr<Canvas> c) : Holder<Canvas>(std::move(c)) {}
@@ -213,6 +370,9 @@ namespace widget {
         template <typename... Widgets>
         void append(Widgets... widgets) {
             (constructed->bind(widgets.constructed), ...);
+            (std::for_each(widgets.lazyDefaults.begin(), widgets.lazyDefaults.end(),
+                     [&widgets](auto d) { d.second->effectErased(d.first); }),
+                    ...);
         }
     };
 
@@ -220,12 +380,15 @@ namespace widget {
         template <typename... Widgets>
         explicit group(std::string name, Widgets... widgets) : Holder<Group>({}, name) {
             (constructed->bind(widgets.constructed), ...);
+            (lazyDefaults.insert(lazyDefaults.end(), widgets.lazyDefaults.begin(), widgets.lazyDefaults.end()), ...);
         }
     };
 
     template <typename W>
     struct many {
-        std::vector<std::shared_ptr<W>> constructed;
+        using widget_type = W;
+        std::vector<std::shared_ptr<W>>                                          constructed;
+        std::vector<std::pair<std::shared_ptr<Widget>, setup::DSLSetupErased *>> lazyDefaults;
 
         template <typename... Defaults, typename F = W(std::size_t &)>
         many(std::size_t count, F fn = __detail::ctor<W, std::size_t &>) : constructed(count) {

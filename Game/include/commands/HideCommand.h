@@ -8,9 +8,7 @@
 
 #include "Command.h"
 
-class HideCommand
-    : public virtual WidgetCommand<PositionedWidget>,
-      public virtual CloneCommand<HideCommand> {
+class HideCommand : public virtual WidgetCommand<PositionedWidget>, public virtual CloneCommand<HideCommand> {
 private:
     std::function<bool()> hideFn;
 
