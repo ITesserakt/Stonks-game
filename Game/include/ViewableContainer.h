@@ -17,6 +17,7 @@ private:
     mutable std::shared_mutex containerLock;
 
     JSONCONS_TYPE_TRAITS_FRIEND;
+    friend class game_logic_profitness_Test;
 
 protected:
     explicit ViewableContainer(decltype(container) &&container) : container(std::move(container)) {}

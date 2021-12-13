@@ -24,16 +24,18 @@ public:
 
     Widget(Widget &&) = default;
 
-    virtual ~Widget() = default;
-
     Widget &operator=(Widget &&) = default;
+
+    virtual ~Widget() = default;
 
     explicit Widget(std::string name);
 
     virtual void show() = 0;
 
     template <typename T>
-    bool is() { return dynamic_cast<T *>(this); }
+    bool is() {
+        return dynamic_cast<T *>(this);
+    }
 
     template <typename T>
     std::shared_ptr<T> as() {

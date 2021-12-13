@@ -11,10 +11,10 @@ void Purchase::show() {
     if (isBlowing) {
         init_pair(widgetId, COLOR_BLACK, col);
         attron(COLOR_PAIR(widgetId));
-        printw("%d. %s", tabIndex + 1, name.c_str());
+        printw("%d. %s", index, name.c_str());
         attroff(COLOR_PAIR(widgetId));
     } else {
-        printw("%d. %s", tabIndex + 1, name.c_str());
+        printw("%d. %s", index, name.c_str());
     }
     if (isBlowing && object.has_value()) {
         move(position.y + 1, position.x);

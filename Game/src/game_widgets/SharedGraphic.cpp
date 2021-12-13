@@ -1,6 +1,6 @@
 #include "game_widgets/SharedGraphic.h"
-#include "game_widgets/TradeButton.h"
 #include "Debug.h"
+#include "game_widgets/TradeButton.h"
 
 void SharedGraphic::updateData(double num) {
     auto current = state.getCurrentScene().getActiveWidget();
@@ -13,9 +13,10 @@ void SharedGraphic::updateData(double num) {
         if (list != nullptr) {
             values = *list;
             // clearing unnecessary data
-            while (values.size() > amountOfColumns) {
-                values.pop_front();
-            }
+            while (values.size() > amountOfColumns) { values.pop_front(); }
         }
+    }
+    else {
+        values.clear();
     }
 }

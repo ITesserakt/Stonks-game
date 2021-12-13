@@ -5,22 +5,24 @@
 #pragma once
 
 #include "Command.h"
-#include "GameObject.h"
 #include "game_widgets/TradeButton.h"
+#include "GameObject.h"
 
 class Sale : public TradeButton {
     friend struct SaleCommand;
 
 private:
-    GameObject::Cost                        newPrice = 0;
+    int              index;
+    GameObject::Cost newPrice = 0;
 
 public:
     template <typename C>
-    explicit Sale(int index, C &&cmd) : Widget(""), ColorWidget(""), HoverableWidget(index, Command::noop()) {
+    explicit Sale(int tabIndex, int index, C &&cmd)
+        : Widget(""), ColorWidget(""), HoverableWidget(tabIndex, Command::noop()), index(index) {
         applyAction(std::forward<C>(cmd));
     }
 
-    explicit Sale(int index) : Sale(index, Command::noop()) {}
+    explicit Sale(int tabIndex, int index) : Sale(tabIndex, index, Command::noop()) {}
 
     GameObject::Cost currentPrice();
 

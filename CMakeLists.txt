@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.6)
 project(Stonks-Game CXX)
 set(CMAKE_CXX_STANDARD 17)
 
+set(BUILD_TESTS OFF)
+set(JSONCONS_BUILD_TESTS OFF)
+set(CPPTERMINAL_BUILD_EXAMPLES OFF)
+set(CPPTERMINAL_ENABLE_TESING OFF)
+
 include(Install_libs.cmake)
 
 file(GLOB_RECURSE SOURCE_FILES Game/src/*.cpp)

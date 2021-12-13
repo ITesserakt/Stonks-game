@@ -36,7 +36,6 @@ TEST(api, widget_creation) {
     ASSERT_EQ(g.getName(), "Test");
     ASSERT_EQ(g.getChildren().size(), 0);
     ASSERT_EQ(g.getParent().lock(), nullptr);
-    ASSERT_EQ(g.getCanvas().lock(), nullptr);
 }
 
 TEST(api, right_child_creation) {
@@ -70,8 +69,6 @@ TEST(api, get_canvas) {
     auto but = std::make_shared<Group>("Group");
     can->bind(but);
 
-    ASSERT_EQ(but->getCanvas().lock(), can);
-    ASSERT_EQ(can->getCanvas().lock(), can);
     ASSERT_EQ(can->getParent().lock(), nullptr);
 }
 

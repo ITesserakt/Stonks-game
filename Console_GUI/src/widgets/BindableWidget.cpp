@@ -19,11 +19,11 @@ std::shared_ptr<Widget> BindableWidget::getChildWithName(const std::string &name
 
     for (auto &child : children)
         if (child->is<BindableWidget>()) {
-            auto result = child->as<BindableWidget>()->getChildWithName(name);
-            if (result == nullptr) continue;
-            return result;
+            try {
+                return child->as<BindableWidget>()->getChildWithName(name);
+            } catch (...) { continue; }
         }
-    return nullptr;
+    throw std::runtime_error("Cannot find widget with name " + name + " in " + getName());
 }
 
 const std::vector<std::shared_ptr<Widget>> &BindableWidget::getChildren() const {

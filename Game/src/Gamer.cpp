@@ -5,7 +5,7 @@
 #include "Statistics.h"
 #include <Gamer.h>
 
-auto Gamer::IdGenerator = 0U;
+unsigned int Gamer::IdGenerator = 0U;
 
 void Gamer::buyItem(std::unique_ptr<GameObject> item) {
 
@@ -47,19 +47,21 @@ std::unique_ptr<GameObject> Gamer::sellItem(GameObject::Id itemId) {
     return sellItem(itemId, item->cost);
 }
 
-Gamer::Gamer(double money,
-             unsigned int availableSlots,
-             unsigned int gamerId,
-             std::map<GameObject::Id, std::unique_ptr<GameObject>> container)
-    : money(money), availableSlots(availableSlots), ViewableContainer(std::move(container)), Id(gamerId) {}
+Gamer::Gamer(double                                           money,
+        unsigned int                                          availableSlots,
+        unsigned int                                          gamerId,
+        std::map<GameObject::Id, std::unique_ptr<GameObject>> container)
+    : money(money), availableSlots(availableSlots), ViewableContainer(std::move(container)), id(gamerId) {}
 
-Gamer::Gamer() : money(0), availableSlots(0), Id(IdGenerator++) {}
+Gamer::Gamer() : money(0), availableSlots(0), id(IdGenerator++) {}
 
 Gamer::Gamer(Gamer &&g) noexcept
-    : money(g.money), availableSlots(g.availableSlots.load()), ViewableContainer(std::move(g)), Id(IdGenerator++) {}
+    : money(g.money), availableSlots(g.availableSlots.load()), ViewableContainer(std::move(g)), id(IdGenerator++) {}
 
 double Gamer::getBalance() const { return money; }
 
-unsigned int Gamer::getId() const { return Id; }
+unsigned int Gamer::getId() const {
+    return id;
+}
 
 bool Gamer::couldBuy() const { return availableSlots > 0; }

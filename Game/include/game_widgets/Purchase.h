@@ -13,13 +13,18 @@
 
 class Purchase : public TradeButton {
     friend struct PurchaseCommand;
+
+private:
+    int index;
+
 public:
     template <typename C>
-    Purchase(int index, C &&cmd) : Widget(""), ColorWidget(""), HoverableWidget(index, Command::noop()) {
+    Purchase(int tabIndex, int index, C &&cmd)
+        : Widget(""), ColorWidget(""), HoverableWidget(tabIndex, Command::noop()), index(index) {
         applyAction(std::forward<C>(cmd));
     }
 
-    explicit Purchase(int index) : Purchase(index, Command::noop()) {}
+    explicit Purchase(int tabIndex, int index) : Purchase(tabIndex, index, Command::noop()) {}
 
     void update(GameObject &&item);
 

@@ -8,8 +8,8 @@
 #include <vector>
 
 class World : public ViewableContainer<GameObject, GameObject::Id> {
-    friend class game_logic_profitness_Test;
     friend class WorldState;
+    friend class game_logic_profitness_Test;
 
 private:
     std::vector<std::shared_ptr<Gamer>> players;

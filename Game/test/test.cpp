@@ -5,6 +5,7 @@
 #include <ObjectFactory.h>
 #include <World.h>
 #include <Player.h>
+#include <range/v3/all.hpp>
 
 using namespace jsoncons::literals;
 

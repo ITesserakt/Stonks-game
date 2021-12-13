@@ -54,36 +54,38 @@ struct UpdateCommand : public virtual WidgetCommand<T> {
     virtual void update() = 0;
 };
 
+template <typename Self, typename C>
+struct ChainCommand : CloneCommand<ChainCommand<Self, C>> {
+    Self a;
+    C    b;
+
+    ChainCommand(CloneCommand<Self> &&a, CloneCommand<C> &&b) : a(a.clone()), b(b.clone()) {}
+
+    void act() override {
+        a.act();
+        b.act();
+    }
+};
+
+template <typename F>
+struct FnCommand : CloneCommand<FnCommand<F>> {
+    F f;
+
+    explicit FnCommand(F &&f) : f(std::forward<F>(f)) {}
+
+    void act() override {
+        return f();
+    }
+};
+
 template <typename F>
 auto Command::fromFunction(F &&fn) {
-    struct FnCommand : CloneCommand<FnCommand> {
-        F f;
-
-        explicit FnCommand(F &&f) : f(std::forward<F>(f)) {}
-
-        void act() override {
-            return f();
-        }
-    };
-
     return FnCommand(std::forward<F>(fn));
 }
 
 template <typename Self>
 template <typename C>
 auto CloneCommand<Self>::then(CloneCommand<C> &&cmd) && {
-    struct ChainCommand : CloneCommand<ChainCommand> {
-        Self a;
-        C    b;
-
-        ChainCommand(CloneCommand<Self> &&a, CloneCommand<C> &&b) : a(a.clone()), b(b.clone()) {}
-
-        void act() override {
-            a.act();
-            b.act();
-        }
-    };
-
     return ChainCommand(std::move(*this), std::forward<CloneCommand<C>>(cmd));
 }
 

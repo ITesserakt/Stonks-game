@@ -7,8 +7,6 @@
 WorldState::WorldState(std::shared_ptr<World> w, std::shared_ptr<Player> player, std::vector<std::shared_ptr<AI>> bots)
     : world(std::move(w)), player(std::move(player)), bots(std::move(bots)) {
     botThreads.resize(this->bots.size());
-    for (unsigned int index = 0; index < this->bots.size(); index++)
-        botThreads[index] = this->bots[index]->startTrading(isActive);
 }
 
 WorldState::WorldState(WorldState &&s) noexcept
@@ -16,8 +14,6 @@ WorldState::WorldState(WorldState &&s) noexcept
       bots(std::move(s.bots)),
       world(std::move(s.world)) {
     botThreads.resize(this->bots.size());
-    for (unsigned int index = 0; index < this->bots.size(); index++)
-        botThreads[index] = this->bots[index]->startTrading(isActive);
 }
 
 WorldState::WorldState(unsigned int maxBots, bool debug, Canvas *currentScene)
@@ -29,7 +25,6 @@ WorldState::WorldState(unsigned int maxBots, bool debug, Canvas *currentScene)
     for (unsigned int index = 0; index < maxBots; index++) {
         bots[index] = std::make_shared<AI>(world, debug, 10);
         world->addGamer(bots[index]);
-        botThreads[index] = bots[index]->startTrading(isActive);
     }
     world->fillUp();
 }
@@ -46,13 +41,22 @@ World &WorldState::getWorld() { return *world; }
 
 Player &WorldState::getPlayer() { return *player; }
 
-bool WorldState::running() const { return isActive; }
+bool WorldState::running() const {
+    return isActive;
+}
 
-AI &WorldState::getRandomBot() { return *bots[random() % bots.size()]; }
+AI &WorldState::getRandomBot() {
+    return *bots[random() % bots.size()];
+}
 
 void WorldState::cancelAllAI() {
     for (auto &thread : botThreads) {
         thread.detach();
         thread.std::thread::~thread();
     }
+}
+
+void WorldState::run() {
+    for (unsigned int index = 0; index < this->bots.size(); index++)
+        botThreads[index] = this->bots[index]->startTrading(isActive);
 }

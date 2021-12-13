@@ -20,8 +20,8 @@ void close(bool withFailure) {
 }
 
 int main() {
-    bool failure = false;
-    WorldState state = loadWorldState();
+    bool       failure = false;
+    WorldState state   = loadWorldState();
     loadStatistic();
     std::set_terminate([] { close(true); });
     try {
@@ -49,7 +49,8 @@ int main() {
                 clear();
                 if (state.getCurrentScene() == *scenes[SceneNames::GameField]) {
                     paintGameFieldFrame(state, scenes, Config::current().debug);
-                } else if (state.getCurrentScene() == *scenes[SceneNames::Inventory]) {
+                }
+                else if (state.getCurrentScene() == *scenes[SceneNames::Inventory]) {
                     paintInventoryFrame(state, scenes);
                 }
                 state.getCurrentScene().show();

@@ -42,11 +42,9 @@ namespace jsoncons {
         }
 
         static json to_json(const AI &bot) {
-            return json{{{"debug", bot.debugFlag},
-                         {"money", bot.money},
-                         {"availableSlots", bot.availableSlots.load()},
-                         {"id", bot.Id},
-                         {"objects", static_cast<const ViewableContainer<GameObject, GameObject::Id> &>(bot)}}};
+            return json{{{"debug", bot.debugFlag}, {"money", bot.money}, {"availableSlots", bot.availableSlots.load()},
+                    {"id", bot.id},
+                    {"objects", static_cast<const ViewableContainer<GameObject, GameObject::Id> &>(bot)}}};
         }
     };
 }// namespace jsoncons

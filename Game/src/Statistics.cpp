@@ -2,14 +2,14 @@
 #include "Debug.h"
 #include <sstream>
 
-auto Stat::ItemStat::_valuesForEveryObject = std::map<GameObject::Id, Stat::ItemStat::sharedList>();
-auto Stat::Timer::_nameAndStart = std::map<std::string, time_struct>();
+std::map<GameObject::Id, Stat::ItemStat::sharedList> Stat::ItemStat::_valuesForEveryObject =
+        std::map<GameObject::Id, Stat::ItemStat::sharedList>();
+std::map<std::string, Stat::Timer::time_struct> Stat::Timer::_nameAndStart = std::map<std::string, time_struct>();
 
 std::map<std::string, int> Stat::Counter::_callersAndTheirNumber;
 
 int Stat::Counter::getValueByName(const char *name) {
-    if (_callersAndTheirNumber.find(name) != _callersAndTheirNumber.end())
-        return _callersAndTheirNumber[name];
+    if (_callersAndTheirNumber.find(name) != _callersAndTheirNumber.end()) return _callersAndTheirNumber[name];
     else
         return 0;
 }
@@ -17,22 +17,21 @@ int Stat::Counter::getValueByName(const char *name) {
 Stat::ItemStat::ItemStat(GameObject::Id itemId, double value) {
     if (_valuesForEveryObject.find(itemId) != _valuesForEveryObject.end()) {
         auto lst = _valuesForEveryObject[itemId];
-        if (lst->size() + 1 < _historySize)
-            lst->push_back(value);
+        if (lst->size() + 1 < _historySize) lst->push_back(value);
         else {
             lst->pop_front();
             lst->push_back(value);
         }
-    } else {
-        _valuesForEveryObject.insert(std::pair<GameObject::Id, sharedList>(itemId, std::make_shared<std::list<double>>()));
+    }
+    else {
+        _valuesForEveryObject.insert(
+                std::pair<GameObject::Id, sharedList>(itemId, std::make_shared<std::list<double>>()));
         _valuesForEveryObject[itemId]->push_back(value);
     }
 }
 Stat::ItemStat::sharedList Stat::ItemStat::getValuesById(GameObject::Id id) {
     auto it = _valuesForEveryObject.find(id);
-    if (it == _valuesForEveryObject.end()) {
-        return nullptr;
-    }
+    if (it == _valuesForEveryObject.end()) { return nullptr; }
     return it->second;
 }
 
@@ -44,7 +43,8 @@ std::string Stat::Timer::getTimeByName(const std::string &name, const std::strin
     char *buffer = new char[format.size() + 1];
     if (_nameAndStart.find(name) == _nameAndStart.end()) {
         Debug::logger << "Timer with name: " << name << " doesn't exist";
-    } else {
+    }
+    else {
         _nameAndStart[name].delta += time(nullptr) - _nameAndStart[name].start;
         _nameAndStart[name].start = time(nullptr);
     }

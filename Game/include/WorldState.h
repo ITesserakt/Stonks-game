@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <condition_variable>
 #include <utility>
 
 #include "AI.h"
@@ -42,6 +43,8 @@ public:
     [[nodiscard]] bool running() const;
 
     AI &getRandomBot();
+
+    void run();
 
     void cancelAllAI();
 };

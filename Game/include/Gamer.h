@@ -10,14 +10,17 @@ class Gamer : public std::enable_shared_from_this<Gamer>, public ViewableContain
 protected:
     double money;
 
-    // when game is restarted Id will be restored
-    // else Id will be new
-    const unsigned int Id;
+    // when game is restarted id will be restored
+    // else id will be new
+    const unsigned int  id;
     static unsigned int IdGenerator;
 
     std::atomic<unsigned int> availableSlots;
 
-    Gamer(double money, unsigned int availableSlots, unsigned int gamerId, std::map<GameObject::Id, std::unique_ptr<GameObject>> container);
+    Gamer(double                                                  money,
+            unsigned int                                          availableSlots,
+            unsigned int                                          gamerId,
+            std::map<GameObject::Id, std::unique_ptr<GameObject>> container);
 
     Gamer();
 
@@ -26,10 +29,10 @@ protected:
 public:
     virtual ~Gamer() = default;
 
-    virtual void buyItem(std::unique_ptr<GameObject> item);
+    virtual void                        buyItem(std::unique_ptr<GameObject> item);
     virtual std::unique_ptr<GameObject> sellItem(GameObject::Id itemId, GameObject::Cost newCost);
-    std::unique_ptr<GameObject> sellItem(GameObject::Id itemId);
-    double getBalance() const;
-    unsigned int getId() const;
-    bool couldBuy() const;
+    std::unique_ptr<GameObject>         sellItem(GameObject::Id itemId);
+    double                              getBalance() const;
+    unsigned int                        getId() const;
+    bool                                couldBuy() const;
 };
