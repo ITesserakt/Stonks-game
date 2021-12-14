@@ -57,6 +57,9 @@ void WorldState::cancelAllAI() {
 }
 
 void WorldState::run() {
-    for (unsigned int index = 0; index < this->bots.size(); index++)
-        botThreads[index] = this->bots[index]->startTrading(isActive);
+    if (isPaused) {
+        isPaused = false;
+        for (unsigned int index = 0; index < this->bots.size(); index++)
+            botThreads[index] = this->bots[index]->startTrading(isActive);
+    }
 }

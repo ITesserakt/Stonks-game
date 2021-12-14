@@ -13,8 +13,9 @@ private:
     std::shared_ptr<Player> player;
     std::vector<std::shared_ptr<AI>> bots;
     std::vector<std::thread> botThreads;
-    std::shared_ptr<World> world = std::make_shared<World>(ObjectFactory::fromFile("../share/objects.json"), Config::current().worldSize);
-    bool isActive = true;
+    std::shared_ptr<World>           world =
+            std::make_shared<World>(ObjectFactory::fromFile("../share/objects.json"), Config::current().worldSize);
+    bool               isActive = true, isPaused = true;
     std::random_device engine;
     std::mt19937 random = std::mt19937(engine());
 
