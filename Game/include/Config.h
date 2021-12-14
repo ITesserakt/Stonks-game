@@ -10,7 +10,8 @@ struct DifficultyPreset {
     std::string name;
     double initialMoney;
     int winCondition;
-    int inventorySize;
+    int         inventorySize;
+    double      taxPercentage;
 };
 
 struct ConfigData {
@@ -19,17 +20,17 @@ struct ConfigData {
     bool debug = false;
     unsigned int debugSpeedGame = 10;
     unsigned int maxFPS = 15;
-    unsigned int difficulty = 0;
-    std::vector<DifficultyPreset> presets = {
-            {"Easy", 1000, 10000, 5},
-            {"Normal", 200, 10000, 3},
-            {"Hard", 200, 50000, 1}};
+    unsigned int                  difficulty     = 0;
+    std::vector<DifficultyPreset> presets        = {
+            {"Easy", 1000, 10000, 5, 0.07}, {"Normal", 200, 10000, 3, 0.10}, {"Hard", 1000, 50000, 1, 0.18}};
 
-    [[nodiscard]] const DifficultyPreset &activePreset() const { return presets[difficulty]; }
+    [[nodiscard]] const DifficultyPreset &activePreset() const {
+        return presets[difficulty];
+    }
 };
 
 JSONCONS_ALL_MEMBER_TRAITS(ConfigData, botsAmount, worldSize, debug, debugSpeedGame, maxFPS, difficulty, presets)
-JSONCONS_ALL_MEMBER_TRAITS(DifficultyPreset, name, initialMoney, winCondition, inventorySize);
+JSONCONS_ALL_MEMBER_TRAITS(DifficultyPreset, name, initialMoney, winCondition, inventorySize, taxPercentage);
 
 class Config {
 private:

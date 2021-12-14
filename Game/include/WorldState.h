@@ -10,18 +10,21 @@
 
 class WorldState {
 private:
-    std::shared_ptr<Player> player;
+    std::shared_ptr<Player>          player;
     std::vector<std::shared_ptr<AI>> bots;
-    std::vector<std::thread> botThreads;
+    std::vector<std::thread>         botThreads;
     std::shared_ptr<World>           world =
             std::make_shared<World>(ObjectFactory::fromFile("../share/objects.json"), Config::current().worldSize);
-    bool               isActive = true, isPaused = true;
-    std::random_device engine;
-    std::mt19937 random = std::mt19937(engine());
+    bool                         isActive = true, isPaused = true;
+    std::random_device           engine;
+    std::mt19937                 random = std::mt19937(engine());
+    std::unique_ptr<TaxStrategy> strategy;
 
     Canvas *currentScene = nullptr;
 
-    explicit WorldState(std::shared_ptr<World> w, std::shared_ptr<Player> player, std::vector<std::shared_ptr<AI>> bots);
+    explicit WorldState(std::shared_ptr<World> w,
+            std::shared_ptr<Player>            player,
+            std::vector<std::shared_ptr<AI>>   bots);
 
     JSONCONS_TYPE_TRAITS_FRIEND
 
@@ -65,8 +68,8 @@ namespace jsoncons {
         }
 
         static WorldState as(const json &json) {
-            auto world = std::make_shared<World>(json["world"].as<World>());
-            auto player = std::make_shared<Player>(json["player"].as<Player>());
+            auto                             world  = std::make_shared<World>(json["world"].as<World>());
+            auto                             player = std::make_shared<Player>(json["player"].as<Player>());
             std::vector<std::shared_ptr<AI>> bots;
             for (auto &&botJson : json["bots"].as<std::vector<jsoncons::json>>()) {
                 auto bot = std::make_shared<AI>(AI::fromJson(world, botJson));
@@ -80,12 +83,9 @@ namespace jsoncons {
 
         static json to_json(const WorldState &w) {
             std::vector<AI> bots;
-            for (const auto &bot : w.bots)
-                bots.emplace_back(std::move(*bot));
+            for (const auto &bot : w.bots) bots.emplace_back(std::move(*bot));
 
-            return json{{{"world", *w.world},
-                         {"player", *w.player},
-                         {"bots", bots}}};
+            return json{{{"world", *w.world}, {"player", *w.player}, {"bots", bots}}};
         }
     };
 }// namespace jsoncons

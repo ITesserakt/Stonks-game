@@ -1,10 +1,12 @@
 #pragma once
 
-#include "GameObject.h"
-#include "ViewableContainer.h"
 #include <atomic>
 #include <memory>
 #include <vector>
+
+#include "GameObject.h"
+#include "TaxStrategy.h"
+#include "ViewableContainer.h"
 
 class Gamer : public std::enable_shared_from_this<Gamer>, public ViewableContainer<GameObject, GameObject::Id> {
 protected:
@@ -35,4 +37,5 @@ public:
     double                              getBalance() const;
     unsigned int                        getId() const;
     bool                                couldBuy() const;
+    void                                takeTaxes(TaxStrategy &strategy);
 };

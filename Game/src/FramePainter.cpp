@@ -18,18 +18,21 @@ void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugF
     for (auto next : ranges::views::zip(slots, purches)) {
         auto slot = next.first;
         auto purch = next.second;
-        auto item = state.getWorld().focusItem(slot);
+        auto item  = state.getWorld().focusItem(slot);
         if (!item.has_value()) continue;
         std::stringstream ss;
-        if (debugFlag)
-            ss << item.value() << ", profitness: " << state.getWorld().getProfitness(slot);
+        if (debugFlag) ss << item.value() << ", profitness: " << state.getWorld().getProfitness(slot);
         else
             ss << item->fullName() << (item->timesSold > 0 ? " *" : "");
         purch->setName(ss.str());
         purch->update(std::move(item.value()));
     }
-    if (state.getPlayer().getBalance() > Config::current().activePreset().winCondition) {
-        scenes[SceneNames::GameField]->getChildWithName("Win Message")->as<MessageBox>()->hide(false);
+    if (state.getPlayer().getBalance() >= Config::current().activePreset().winCondition) {
+        scenes[SceneNames::GameField]->getChildWithName("win_message")->as<MessageBox>()->hide(false);
+        state.shutdown();
+    }
+    else if (state.getPlayer().getBalance() <= 0) {
+        scenes[SceneNames::GameField]->getChildWithName("loose_message")->as<MessageBox>()->hide(false);
         state.shutdown();
     }
 }

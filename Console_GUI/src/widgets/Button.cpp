@@ -13,7 +13,7 @@ void Button::show() {
         if (isBlowing) { attron(COLOR_PAIR(widgetId)); }
         for (int i = 0; i < getHeight(name); i++) {
             move(position.y + i, position.x);
-            printw("| %s |", splitBySentence(name, i).c_str());
+            printw("│ %s │", splitBySentence(name, i).c_str());
         }
         if (isBlowing) { attroff(COLOR_PAIR(widgetId)); }
     }

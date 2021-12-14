@@ -39,6 +39,7 @@ void setupGameField(WorldState &state, Canvases &scenes) {
     auto       balanceUpdate = [&]() {
         return std::string("Balance: ") + std::to_string(state.getPlayer().getBalance()) + std::string(" $");
     };
+    auto constructPurchase = [&guard](std::size_t idx) { return Purchase(guard(), idx + 1); };
 
     canvas{scenes[GameField]}.append(group{"management", label{"stocks", "Game field\n"} << color(COLOR_YELLOW),
                                              label{"money_amount", "Balance: \n", withUpdate(100ms, balanceUpdate)},
@@ -47,11 +48,11 @@ void setupGameField(WorldState &state, Canvases &scenes) {
                                              button{"Go to main menu", guard} << command<SceneChangeCommand>(
                                                      state, scenes[SceneNames::MainMenu]),
                                              label{"empty", ""},
-                                             many<Purchase>(Config::current().worldSize,
-                                                     [&guard](std::size_t idx) { return Purchase(guard(), idx + 1); })
-                                                     << command<PurchaseCommand>(self<Purchase>{}, state),
-                                             message_box{"win_message", "You have won!", Center, hide(true)}},
-            group{"statistics", shared_graphic{"Price", "$", "t", {30, 20}, state}});
+                                             many<Purchase>(Config::current().worldSize, constructPurchase)
+                                                     << command<PurchaseCommand>(self<Purchase>{}, state)},
+            group{"statistics", shared_graphic{"Price", "$", "t", {30, 20}, state}, label{"empty", ""},
+                    message_box{"loose_message", "You have loose.\nTry next time!", Special, hide(true)},
+                    message_box{"win_message", "You have won!", Special, hide(true)}});
 }
 
 void setupInventory(WorldState &state, Canvases &scenes) {

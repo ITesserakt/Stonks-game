@@ -1,28 +1,28 @@
 #include "widgets/MessageBox.h"
 
-#include <utility>
-#include "utils.h"
 #include "sstream"
+#include "utils.h"
+#include <utility>
 
-void paintLine(std::stringstream& ss, const std::string& text) {
-    ss << '+';
-    for (int i = 0; i < getWidth(text); i++) {
-        ss << '-';
-    }
-    ss << '+';
+void paintLine(std::stringstream &ss, const std::string &text) {
+    ss << "+";
+    for (int i = 0; i < getWidth(text); i++) { ss << "─"; }
+    ss << "+";
 }
-void paintInner(std::stringstream& ss, const std::string& text) {
-    ss << '|';
+
+void paintInner(std::stringstream &ss, const std::string &text) {
+    ss << "│";
     ss << text;
-    ss << '|';
+    ss << "│";
 }
 
-MessageBox::MessageBox(std::string name, std::string text, SpecialPosition spec)
-    : Widget(std::move(name)), spec(spec) {
+MessageBox::MessageBox(std::string name, std::string text, SpecialPosition spec) : Widget(std::move(name)), spec(spec) {
     std::stringstream ss;
-    paintLine(ss, text); ss << '\n';
+    paintLine(ss, text);
+    ss << '\n';
     for (int i = 0; i < getHeight(text); i++) {
-        paintInner(ss, splitBySentence(text, i)); ss << '\n';
+        paintInner(ss, splitBySentence(text, i));
+        ss << '\n';
     }
     paintLine(ss, text);
     messageText = ss.str();
@@ -38,7 +38,8 @@ void MessageBox::show() {
             //move(position.y + i, position.x);
             printw("%s", splitBySentence(messageText, i).c_str());
         }
-    } else if (spec == SpecialPosition::Special) {
+    }
+    else if (spec == SpecialPosition::Special) {
         move(position.y, position.x);
         for (int i = 0; i < getHeight(messageText); i++) {
             move(position.y + i, position.x);
@@ -49,6 +50,7 @@ void MessageBox::show() {
 
 UISize MessageBox::getSize() {
     if (isHidden) size = {0, 0};
-    else size = {getWidth(messageText), getHeight(messageText)};
+    else
+        size = {getWidth(messageText), getHeight(messageText)};
     return size;
 }
