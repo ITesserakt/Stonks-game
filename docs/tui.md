@@ -1,18 +1,18 @@
 ## TUI library
 
-We implemented simple but flexible `TUI` library to construct this game.
+We implemented a pretty simple and flexible `TUI` library to construct this game.
 
-There are `widgets` - parts of terminal with special behaviour.
+There are `widgets` - parts of a terminal with specific behavior.
 
 ### Hierarchy 
 
 ```text
 - Widget                  Main and the most simple kind of widgets
-|- BindableWidget         Widgets that can have children tree (canvas for example)
-|- ColorWidget            Widgets with color property
+|- BindableWidget         Widgets that can have children trees (canvas, for example)
+|- ColorWidget            Widgets with a color property
 |\ - SizeableWidget       Widgets with size property
 | \_\- PositionedWidget   Widgets with position; can also be hidden
-|      \- HowerableWidget Widgets that can be clicked
+|      \- HowerableWidget Basically, it's clickable widgets
 ```
 
 Built-in widgets: `canvas, button, label, message box, graphic, group`.
@@ -30,9 +30,9 @@ Button button{/* name: */ "Example", /* tab index */ 0};
 button.applyAction(SceneChangedCommand(...)); // when user clicks on this button, act method will be called
 ```
 
-We can even chain simple commands to build more complex.
+We can even chain simple commands to build more complex ones.
 
-> Note: every command `A` that can be chained should extends `CloneCommand<A>` class
+> Note: every command `A` that can be chained should extend `CloneCommand<A>` class
 
 ```c++
 auto complex = HideCommand(...) + HideCommand(...) + KillSomeoneCommand(...)
@@ -41,11 +41,11 @@ auto complex = HideCommand(...) + HideCommand(...) + KillSomeoneCommand(...)
 
 Calling `auto button = std::make_shared<Button>(...)` is pretty noisy and boring.
 
-This can lead to very complicated and hard to read code.
+This can lead to very complicated and hard-to-read code.
 
 The solution is `layout builder`!
 
-This is a set of lightweight wrappers to eliminate boiler-plate code.
+This is a set of lightweight wrappers to eliminate boilerplate code.
 
 ```c++
 using namespace widget;
@@ -61,7 +61,7 @@ canvas {
 }
 ```
 
-Will make `Canvas` with button, label and group
+Will make `Canvas` with button, label, and group
 
 Among other wrappers, there are `many` that wraps creation of multiple widgets:
 
@@ -77,7 +77,7 @@ To append widgets layout to existing canvas, use `canvas{ /* some existing canva
 
 ***
 
-But what if you need to setup label color or button's action?
+But what if you need to set the label color or button's action?
 
 We don't have any variables, so how it's possible?
 
@@ -97,7 +97,7 @@ canvas {
 ```
 ***
 
-Ok, but what if we need self widget in setup? Or even a reference to other widget in current canvas?
+Ok, but what if we need self widget in the setup? Or even a reference to another one in the current canvas?
 
 `widget implicits`!
 
@@ -118,4 +118,4 @@ canvas {
 
 * `Root` - search down from canvas (used by default)
 * `FirstBindable` - search down from the first for current widget bindable
-* `Bindable` - specify bindable to search from by name
+* `Bindable` - specify bindable to search by name
