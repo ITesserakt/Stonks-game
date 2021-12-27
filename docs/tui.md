@@ -1,5 +1,3 @@
-# Stonks game
-
 ## TUI library
 
 We implemented simple but flexible `TUI` library to construct this game.
