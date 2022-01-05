@@ -58,7 +58,6 @@ AI &WorldState::getRandomBot() {
 
 void WorldState::cancelAllAI() {
     for (auto &thread : botThreads) {
-        thread.detach();
         thread.std::thread::~thread();
     }
 }

@@ -8,15 +8,14 @@
 
 using namespace std::chrono_literals;
 
-void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugFlag) {
-    auto slots = state.getWorld().getSlots();
+void paintGameFieldFrame(WorldState &state, Scenes &scenes, const bool &debugFlag) {
+    auto slots   = state.getWorld().getSlots();
     auto purches = scenes[SceneNames::GameField]->getChildrenRecursively<Purchase>();
 
-    for (const auto &purchase : purches)
-        purchase->clearItem();
+    for (const auto &purchase : purches) purchase->clearItem();
 
     for (auto next : ranges::views::zip(slots, purches)) {
-        auto slot = next.first;
+        auto slot  = next.first;
         auto purch = next.second;
         auto item  = state.getWorld().focusItem(slot);
         if (!item.has_value()) continue;
@@ -37,16 +36,15 @@ void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugF
     }
 }
 
-void paintInventoryFrame(WorldState &state, Canvases &scenes) {
+void paintInventoryFrame(WorldState &state, Scenes &scenes) {
     auto sales = scenes[SceneNames::Inventory]->getChildrenRecursively<Sale>();
     auto items = state.getPlayer().getSlots();
 
-    for (auto sale : sales)
-        sale->clearItem();
+    for (auto sale : sales) sale->clearItem();
 
     for (auto context : ranges::views::zip(items, sales)) {
         auto itemId = context.first;
-        auto sale = context.second;
+        auto sale   = context.second;
 
         std::stringstream ss;
         auto item = state.getPlayer().viewItem(itemId);

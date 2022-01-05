@@ -103,11 +103,14 @@ namespace widget {
         };
 
         template <typename W>
-        struct self : DSLImplicit<Eager> {
+        struct self_t : DSLImplicit<Eager> {
             W &inject(Widget &self) {
                 return *self.as<W>();
             }
         };
+
+        template <typename W>
+        static auto self = self_t<W>{};
 
         template <typename W, SearchScope scope = Root>
         struct search : DSLImplicit<Lazy> {
@@ -167,7 +170,7 @@ namespace widget {
 
         template <typename T>
         constexpr Resolution laziness() {
-            if constexpr (is_implicit_v<T>) return T::resolution_type;
+            if constexpr (is_implicit_v<T>) return std::remove_reference_t<T>::resolution_type;
             else
                 return Eager;
         }
@@ -183,12 +186,13 @@ namespace widget {
             void effectErased(std::vector<std::shared_ptr<W>> widgets) {
                 for (auto &item : widgets) effectErased(item->template as<Widget>());
             }
+
+            virtual ~DSLSetupErased() = default;
         };
 
         template <typename W, Resolution type>
         struct DSLSetup : DSLSetupErased<type> {
             virtual void effect(W &widget) = 0;
-            virtual ~DSLSetup()            = default;
 
         private:
             void effectErased(std::shared_ptr<Widget> widget) final {
@@ -280,7 +284,7 @@ namespace widget {
         };
 
         template <typename F>
-        struct withUpdate : DSLSetup<Label, Lazy> {
+        struct withUpdate : DSLSetup<Label, Eager> {
             F                         onUpdate;
             std::chrono::milliseconds duration;
             withUpdate(std::chrono::milliseconds duration, F onUpdate) : onUpdate(onUpdate), duration(duration) {}
@@ -289,19 +293,11 @@ namespace widget {
             }
         };
 
-        template <typename W>
-        struct copyTo : DSLSetup<W, Eager> {
-            std::shared_ptr<W> *nullable;
-            copyTo(std::shared_ptr<W> *nullable) : nullable(nullable) {}
-            void effect(W &widget) override {
-                *nullable = widget;
-            }
-        };
+        // FIXME compiler reverses ordering
+        struct [[deprecated("Compiler tricky case. Use manual indexing")]] auto_index {
+            volatile unsigned int index = 0;
 
-        struct auto_index {
-            std::size_t index = 0;
-
-            std::size_t operator()() {
+            operator unsigned int() {
                 return index++;
             }
         };
@@ -309,23 +305,26 @@ namespace widget {
 
     template <typename W>
     struct Holder {
-        std::shared_ptr<W>                                                             constructed;
-        std::vector<std::pair<std::shared_ptr<Widget>, setup::DSLSetupErased<Lazy> *>> lazyDefaults;
+    private:
+        template <typename Default>
+        void applyDefault(Default &&def) {
+            using arg_type = std::remove_reference_t<Default>;
+            if constexpr (arg_type::resolution_type == Eager) def.effect(*constructed);
+            else if constexpr (arg_type::resolution_type == Lazy) {
+                auto copy = std::make_shared<Default>(std::forward<Default>(def));
+                lazyDefaults.emplace_back(std::make_pair(constructed, copy));
+            }
+        }
+
+    public:
+        std::vector<std::pair<std::shared_ptr<Widget>, std::shared_ptr<setup::DSLSetupErased<Lazy>>>> lazyDefaults;
+        std::shared_ptr<W>                                                                            constructed;
         using widget_type = W;
 
         template <typename... Args, typename... Defaults>
         explicit Holder(std::tuple<Defaults...> &&def, Args &&...args)
             : constructed(std::make_shared<W>(std::forward<Args &&>(args)...)) {
-            __detail::tupleForeach(def, [this](auto &&d) {
-                using arg_type = std::remove_reference_t<decltype(d)>;
-                if constexpr (arg_type::resolution_type == Eager) d.effect(*constructed);
-                else if constexpr (arg_type::resolution_type == Lazy) {
-                    auto copy = new arg_type(std::forward<decltype(d)>(d));
-                    lazyDefaults.emplace_back(constructed, copy);
-                }
-                else
-                    throw std::runtime_error("Cannot defer class, not extended from DSLSetup");
-            });
+            __detail::tupleForeach(def, [this](auto &&d) { applyDefault(std::forward<decltype(d)>(d)); });
         }
 
         Holder(std::shared_ptr<W> widget) : constructed(std::move(widget)) {}
@@ -338,9 +337,13 @@ namespace widget {
             return constructed.operator->();
         }
 
+        W &operator*() {
+            return constructed.operator*();
+        }
+
         template <typename Default>
         Holder<W> &operator<<(Default &&def) {
-            def.effect(*constructed);
+            applyDefault(std::forward<Default>(def));
             return *this;
         }
     };
@@ -349,10 +352,6 @@ namespace widget {
         template <typename... Defaults>
         button(const std::string &name, unsigned int index, Defaults &&...def)
             : Holder<Button>(std::tuple<Defaults &&...>{std::forward<Defaults &&>(def)...}, name, index) {}
-
-        template <typename... Defaults>
-        button(const std::string &name, setup::auto_index &idx, Defaults &&...def)
-            : button(name, idx(), std::forward<Defaults &&>(def)...) {}
     };
 
     struct label : Holder<Label> {
@@ -395,7 +394,7 @@ namespace widget {
         canvas(std::shared_ptr<Canvas> c) : Holder<Canvas>(std::move(c)) {}
 
         template <typename... Widgets>
-        void append(Widgets... widgets) {
+        void append(Widgets &&...widgets) {
             (constructed->bind(widgets.constructed), ...);
             (std::for_each(widgets.lazyDefaults.begin(), widgets.lazyDefaults.end(),
                      [&widgets](auto d) { d.second->effectErased(d.first); }),
@@ -414,8 +413,8 @@ namespace widget {
     template <typename W>
     struct many {
         using widget_type = W;
-        std::vector<std::shared_ptr<W>>                                                constructed;
-        std::vector<std::pair<std::shared_ptr<Widget>, setup::DSLSetupErased<Lazy> *>> lazyDefaults;
+        std::vector<std::shared_ptr<W>>                                                               constructed;
+        std::vector<std::pair<std::shared_ptr<Widget>, std::shared_ptr<setup::DSLSetupErased<Lazy>>>> lazyDefaults;
 
         template <typename... Defaults, typename F = W(std::size_t &)>
         many(std::size_t count, F fn = __detail::ctor<W, std::size_t &>) : constructed(count) {

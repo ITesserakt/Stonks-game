@@ -32,5 +32,4 @@ void EventHandler::startLoop() {
     }
 }
 
-EventHandler::EventHandler(const std::vector<std::shared_ptr<Canvas>> &scenes, WorldState &state)
-    : scenes(scenes), state(state) {}
+EventHandler::EventHandler(WorldState &state) : state(state) {}

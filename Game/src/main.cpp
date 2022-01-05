@@ -3,12 +3,12 @@
 #include "Debug.h"
 #include "EventHandler.h"
 #include "FramePainter.h"
-#include "GUI.h"
 #include "GameLoading.h"
+#include "GUI.h"
 #include "Statistics.h"
-#include "WorldState.h"
-#include "widgets/MessageBox.h"
 #include "widgets/dsl/DSL.h"
+#include "widgets/MessageBox.h"
+#include "WorldState.h"
 #include <thread>
 
 using Frontend = console_gui::NCurses;
@@ -25,12 +25,8 @@ int main() {
     loadStatistic();
     std::set_terminate([] { close(true); });
     try {
-        console_gui::init<Frontend>();
-
-        Canvases scenes = {std::make_shared<Canvas>("MainMenu", Centered),
-                std::make_shared<Canvas>("GameField", Vsplit), std::make_shared<Canvas>("Inventory", Vsplit),
-                std::make_shared<Canvas>("Guide", Left), std::make_shared<Canvas>("Settings", Centered),
-                std::make_shared<Canvas>("Statistics", Vsplit)};
+        Scenes scenes = {Canvas("MainMenu", Centered), Canvas("GameField", Vsplit), Canvas("Inventory", Vsplit),
+                Canvas("Guide", Left), Canvas("Settings", Centered), Canvas("Statistics", Vsplit)};
         setupMainMenu(state, scenes);
         setupGameField(state, scenes);
         setupInventory(state, scenes);
@@ -38,9 +34,9 @@ int main() {
         setupSettings(state, scenes);
         setupStatistics(state, scenes);
 
-        state.changeCurrentScene(*scenes[SceneNames::MainMenu]);
+        state.changeCurrentScene(*scenes[MainMenu]);
 
-        auto handler = EventHandler(scenes, state);
+        auto handler = EventHandler(state);
 
         std::chrono::milliseconds sleepTime{static_cast<int>(1.0 / Config::current().maxFPS * 1000)};
         std::thread               renderThread([&]() {
@@ -60,6 +56,7 @@ int main() {
             }
                       });
 
+        console_gui::init<Frontend>();
         handler.startLoop();
         renderThread.join();
         state.cancelAllAI();

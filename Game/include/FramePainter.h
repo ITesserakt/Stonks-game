@@ -2,6 +2,6 @@
 #include "WorldState.h"
 #include "CreatingGui.h"
 
-void paintGameFieldFrame(WorldState &state, Canvases &scenes, const bool &debugFlag);
+void paintGameFieldFrame(WorldState &state, Scenes &scenes, const bool &debugFlag);
 
-void paintInventoryFrame(WorldState &state, Canvases &scenes);
+void paintInventoryFrame(WorldState &state, Scenes &scenes);

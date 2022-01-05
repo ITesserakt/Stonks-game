@@ -75,6 +75,7 @@ std::thread AI::startTrading(bool &running) {
             }
         }
     });
+    thread.detach();
     return thread;
 }
 

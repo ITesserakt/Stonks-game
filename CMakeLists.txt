@@ -6,6 +6,7 @@ set(BUILD_TESTS OFF)
 set(JSONCONS_BUILD_TESTS OFF)
 set(CPPTERMINAL_BUILD_EXAMPLES OFF)
 set(CPPTERMINAL_ENABLE_TESING OFF)
+add_compile_options(-Wno-virtual-move-assign)
 
 include(Install_libs.cmake)
 
