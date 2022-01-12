@@ -1,6 +1,10 @@
 # Stonks-game
-
+ 
 ![Gameplay](gameplay.gif)
+
+**Addictive gameplay. 
+Creating money out of thin air. 
+Feel like you're in that meme**
 
 ## Description
 
